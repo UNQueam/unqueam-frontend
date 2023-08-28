@@ -1,4 +1,12 @@
-# UNQueam
+# UNQueam Frontend Project
+
+> This project is the frontend of the gaming platform UNQueam. It is developed with Javascript and Vue as a framework.
+
+## Prerequisites
+
+Before you begin, make sure you have the following installed on your system:
+
+- [Node]([https://www.oracle.com/java/technologies/javase-downloads.html](https://nodejs.org/es))
 
 ## Project Setup
 
