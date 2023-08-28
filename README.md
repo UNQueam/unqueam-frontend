@@ -45,3 +45,11 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+
+## Contribution
+
+If you'd like to contribute to this project, you're welcome to do so! Open an issue to discuss your ideas or submit a pull request with your proposed changes.
+
+## License
+
+This project is under the [MIT license](LICENSE).
