@@ -13,6 +13,7 @@ import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
 import Dropdown from 'primevue/dropdown';
 import Rating from 'primevue/rating';
 import Button from 'primevue/button';
+import InputText from "primevue/inputtext";
 import PickList from 'primevue/picklist';
 import OrderList from 'primevue/orderlist';
 
@@ -30,6 +31,7 @@ app.component('Rating', Rating);
 app.component('Button', Button);
 app.component('PickList', PickList);
 app.component('OrderList', OrderList);
+app.component('InputText', InputText);
 
 
 app.mount('#app')

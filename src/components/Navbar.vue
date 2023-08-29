@@ -1,5 +1,4 @@
 <template>
-    <div>
       <nav class="navbar">
         <div class="navbar-logo">
           <img src="/public/Unqueam_logo_image.png" alt="Logo">
@@ -12,17 +11,11 @@
           </ul>
         </div>
       </nav>
-      <!-- El contenido del componente -->
-      <router-view></router-view>
-    </div>
   </template>
   
-  <script>
-  export default {
-    name: 'Navbar'
-  };
+  <script setup>
   </script>
-  
+
   <style scoped>
   .navbar {
     display: flex;

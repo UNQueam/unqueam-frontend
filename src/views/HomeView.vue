@@ -1,5 +1,11 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+
+// Data
+const filterKey = ref('');
+// Otros datos y propiedades
+
+
 
 const dataviewValue = ref(null);
 dataviewValue.value = [
@@ -15,6 +21,15 @@ dataviewValue.value = [
         {"id": "1009","code": "cm230f032","name": "Gaming Set","description": "Product Description","image": "gaming-set.jpg","price": 299,"category": "Electronics","quantity": 63,"inventoryStatus": "INSTOCK","rating": 3}
     ]
 
+// Propiedad computada para filtrar los datos
+const filteredData = computed(() => {
+  const lowerCaseFilter = filterKey.value.toLowerCase();
+  return dataviewValue.value.filter(
+      item =>
+          item.name.toLowerCase().includes(lowerCaseFilter) ||
+          item.description.toLowerCase().includes(lowerCaseFilter)
+  );
+});
 
 const layout = ref('grid');
 const sortKey = ref(null);
@@ -46,17 +61,20 @@ const onSortChange = (event) => {
         <div class="col-12">
             <div class="card">
                 <h5>DataView</h5>
-                <DataView :value="dataviewValue" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
-                    <template #header>
-                        <div class="grid grid-nogutter">
-                            <div class="col-6 text-left">
-                                <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Sort By Price" @change="onSortChange($event)" />
-                            </div>
-                            <div class="col-6 text-right">
-                                <DataViewLayoutOptions v-model="layout" />
-                            </div>
-                        </div>
-                    </template>
+                <DataView :value="filteredData" :layout="layout" :paginator="true" :rows="9" :sortOrder="sortOrder" :sortField="sortField">
+                  <template #header>
+                    <div class="grid grid-nogutter">
+                      <div class="col-6 text-left">
+                        <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Sort By Price" @change="onSortChange($event)" />
+                      </div>
+                      <div class="col-6 text-right">
+                        <DataViewLayoutOptions v-model="layout" />
+                      </div>
+                      <div class="col-12 mt-3">
+                        <InputText v-model="filterKey" placeholder="Search" />
+                      </div>
+                    </div>
+                  </template>
                     <template #list="slotProps">
                         <div class="col-12">
                             <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
