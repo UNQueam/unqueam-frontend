@@ -1,7 +1,4 @@
 <script setup>
-import { ref} from 'vue';
-
-
 
 </script>
 
@@ -9,7 +6,7 @@ import { ref} from 'vue';
   <div class="grid">
     <div class="col-lg-6 col-md-12 col-sm-12 m-auto mt-6">
       <div class="card mb-5">
-        <h1>Overwacho</h1>
+        <h1>League Of Legends</h1>
 
         <div class='game-preview'>
           <button class='play-button'>
