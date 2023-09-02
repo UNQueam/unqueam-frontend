@@ -17,6 +17,7 @@ import Button from 'primevue/button';
 import InputText from "primevue/inputtext";
 import PickList from 'primevue/picklist';
 import OrderList from 'primevue/orderlist';
+
 import Chip from "primevue/chip";
 import Image from "primevue/image";
 
@@ -35,6 +36,7 @@ app.component('Button', Button);
 app.component('PickList', PickList);
 app.component('OrderList', OrderList);
 app.component('InputText', InputText);
+
 app.component('Chip', Chip)
 app.component('Image', Image)
 

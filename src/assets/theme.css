@@ -1080,7 +1080,7 @@
   background: rgba(255, 255, 255, 0.87);
 }
 .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
-  background: #b052c0;
+  background: #b51c36 ;
 }
 .p-inputswitch.p-invalid .p-inputswitch-slider {
   border-color: #ef9a9a;
@@ -1549,8 +1549,10 @@
   color: #ffffff;
 }
 .p-selectbutton .p-button.p-highlight:hover {
-  background: #b052c0;
-  border-color: #b052c0;
+
+  background: #b51c36 ;
+  border-color: #b51c36 ;
+
   color: #ffffff;
 }
 .p-selectbutton .p-button.p-highlight:hover .p-button-icon-left,
@@ -1706,8 +1708,8 @@
   color: #ffffff;
 }
 .p-togglebutton.p-button.p-highlight:hover {
-  background: #b052c0;
-  border-color: #b052c0;
+  background: #b51c36 ;
+  border-color: #b51c36 ;
   color: #ffffff;
 }
 .p-togglebutton.p-button.p-highlight:hover .p-button-icon-left,
@@ -1728,9 +1730,9 @@
   border-radius: 3px;
 }
 .p-button:enabled:hover {
-  background: #b052c0;
+  background: #b51c36 ;
   color: #ffffff;
-  border-color: #b052c0;
+  border-color: #b51c36 ;
 }
 .p-button:enabled:active {
   background: #a241b2;
@@ -3004,8 +3006,8 @@
   border-right: 1px solid #383838;
 }
 .fc.fc-unthemed .fc-view-container .fc-event {
-  background: #b052c0;
-  border: 1px solid #b052c0;
+  background: #b51c36 ;
+  border: 1px solid #b51c36 ;
   color: #ffffff;
 }
 .fc.fc-unthemed .fc-view-container .fc-divider {
@@ -3023,9 +3025,9 @@
   align-items: center;
 }
 .fc.fc-unthemed .fc-toolbar .fc-button:enabled:hover {
-  background: #b052c0;
+  background: #b51c36 ;
   color: #ffffff;
-  border-color: #b052c0;
+  border-color: #b51c36 ;
 }
 .fc.fc-unthemed .fc-toolbar .fc-button:enabled:active {
   background: #a241b2;
@@ -3075,8 +3077,8 @@
   color: #ffffff;
 }
 .fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
-  background: #b052c0;
-  border-color: #b052c0;
+  background: #b51c36 ;
+  border-color: #b51c36 ;
   color: #ffffff;
 }
 .fc.fc-unthemed .fc-toolbar .fc-button.fc-dayGridMonth-button:focus, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridWeek-button:focus, .fc.fc-unthemed .fc-toolbar .fc-button.fc-timeGridDay-button:focus {
@@ -3159,15 +3161,15 @@
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-block-event {
   color: #ffffff;
-  background: #b052c0;
-  border-color: #b052c0;
+  background: #b51c36 ;
+  border-color: #b51c36 ;
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-block-event .fc-event-main {
   color: #ffffff;
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-dot-event .fc-daygrid-event-dot {
-  background: #b052c0;
-  border-color: #b052c0;
+  background: #b51c36 ;
+  border-color: #b51c36 ;
 }
 .fc.fc-theme-standard .fc-view-harness .fc-event.fc-daygrid-dot-event:hover {
   background: rgba(255, 255, 255, 0.03);
@@ -3185,9 +3187,9 @@
   border-radius: 3px;
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button:enabled:hover {
-  background: #b052c0;
+  background: #b51c36 ;
   color: #ffffff;
-  border-color: #b052c0;
+  border-color: #b51c36 ;
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button:enabled:active {
   background: #a241b2;
@@ -3243,8 +3245,8 @@
   color: #ffffff;
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button.fc-button-active:hover, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button.fc-button-active:hover, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button.fc-button-active:hover {
-  background: #b052c0;
-  border-color: #b052c0;
+  background: #b51c36 ;
+  border-color: #b51c36 ;
   color: #ffffff;
 }
 .fc.fc-theme-standard .fc-toolbar .fc-button.fc-dayGridMonth-button:not(:disabled):focus, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridWeek-button:not(:disabled):focus, .fc.fc-theme-standard .fc-toolbar .fc-button.fc-timeGridDay-button:not(:disabled):focus {
@@ -4274,7 +4276,7 @@
   right: -1rem;
 }
 .p-overlaypanel .p-overlaypanel-close:enabled:hover {
-  background: #b052c0;
+  background: #b51c36 ;
   color: #ffffff;
 }
 .p-overlaypanel:after {
@@ -4402,9 +4404,9 @@
 }
 
 .p-fileupload-choose:not(.p-disabled):hover {
-  background: #b052c0;
+  background: #b51c36 ;
   color: #ffffff;
-  border-color: #b052c0;
+  border-color: #b51c36 ;
 }
 .p-fileupload-choose:not(.p-disabled):active {
   background: #a241b2;
