@@ -1549,8 +1549,10 @@
   color: #ffffff;
 }
 .p-selectbutton .p-button.p-highlight:hover {
+
   background: #b51c36 ;
   border-color: #b51c36 ;
+
   color: #ffffff;
 }
 .p-selectbutton .p-button.p-highlight:hover .p-button-icon-left,

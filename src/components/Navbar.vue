@@ -11,7 +11,7 @@
     <div class="navbar-links">
       <ul>
         <li><router-link to="/">Inicio</router-link></li>
-        <li><router-link to="/juegos">Juegos</router-link></li>
+        <li><router-link to="/game/game-change-name">Juegos</router-link></li>
         <li><router-link to="/perfil">Perfil</router-link></li>
       </ul>
     </div>
