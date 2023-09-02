@@ -1,4 +1,13 @@
 <script setup>
+import {ref} from 'vue'
+
+const isUserPlaying = ref(false)
+
+const isGameScreenExpanded = ref(false);
+
+function executePlay() {
+  isUserPlaying.value = true
+}
 
 </script>
 
@@ -8,12 +17,18 @@
       <div class="card mb-5">
         <h1>League Of Legends</h1>
 
-        <div class='game-preview'>
-          <button class='play-button'>
+        <div v-if="!isUserPlaying" class='game-preview'>
+          <button class='play-button' @click="executePlay">
             <span id='play-button-text'>Play</span>
             <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
           </button>
         </div>
+        <div v-if="isUserPlaying" :class="{ 'gameplay': !isGameScreenExpanded, 'expanded-gameplay': isGameScreenExpanded }" class="flex flex-column">
+          <iframe :class="{ 'game': !isGameScreenExpanded, 'expanded-game': isGameScreenExpanded }" src="https://camilacintioli.github.io/the-progammator/"></iframe>
+          <button v-if="isGameScreenExpanded" @click="isGameScreenExpanded = false">Minimizar pantalla</button>
+          <button v-if="!isGameScreenExpanded" @click="isGameScreenExpanded = true">Expandir pantalla</button>
+        </div>
+
         <div class='game-images-container'>
           <Image src="https://th.bing.com/th/id/R.76f0763f35b9ef55d0a8919c7849d026?rik=Nxu189bBsslFeg&pid=ImgRaw&r=0" alt="Image" width="200" preview />
           <Image src="https://wallpapercave.com/wp/wp9493361.jpg" alt="Image" width="200" preview />
@@ -57,6 +72,34 @@
 </template>
 
 <style>
+.expanded-gameplay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.expanded-game {
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  height: 80%;
+  position: relative;
+  overflow: auto;
+  border: 1px solid white;
+}
+
+.game {
+  width: 100%;
+  height: 100%;
+}
+
 .play-icon {
   font-size: 14pt;
   background-color: #666666;
@@ -85,6 +128,15 @@
 
 .game-preview {
   background-color: black;
+  width: 100%;
+  height: 500px;
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameplay {
   width: 100%;
   height: 500px;
   margin: 2rem 0;
