@@ -1,11 +1,26 @@
 <script setup>
 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { fetchData } from "@/service/GamesService"
 
 // Data
 const filterKey = ref('')
 // Otros datos y propiedades
 
+
+const games = ref([]);
+const error = ref([]);
+
+onMounted(async () => {
+      try {
+        const result = await fetchData();
+        games.value = result;
+      } catch (err) {
+        error.value = err;
+      }
+    });
+
+//Mock Data
 const dataviewValue = ref(null)
 dataviewValue.value = [
   {
@@ -149,6 +164,7 @@ const layout = ref('grid')
       <div class="card">
         <div class="title">
           <h5>Juegos</h5>
+          {{games}}
         </div>
         <DataView :value="filteredData" :layout="layout" :paginator="true" :rows="9">
           <template #header>

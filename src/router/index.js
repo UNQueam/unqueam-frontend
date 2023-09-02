@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import NotFound from '../views/NotFound.vue'
+import SomethingBroke from '../views/SomethingBroke.vue'
 import GameDetailsView from "../views/GameDetailsView.vue";
 
 const router = createRouter({
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/404',
       name: 'NotFound',
       component: NotFound 
+    },
+    { 
+      path: '/500',
+      name: 'SomethingBroke',
+      component: SomethingBroke 
     },
     
     { path: '/:catchAll(.*)', redirect: '/404' }

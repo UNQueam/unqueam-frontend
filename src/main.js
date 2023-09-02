@@ -4,6 +4,8 @@ import './assets/theme.css'
 
 import App from './App.vue'
 import router from './router'
+import axios from "axios";
+import VueAxios from "vue-axios";   
 
 import PrimeVue from 'primevue/config';
 import '@/assets/styles.scss';
@@ -26,6 +28,9 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(PrimeVue, {ripple:true})
+
+app.use(VueAxios, axios);
+app.provide("axios", app.config.globalProperties.axios);
 
 //Primevue components
 app.component('DataView', DataView);
