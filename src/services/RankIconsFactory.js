@@ -1,14 +1,15 @@
-import ranks from '../assets/icons/ranks'
+import rank_bronze from '../assets/icons/ranks/rank_bronze.png'
+import rank_silver from '../assets/icons/ranks/rank_silver.png'
+import rank_gold from '../assets/icons/ranks/rank_gold.png'
 
 const rankIcons = {
-    "rank1": ranks.rank1,
-    "rank2": ranks.rank2,
-    "rank3": ranks.rank3,
-    "rank4": ranks.rank4,
-    "rank5": ranks.rank5
+    "unranked": null,
+    "bronze": rank_bronze,
+    "silver": rank_silver,
+    "gold": rank_gold
 };
 
-const defaultRank = ranks.rank5
+const defaultRank = rankIcons["unranked"]
 
 // TODO: Debe retornar .png de los iconos o retornamos iconos directamente?
 class RankIconsFactory {

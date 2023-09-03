@@ -1,19 +1,41 @@
 <script setup>
+import {ref} from 'vue'
+
+const isUserPlaying = ref(false)
+
+const gameIframe = ref(null);
+const toggleFullscreen = () => {
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    gameIframe.value.requestFullscreen().catch(error => {
+      console.error('Error al habilitar pantalla completa:', error);
+    });
+  }
+};
+
+function executePlay() {
+  isUserPlaying.value = true
+}
 
 </script>
 
 <template>
-  <div class="flex">
-    <div class="col-lg-6 col-md-12 col-sm-12 m-auto mt-6">
-      <div class="card mb-5">
+  <div class="flex ">
+      <div class="card mb-5 m-auto mt-5 w-100">
         <h1>League Of Legends</h1>
 
-        <div class='game-preview'>
-          <button class='play-button'>
+        <div v-if="!isUserPlaying" class='game-preview'>
+          <button class='play-button' @click="executePlay">
             <span id='play-button-text'>Play</span>
             <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
           </button>
         </div>
+        <div v-if="isUserPlaying" class="gameplay flex flex-column">
+          <iframe ref="gameIframe" class="game" src="https://emilianaailen.github.io/boss-vainilla/"></iframe>
+          <button class="p-2 mt-3" @click="toggleFullscreen">Pantalla completa</button>
+        </div>
+
         <div class='game-images-container'>
           <Image src="https://th.bing.com/th/id/R.76f0763f35b9ef55d0a8919c7849d026?rik=Nxu189bBsslFeg&pid=ImgRaw&r=0" alt="Image" width="200" preview />
           <Image src="https://wallpapercave.com/wp/wp9493361.jpg" alt="Image" width="200" preview />
@@ -52,11 +74,16 @@
           </ul>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
 <style>
+.game {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
 .play-icon {
   font-size: 14pt;
   background-color: #666666;
@@ -87,6 +114,15 @@
   background-color: black;
   width: 100%;
   height: 500px;
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameplay {
+  width: 100%;
+  height: 600px;
   margin: 2rem 0;
   display: flex;
   justify-content: center;
