@@ -1,7 +1,6 @@
 <script setup>
-import {ref} from 'vue'
 
-const isUserPlaying = ref(false)
+const isUserPlaying = ref(false);
 
 const gameIframe = ref(null);
 const toggleFullscreen = () => {
@@ -89,6 +88,7 @@ onMounted(async () => {
             </li>
           </ul>
         </div>
+      </div>
   </div>
 </template>
 
