@@ -1,9 +1,9 @@
 <template>
-    <div id="notfound">
-		<div class="notfound">
-			<div class="notfound-404">
-				<h1>404</h1>
-				<h2>Page not found</h2>
+    <div id="broken">
+		<div class="broken">
+			<div class="broken-500">
+				<h1>500</h1>
+				<h2>Ups! Something went wrong</h2>
 			</div>
       <RouterLink to="/" class="link">Homepage</RouterLink>
 		</div>
@@ -15,13 +15,13 @@
 
 <style scoped>
 
-#notfound {
+#broken {
   position: relative;
   height: 100vh;
   background: #030005;
 }
 
-#notfound .notfound {
+#broken .broken {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -30,21 +30,21 @@
           transform: translate(-50%, -50%);
 }
 
-.notfound {
+.broken {
   max-width: 767px;
   width: 100%;
   line-height: 1.4;
   text-align: center;
 }
 
-.notfound .notfound-404 {
+.broken .broken-500 {
   position: relative;
   height: 180px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   z-index: -1;
 }
 
-.notfound .notfound-404 h1 {
+.broken .broken-500 h1 {
   font-family: 'Montserrat', sans-serif;
   position: absolute;
   left: 50%;
@@ -64,7 +64,7 @@
 }
 
 
-.notfound .notfound-404 h2 {
+.broken .broken-500 h2 {
   font-family: 'Montserrat', sans-serif;
   position: absolute;
   left: 0;
@@ -79,7 +79,7 @@
   margin: 0;
 }
 
-.notfound .link {
+.broken .link {
   font-family: 'Montserrat', sans-serif;
   display: inline-block;
   text-transform: uppercase;
@@ -94,18 +94,18 @@
   transition: 0.2s all;
 }
 
-.notfound .link:hover {
+.broken .link:hover {
   color: #ffffff;
 }
 
 @media only screen and (max-width: 767px) {
-    .notfound .notfound-404 h2 {
+    .broken .broken-500 h2 {
         font-size: 24px;
     }
 }
 
 @media only screen and (max-width: 480px) {
-  .notfound .notfound-404 h1 {
+  .broken .broken-500 h1 {
       font-size: 182px;
   }
 }
