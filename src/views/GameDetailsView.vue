@@ -1,13 +1,39 @@
 <script setup>
 
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { fetchGame } from "@/service/GamesService"
+
+const route = useRoute();
+const gameId = ref('');
+const gameData = ref(null);
+
+const getDeveloperNames = (developers) => {
+  if(developers) {
+    const nameStrings = developers.map(item => `${item.firstName} ${item.lastName}`);
+    return nameStrings.join(', ');
+  }
+  
+}
+
+onMounted(async () => {
+  gameId.value = route.params.id;
+
+  try {
+    const response = await fetchGame(gameId.value);
+    gameData.value = response;
+  } catch (error) {
+    console.error('Error al cargar el juego:', error);
+  }
+})
+
 </script>
 
 <template>
   <div class="flex">
     <div class="col-lg-6 col-md-12 col-sm-12 m-auto mt-6">
       <div class="card mb-5">
-        <h1>League Of Legends</h1>
-
+        <h1>{{gameData?.name}}</h1>
         <div class='game-preview'>
           <button class='play-button'>
             <span id='play-button-text'>Play</span>
@@ -15,39 +41,29 @@
           </button>
         </div>
         <div class='game-images-container'>
-          <Image src="https://th.bing.com/th/id/R.76f0763f35b9ef55d0a8919c7849d026?rik=Nxu189bBsslFeg&pid=ImgRaw&r=0" alt="Image" width="200" preview />
-          <Image src="https://wallpapercave.com/wp/wp9493361.jpg" alt="Image" width="200" preview />
-          <Image src="https://images3.alphacoders.com/691/thumb-1920-691287.jpg" alt="Image" width="200" preview />
+          <Image v-for="(image, index) in gameData?.images" :key="index" :src="image.url" alt="Image" width="200" preview />
         </div>
         <div>
           <div class="font-medium text-3xl text-900 mb-3">Game Information</div>
-          <div class="text-500 mb-5">Morbi tristique blandit turpis. In viverra ligula id nulla hendrerit rutrum.</div>
+          <div class="text-500 mb-5">{{gameData?.description}}</div>
           <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
               <div class="text-500 w-6 md:w-2 font-medium">Title</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">Heat</div>
+              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.name}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Genre</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Genres</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-                <Chip label="Crime" class="mr-2"></Chip>
-                <Chip label="Drama" class="mr-2"></Chip>
-                <Chip label="Thriller"></Chip>
+                <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre" class="mr-2"></Chip>
               </div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Director</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">Michael Mann</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Dev Team</div>
+              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.developmentTeam}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Actors</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">Robert De Niro, Al Pacino</div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 border-top-1 border-bottom-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Plot</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1 line-height-3">
-                A group of professional bank robbers start to feel the heat from police
-                when they unknowingly leave a clue at their latest heist.</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Developers</div>
+              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ getDeveloperNames(gameData?.developers) }}</div>
             </li>
           </ul>
         </div>

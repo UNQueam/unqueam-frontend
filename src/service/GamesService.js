@@ -21,3 +21,20 @@ export const fetchData = async () => {
         }
     }
   };
+
+export const fetchGame = async (gameId) => {
+    try {
+      const response = await apiService.get(`/${gameId}`);
+      return response.data;
+    } catch (error) {
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+            router.push('/404');
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            router.push('/500');
+        }
+    }
+};
