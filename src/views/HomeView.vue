@@ -38,9 +38,8 @@ const layout = ref('grid')
 </script>
 
 <template>
-  <div>
-    <div class="col-10 m-auto mt-5 mb-5">
-      <div class="card">
+  <div class="flex">
+    <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-10 lg:col-9 p-4">
         <div class="title">
           <h5>Juegos</h5>
         </div>
@@ -79,7 +78,6 @@ const layout = ref('grid')
             </div>
           </template>
         </DataView>
-      </div>
     </div>
   </div>
 </template>
