@@ -5,7 +5,7 @@ import './assets/theme.css'
 import App from './App.vue'
 import router from './router'
 import axios from "axios";
-import VueAxios from "vue-axios";   
+import VueAxios from "vue-axios";
 
 import PrimeVue from 'primevue/config';
 import '@/assets/styles.scss';
@@ -22,6 +22,7 @@ import OrderList from 'primevue/orderlist';
 import Dialog from 'primevue/dialog';
 import Chip from "primevue/chip";
 import Image from "primevue/image";
+import Skeleton from "primevue/skeleton";
 
 const app = createApp(App)
 
@@ -44,6 +45,7 @@ app.component('InputText', InputText);
 app.component('Dialog', Dialog);
 app.component('Chip', Chip)
 app.component('Image', Image)
+app.component('Skeleton', Skeleton)
 
 
 app.mount('#app')

@@ -4,7 +4,7 @@
       <router-link to="/">
         <img src="/public/Unqueam_logo_image.png" alt="Logo" />
       </router-link>
-      <span class="logo-name">
+      <span class="hidden md:visible md:inline logo-name">
         <router-link to="/"> &lt;<span class="red-text">UN</span>Queam/&gt; </router-link>
       </span>
     </div>

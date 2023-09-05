@@ -48,6 +48,14 @@ onMounted(async () => {
 </script>
 
 <template>
+  <div v-if="!gameData" class="flex">
+    <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
+      <Skeleton class="mb-5" height="3rem" width="10rem"></Skeleton>
+      <Skeleton height="500px" width="100%"></Skeleton>
+      <Skeleton class="mb-5 mt-5" height="3rem" width="10rem"></Skeleton>
+      <Skeleton class="mt-5" height="10rem" width="100%"></Skeleton>
+    </div>
+  </div>
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
         <h1>{{gameData?.name}}</h1>
@@ -65,26 +73,30 @@ onMounted(async () => {
           <Image v-for="(image, index) in gameData?.images" :key="index" :src="image.url" alt="Image" width="200" preview />
         </div>
         <div>
-          <div class="font-medium text-3xl text-900 mb-3">Game Information</div>
+          <div class="font-medium text-3xl text-900 mb-3">Información del juego</div>
           <div class="text-500 mb-5">{{gameData?.description}}</div>
           <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Title</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Título</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.name}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Genres</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Géneros</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
                 <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.name" class="mr-2"></Chip>
               </div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Dev Team</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Equipo desarrollador</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.developmentTeam}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Developers</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Desarrolladores</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ getDeveloperNames(gameData?.developers) }}</div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+              <div class="text-500 w-6 md:w-2 font-medium">Fecha de lanzamiento</div>
+              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.releaseDate }}</div>
             </li>
           </ul>
         </div>
