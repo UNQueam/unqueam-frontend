@@ -20,3 +20,5 @@ class RankIconsFactory {
     }
 }
 
+export default RankIconsFactory
+

@@ -1,14 +1,11 @@
 <script setup>
 
-import { ref, computed, onMounted } from 'vue'
-import { fetchData } from "@/service/GamesService"
-import { useRouter } from 'vue-router';
+import {computed, onMounted, ref} from 'vue'
+import {fetchData} from "@/service/GamesService"
+import {useRouter} from 'vue-router';
+import RankIconsFactory from '@/services/RankIconsFactory'
 
-// Data
 const filterKey = ref('');
-
-// Otros datos y propiedades
-
 const games = ref([]);
 const error = ref([]);
 const router = useRouter();
@@ -16,13 +13,13 @@ const router = useRouter();
 onMounted(async () => {
       try {
         const result = await fetchData();
+        result.forEach(game => game.rankBadgeSrc = RankIconsFactory.getRankIcon(game.rankBadge))
         games.value = result;
       } catch (err) {
         error.value = err;
       }
     });
 
-// Propiedad computada para filtrar los datos
 const filteredData = computed(() => {
   const lowerCaseFilter = filterKey.value.toLowerCase()
   return games.value.filter(
@@ -67,6 +64,7 @@ const layout = ref('grid')
                     src="https://image.api.playstation.com/vulcan/ap/rnd/202308/1002/1c63f7e89a8010eaec68d2dd622b42d3f2290e44e1d8168e.png"
                     class="shadow-2 my-1 mx-0"
                   />
+                  <Avatar v-if="slotProps.data.rankBadgeSrc" :image="slotProps.data.rankBadgeSrc" class="p-overlay-badge absolute right-0 m-1" size="large"/>
                   <h3 class="text-center">{{ slotProps.data.name }}</h3>
                 </div>
 

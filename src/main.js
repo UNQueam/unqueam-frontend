@@ -23,6 +23,7 @@ import Dialog from 'primevue/dialog';
 import Chip from "primevue/chip";
 import Image from "primevue/image";
 import Skeleton from "primevue/skeleton";
+import Avatar from "primevue/avatar";
 
 const app = createApp(App)
 
@@ -46,6 +47,7 @@ app.component('Dialog', Dialog);
 app.component('Chip', Chip)
 app.component('Image', Image)
 app.component('Skeleton', Skeleton)
+app.component('Avatar', Avatar)
 
 
 app.mount('#app')
