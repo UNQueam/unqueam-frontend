@@ -15,11 +15,12 @@ const toggleFullscreen = () => {
 
 function executePlay() {
   isUserPlaying.value = true
+  setTimeout(toggleFullscreen, 400)
 }
 
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { fetchGame } from "@/service/GamesService"
+import {onMounted, ref} from 'vue';
+import {useRoute} from 'vue-router';
+import {fetchGame} from "@/service/GamesService"
 
 const route = useRoute();
 const gameId = ref('');
@@ -48,7 +49,7 @@ onMounted(async () => {
 
 <template>
   <div class="flex">
-    <div class="card mb-5 m-auto mt-5 w-100">
+    <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
         <h1>{{gameData?.name}}</h1>
         <div v-if="!isUserPlaying" class='game-preview'>
           <button class='play-button' @click="executePlay">
@@ -57,8 +58,7 @@ onMounted(async () => {
           </button>
         </div>
         <div v-if="isUserPlaying" class="gameplay flex flex-column">
-          <iframe ref="gameIframe" class="game" src="https://emilianaailen.github.io/boss-vainilla/"></iframe>
-          <button class="p-2 mt-3" @click="toggleFullscreen">Pantalla completa</button>
+          <iframe ref="gameIframe" :src="gameData?.linkToGame" allowfullscreen="true" class="game"></iframe>
         </div>
 
         <div class='game-images-container'>
@@ -75,7 +75,7 @@ onMounted(async () => {
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
               <div class="text-500 w-6 md:w-2 font-medium">Genres</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-                <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre" class="mr-2"></Chip>
+                <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.name" class="mr-2"></Chip>
               </div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
