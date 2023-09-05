@@ -39,7 +39,7 @@
   margin-right: 10px; /* Add margin between image and text */
 }
 
-a.router-link-active {
+a {
   color: white;
 }
 
