@@ -66,7 +66,7 @@ onMounted(async () => {
           </button>
         </div>
         <div v-if="isUserPlaying" class="gameplay flex flex-column">
-          <iframe ref="gameIframe" :src="gameData?.linkToGame" allowfullscreen="true" class="game"></iframe>
+          <iframe ref="gameIframe" :src="gameData?.link_to_game" allowfullscreen="true" class="game"></iframe>
         </div>
 
         <div class='game-images-container'>
@@ -88,7 +88,7 @@ onMounted(async () => {
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
               <div class="text-500 w-6 md:w-2 font-medium">Equipo desarrollador</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.developmentTeam}}</div>
+              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.development_team}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
               <div class="text-500 w-6 md:w-2 font-medium">Desarrolladores</div>
@@ -96,7 +96,7 @@ onMounted(async () => {
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
               <div class="text-500 w-6 md:w-2 font-medium">Fecha de lanzamiento</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.releaseDate }}</div>
+              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.release_date }}</div>
             </li>
           </ul>
         </div>
