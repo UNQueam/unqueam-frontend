@@ -6,6 +6,7 @@ import {useRouter} from 'vue-router';
 import RankIconsFactory from '@/services/RankIconsFactory'
 
 const filterKey = ref('');
+const isLoadingData = ref(true);
 const games = ref([]);
 const error = ref([]);
 const router = useRouter();
@@ -15,6 +16,7 @@ onMounted(async () => {
         const result = await fetchData();
         result.forEach(game => game.rankBadgeSrc = RankIconsFactory.getRankIcon(game.rankBadge))
         games.value = result;
+        isLoadingData.value = false
       } catch (err) {
         error.value = err;
       }
@@ -52,6 +54,9 @@ const layout = ref('grid')
               <div v-if="!layout === 'grid'" class="col-offset-2 col-1">
                 <DataViewLayoutOptions v-model="layout" />
               </div>
+            </div>
+            <div v-if="isLoadingData" class="h-5rem mt-8">
+            <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
             </div>
           </template>
 

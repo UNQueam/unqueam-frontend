@@ -24,6 +24,7 @@ import Chip from "primevue/chip";
 import Image from "primevue/image";
 import Skeleton from "primevue/skeleton";
 import Avatar from "primevue/avatar";
+import ProgressBar from "primevue/progressbar";
 
 const app = createApp(App)
 
@@ -48,6 +49,7 @@ app.component('Chip', Chip)
 app.component('Image', Image)
 app.component('Skeleton', Skeleton)
 app.component('Avatar', Avatar)
+app.component('ProgressBar', ProgressBar)
 
 
 app.mount('#app')
