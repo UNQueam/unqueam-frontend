@@ -14,7 +14,7 @@ const router = useRouter();
 onMounted(async () => {
       try {
         const result = await fetchData();
-        result.forEach(game => game.rankBadgeSrc = RankIconsFactory.getRankIcon(game.rankBadge))
+        result.forEach(game => game.rankBadgeSrc = RankIconsFactory.getRankIcon(game.rank_badge))
         games.value = result;
         isLoadingData.value = false
       } catch (err) {
@@ -65,7 +65,7 @@ const layout = ref('grid')
               <div class="flip-card">
                 <div class="face front">
                   <img
-                    src="https://image.api.playstation.com/vulcan/ap/rnd/202308/1002/1c63f7e89a8010eaec68d2dd622b42d3f2290e44e1d8168e.png"
+                    :src="slotProps.data.logo_url"
                     class="shadow-2 my-1 mx-0"
                   />
                   <Avatar v-if="slotProps.data.rankBadgeSrc" :image="slotProps.data.rankBadgeSrc" class="p-overlay-badge absolute right-0 m-1" size="large"/>

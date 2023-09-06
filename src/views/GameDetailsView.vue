@@ -28,7 +28,7 @@ const gameData = ref(null);
 
 const getDeveloperNames = (developers) => {
   if(developers) {
-    const nameStrings = developers.map(item => `${item.firstName} ${item.lastName}`);
+    const nameStrings = developers.map(item => `${item.first_name} ${item.last_name}`);
     return nameStrings.join(', ');
   }
   
@@ -95,7 +95,7 @@ onMounted(async () => {
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ getDeveloperNames(gameData?.developers) }}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Fecha de lanzamiento</div>
+              <div class="text-500 w-6 md:w-2 font-medium">Lanzamiento</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.release_date }}</div>
             </li>
           </ul>
