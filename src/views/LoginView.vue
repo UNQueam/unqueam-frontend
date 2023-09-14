@@ -22,7 +22,7 @@ const password = ref('');
             <label class="block text-900 font-medium text-xl mb-2" for="password1">Contraseña</label>
             <Password id="password1" v-model="password" :feedback="false" :inputStyle="{ padding: '1rem' }" :toggleMask="true" class="w-full mb-3" inputClass="w-full" placeholder="Contraseña"></Password>
 
-            <Button class="w-full p-3 mt-5 text-xl" label="Iniciar sesion"></Button>
+            <Button class="w-full p-3 mt-5 text-xl" label="Ingresar"></Button>
           </div>
         </div>
       </div>
