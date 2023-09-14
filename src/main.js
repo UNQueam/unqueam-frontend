@@ -25,6 +25,14 @@ import Image from "primevue/image";
 import Skeleton from "primevue/skeleton";
 import Avatar from "primevue/avatar";
 import ProgressBar from "primevue/progressbar";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import MultiSelect from "primevue/multiselect";
+import Calendar from "primevue/calendar";
+import InputNumber from "primevue/inputnumber";
+import Slider from "primevue/slider";
+import TriStateCheckbox from "primevue/tristatecheckbox";
+import Tag from "primevue/tag";
 
 const app = createApp(App)
 
@@ -46,10 +54,18 @@ app.component('OrderList', OrderList);
 app.component('InputText', InputText);
 app.component('Dialog', Dialog);
 app.component('Chip', Chip)
+app.component('DataTable', DataTable)
 app.component('Image', Image)
 app.component('Skeleton', Skeleton)
 app.component('Avatar', Avatar)
 app.component('ProgressBar', ProgressBar)
+app.component('Column', Column)
+app.component('MultiSelect', MultiSelect)
+app.component('Calendar', Calendar)
+app.component('InputNumber', InputNumber)
+app.component('Slider', Slider)
+app.component('TriStateCheckbox', TriStateCheckbox)
+app.component('Tag', Tag)
 
 
 app.mount('#app')
