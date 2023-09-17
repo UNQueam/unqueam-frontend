@@ -14,7 +14,7 @@ const usersData = [{
   "username": "Sheridan Zane",
   "email": "Sheridan Zane@mail",
   "date": "2016-02-15",
-  "roles": ["Developer", "User"],
+  "role": "Developer",
   "allowed": false
 },
   {
@@ -22,7 +22,7 @@ const usersData = [{
     "username": "Sheridan Zane",
     "email": "Sheridan Zane@mail",
     "date": "2016-02-15",
-    "roles": ["Developer", "User", "Admin"],
+    "role": "User",
     "allowed": true
   }
 ]
@@ -41,7 +41,7 @@ const initfilters = () => {
     username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-    roles: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+    role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
     allowed: { value: null, matchMode: FilterMatchMode.EQUALS }
   };
 };
@@ -67,7 +67,7 @@ const formatDate = (value) => {
         <DataTable
             v-model:filters="filters"
             :filters="filters"
-            :globalFilterFields="['username', 'roles']"
+            :globalFilterFields="['username', 'role']"
             :loading="isLoading"
             :paginator="true"
             :rowHover="true"
@@ -105,27 +105,25 @@ const formatDate = (value) => {
               <InputText v-model="filterModel.value" class="p-column-filter" placeholder="Search by email" type="text" />
             </template>
           </Column>
-          <Column :filterMenuStyle="{ width: '14rem' }" field="roles" header="Roles" style="min-width: 12rem">
+          <Column :filterMenuStyle="{ width: '14rem' }" field="role" header="Role" style="min-width: 12rem">
             <template #body="{ data }">
               <div>
                 <Tag
-                    v-for="role in data.roles"
-                    :key="role"
-                    :class="'mr-2 roles-' + role"
+                    :class="'mr-2'"
                     :rounded="true"
-                    :severity="UserSeverityColorProvider.getForRole(role)"
-                    :value="role"
+                    :severity="UserSeverityColorProvider.getForRole(data.role)"
+                    :value="data.role"
                 ></Tag>
               </div>
             </template>
             <template #filter="{ filterModel }">
               <Dropdown v-model="filterModel.value" :options="roles" :showClear="true" class="p-column-filter" placeholder="Any">
                 <template #value="slotProps">
-                  <span v-if="slotProps.value" :class="'customer-badge roles-' + slotProps.value">{{ slotProps.value }}</span>
+                  <span v-if="slotProps.value" :class="'customer-badge'">{{ slotProps.value }}</span>
                   <span v-else>{{ slotProps.placeholder }}</span>
                 </template>
                 <template #option="slotProps">
-                  <span :class="'customer-badge roles-' + slotProps.option">{{ slotProps.option }}</span>
+                  <span :class="'customer-badge'">{{ slotProps.option }}</span>
                 </template>
               </Dropdown>
             </template>
