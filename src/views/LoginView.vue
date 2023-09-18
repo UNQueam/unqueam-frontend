@@ -1,8 +1,29 @@
 <script setup>
 import {ref} from 'vue';
+import AuthenticationService from '@/service/AuthenticationService';
+import {useRouter} from "vue-router";
+import {useAuthStore} from "@/stores/authStore";
 
 const username = ref('');
 const password = ref('');
+const isProcessingRequest = ref(false)
+
+const authService = new AuthenticationService();
+const router = useRouter();
+const authStore = useAuthStore();
+
+async function handleLogin() {
+  isProcessingRequest.value = true
+  try {
+    const response = await authService.login(username.value, password.value)
+    authStore.saveAuthenticationInfo(response.data);
+    router.push('/');
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    isProcessingRequest.value = false
+  }
+}
 
 </script>
 
@@ -16,13 +37,16 @@ const password = ref('');
           </div>
 
           <div>
+            <form @submit.prevent="handleLogin">
             <label class="block text-900 font-medium mb-2" for="email1">Nombre de usuario</label>
             <InputText id="email1" v-model="username" class="w-full md:w-30rem mb-5" placeholder="Tú nombre de usuario" style="padding: 1rem" type="text" />
 
             <label class="block text-900 font-medium mb-2" for="password1">Contraseña</label>
             <Password id="password1" v-model="password" :feedback="false" :inputStyle="{ padding: '1rem' }" :toggleMask="true" class="w-full mb-3" inputClass="w-full" placeholder="Contraseña"></Password>
 
-            <Button class="w-full p-3 mt-5 " label="Ingresar"></Button>
+            <Button :disabled="isProcessingRequest" class="w-full p-3 mt-5 " label="Ingresar" type="submit"></Button>
+            <ProgressBar v-if="isProcessingRequest" mode="indeterminate" style="height: 3px" />
+            </form>
           </div>
         </div>
       </div>
