@@ -7,6 +7,7 @@ interface AuthenticationInfo {
     role: string | null;
 }
 
+// @ts-ignore
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         authenticationInfo: null as AuthenticationInfo | null,
