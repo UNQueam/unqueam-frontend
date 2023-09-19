@@ -58,7 +58,7 @@ onMounted(async () => {
   </div>
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
-        <h1>{{gameData?.name}}</h1>
+        <h3>{{gameData?.name}}</h3>
         <div v-if="!isUserPlaying" class='game-preview'>
           <button class='play-button' @click="executePlay">
             <span id='play-button-text'>Play</span>
@@ -76,29 +76,29 @@ onMounted(async () => {
         </div>
 
         <div>
-          <div class="font-medium text-3xl text-900 mb-3">Información del juego</div>
+          <div class="font-medium text-2xl text-900 mb-3 mt-3">Información</div>
           <div class="text-500 mb-5">{{gameData?.description}}</div>
           <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Título</div>
+              <div class="text-500 w-6 md:w-2 font-medium mr-3">Título</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.name}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Géneros</div>
+              <div class="text-500 w-6 md:w-2 font-medium mr-3">Géneros</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
                 <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.name" class="mr-2"></Chip>
               </div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Equipo desarrollador</div>
+              <div class="text-500 w-6 md:w-2 font-medium mr-3">Equipo desarrollador</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.development_team}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Desarrolladores</div>
+              <div class="text-500 w-6 md:w-2 font-medium mr-3">Desarrolladores</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ getDeveloperNames(gameData?.developers) }}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium">Lanzamiento</div>
+              <div class="text-500 w-6 md:w-2 font-medium mr-3">Lanzamiento</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.release_date }}</div>
             </li>
           </ul>
