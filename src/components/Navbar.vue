@@ -12,6 +12,7 @@
       <ul>
         <li><router-link to="/">Inicio</router-link></li>
         <li><router-link to="/game/game-change-name">Juegos</router-link></li>
+        <li v-if="!isUserAuthenticated"><router-link to="/login">Iniciar sesión</router-link></li>
         <li><button aria-controls="overlay_menu" aria-haspopup="true" class="p-link" @click="toggle">{{authStore.getUsername}}</button>
           <Menu id="overlay_menu" ref="menu" :model="items"  :popup="true">
             <template #start>
@@ -41,12 +42,10 @@
 <script setup>
 
 import {useAuthStore} from "@/stores/authStore";
-import {ref} from "vue";
-import {useToast} from "primevue/usetoast";
+import {computed, ref} from "vue";
 
 const authStore = useAuthStore()
 
-const toast = useToast();
 const menu = ref();
 const items = ref([
   { separator: true },
@@ -66,10 +65,7 @@ const toggle = (event) => {
   menu.value.toggle(event);
 };
 
-const save = () => {
-  toast.add({severity: 'success', summary: 'Success', detail: 'Data Saved', life: 3000});
-};
-
+const isUserAuthenticated = computed(() => authStore.isAuthenticated());
 
 </script>
 
