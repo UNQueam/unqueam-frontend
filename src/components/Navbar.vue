@@ -10,8 +10,7 @@
     </div>
     <div class="navbar-links">
       <ul>
-        <li><router-link to="/">Inicio</router-link></li>
-        <li><router-link to="/game/game-change-name">Juegos</router-link></li>
+        <li><router-link to="/">Juegos</router-link></li>
         <li v-if="!isUserAuthenticated"><router-link to="/login">Iniciar sesión</router-link></li>
         <li><button aria-controls="overlay_menu" aria-haspopup="true" class="p-link" @click="toggle">{{authStore.getUsername}}</button>
           <Menu id="overlay_menu" ref="menu" :model="items"  :popup="true">
