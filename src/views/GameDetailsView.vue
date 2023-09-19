@@ -69,9 +69,12 @@ onMounted(async () => {
           <iframe ref="gameIframe" :src="gameData?.link_to_game" allowfullscreen="true" class="game"></iframe>
         </div>
 
-        <div class='game-images-container'>
-          <Image v-for="(image, index) in gameData?.images" :key="index" :src="image.url" alt="Image" width="200" preview />
+        <div class="carousel">
+          <div v-for="(image, index) in gameData?.images" :key="index" class="carousel-item" >
+            <Image :key="index" :src="image.url" alt="Image" preview />
+          </div>
         </div>
+
         <div>
           <div class="font-medium text-3xl text-900 mb-3">Información del juego</div>
           <div class="text-500 mb-5">{{gameData?.description}}</div>
@@ -105,6 +108,21 @@ onMounted(async () => {
 </template>
 
 <style>
+
+.carousel {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.carousel-item {
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.carousel-item img {
+  max-width: 150px;
+}
 .game {
   width: 100%;
   height: 100%;
