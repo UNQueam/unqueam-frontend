@@ -7,6 +7,7 @@ import App from './App.vue'
 import router from './router'
 import axios from "axios";
 import VueAxios from "vue-axios";
+import Vuelidate from 'vuelidate';
 
 import PrimeVue from 'primevue/config';
 import '@/assets/styles.scss';
@@ -40,6 +41,7 @@ app.use(pinia)
 app.use(router)
 app.use(PrimeVue, {ripple:true})
 app.use(ToastService);
+app.use(Vuelidate);
 
 app.use(VueAxios, axios);
 app.provide("axios", app.config.globalProperties.axios);
