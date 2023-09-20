@@ -1,9 +1,9 @@
 <script setup>
 import {ref} from 'vue';
 
-import { useVuelidate } from '@vuelidate/core';
-import { required, email, helpers  } from '@vuelidate/validators';
-import { getCustomError } from '@/utils/FormErrorMessageHandler';
+import {useVuelidate} from '@vuelidate/core';
+import {email, helpers, required} from '@vuelidate/validators';
+import {getCustomError} from '@/utils/FormErrorMessageHandler';
 
 
 const passwordRegexVal = (value) =>  {
@@ -71,15 +71,15 @@ const submitForm = () => {
 <template>
     <div class="flex flex-column align-items-center justify-content-center mt-8 col-11 m-auto">
       <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
-        <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius: 53px">
+        <div class="w-full surface-card py-7 px-5 sm:px-8" style="border-radius: 53px">
           <div class="text-center mb-6">
-            <div class="text-900 text-3xl font-medium mb-3">Registro</div>
+            <div class="text-900 text-2xl font-medium mb-3">Registro</div>
             <span class="text-600 font-medium">Crea tu cuenta para continuar</span>
           </div>
 
           <div>
             <div class="field p-fluid mb-5">
-                <label class="block text-900 text-xl font-medium mb-2" for="email1">Email <span class="required">*</span></label>
+                <label class="block text-900 font-medium mb-2" for="email1">Email <span class="required">*</span></label>
                 <InputText 
                     id="email1" 
                     v-model.trim="user.email" 
@@ -96,7 +96,7 @@ const submitForm = () => {
             </div>
             
             <div class="field p-fluid mb-5">
-                <label class="block text-900 text-xl font-medium mb-2" for="username">Usuario <span class="required">*</span></label>
+                <label class="block text-900 font-medium mb-2" for="username">Usuario <span class="required">*</span></label>
                 <InputText 
                     id="username" 
                     v-model.trim="user.username" 
@@ -111,7 +111,7 @@ const submitForm = () => {
             </div>
 
             <div class="field p-fluid mb-5">
-                <label class="block text-900 font-medium text-xl mb-2" for="password1">Contraseña <span class="required">*</span></label>
+                <label class="block text-900 font-medium mb-2" for="password1">Contraseña <span class="required">*</span></label>
                 <Password 
                     id="password1" 
                     v-model="user.password" 
@@ -129,7 +129,7 @@ const submitForm = () => {
             </div>
 
             <div class="field p-fluid mb-3">
-                <label class="block text-900 font-medium text-xl mb-2" for="password2">Confirmar Contraseña <span class="required">*</span></label>
+                <label class="block text-900 font-medium mb-2" for="password2">Confirmar Contraseña <span class="required">*</span></label>
                 <Password 
                     id="password2" 
                     v-model="user.confirmedPassword" 
@@ -146,7 +146,7 @@ const submitForm = () => {
                   <small  v-for="error of v$.confirmedPassword.$errors" :key="error.$uid" class="p-error">{{ getCustomError("confirmedPassword",error.$validator,error) + ". " }}<br> </small>
             </div>
 
-            <Button class="w-full p-3 mt-5 text-xl" label="Registrarse" @click="submitForm"></Button>
+            <Button class="w-full p-3 mt-5" label="Registrarse" @click="submitForm"></Button>
             <div class="text-center w-100 mt-2">
                 <router-link class="font-medium no-underline m-auto cursor-pointer" style="color: var(--primary-color)" to="/login">¿Ya tienes cuenta? Ingresa</router-link>
             </div>

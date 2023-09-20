@@ -1,11 +1,12 @@
 <script setup>
-import {ref} from 'vue';
+import {computed, ref} from 'vue';
 import AuthenticationService from '@/service/AuthenticationService';
 import {useRouter} from "vue-router";
 import {useAuthStore} from "@/stores/authStore";
 
 const username = ref('');
 const password = ref('');
+const errorMessage = ref('');
 const isProcessingRequest = ref(false)
 
 const authService = new AuthenticationService();
@@ -19,11 +20,15 @@ async function handleLogin() {
     authStore.saveAuthenticationInfo(response.data);
     router.push('/');
   } catch (error) {
-    console.error('Error:', error);
+    errorMessage.value = error.response.data.message
   } finally {
     isProcessingRequest.value = false
   }
 }
+
+const isButtonDisabled = computed(() => {
+  return isProcessingRequest.value || username.value.length === 0 || password.value.length === 0;
+});
 
 </script>
 
@@ -35,8 +40,10 @@ async function handleLogin() {
             <div class="text-900 text-2xl font-medium mb-3">¡Bienvenido!</div>
             <span class="text-600 font-medium">Inicia sesion para continuar</span>
           </div>
+          <InlineMessage v-if="errorMessage" class="mb-5 col-12" severity="error">{{errorMessage}}</InlineMessage>
 
           <div>
+
             <form @submit.prevent="handleLogin">
             <label class="block text-900 font-medium mb-2" for="email1">Nombre de usuario</label>
             <InputText id="email1" v-model="username" class="w-full md:w-30rem mb-5" placeholder="Tú nombre de usuario" style="padding: 1rem" type="text" />
@@ -44,8 +51,11 @@ async function handleLogin() {
             <label class="block text-900 font-medium mb-2" for="password1">Contraseña</label>
             <Password id="password1" v-model="password" :feedback="false" :inputStyle="{ padding: '1rem' }" :toggleMask="true" class="w-full mb-3" inputClass="w-full" placeholder="Contraseña"></Password>
 
-            <Button :disabled="isProcessingRequest" class="w-full p-3 mt-5 " label="Ingresar" type="submit"></Button>
+            <Button :disabled="isButtonDisabled" class="w-full p-3 mt-5" label="Ingresar" type="submit"></Button>
             <ProgressBar v-if="isProcessingRequest" mode="indeterminate" style="height: 3px" />
+            <div class="text-center w-100 mt-2">
+              <router-link class="font-medium no-underline m-auto cursor-pointer" style="color: var(--primary-color)" to="/register">¿No tienes cuenta? Registrarse</router-link>
+            </div>
             </form>
           </div>
         </div>

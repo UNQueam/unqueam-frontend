@@ -31,6 +31,7 @@ import ProgressBar from "primevue/progressbar";
 import Password from "primevue/password";
 import Menu from "primevue/menu"
 import Toast from "primevue/toast";
+import InlineMessage from "primevue/inlinemessage";
 
 const app = createApp(App)
 
@@ -48,6 +49,7 @@ app.provide("axios", app.config.globalProperties.axios);
 
 //Primevue components
 app.component('DataView', DataView);
+app.component('InlineMessage', InlineMessage);
 app.component('DataViewLayoutOptions', DataViewLayoutOptions);
 app.component('Dropdown', Dropdown);
 app.component('Rating', Rating);
