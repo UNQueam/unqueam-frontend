@@ -1,4 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
+import {useAuthStore} from "../stores/authStore";
 
 interface UserSignUp {
     email: string;
@@ -8,6 +9,8 @@ interface UserSignUp {
 }
 
 class AuthenticationService {
+
+    private authStore = useAuthStore();
 
     async login(username: string, password: string): Promise<AxiosResponse> {
         try {
@@ -32,6 +35,22 @@ class AuthenticationService {
             });
         } catch (error) {
             throw error;
+        }
+    }
+
+    async logout() {
+        try {
+            // @ts-ignore
+            const authToken = this.authStore.getAuthToken();
+            console.log(authToken)
+            const headers = {
+                'Authorization': `Bearer ${authToken}`
+            };
+            await axios.get('http://localhost:8080/api/auth/logout', {headers});
+            // @ts-ignore
+            this.authStore.clearAuthData();
+        } catch (error) {
+            throw error
         }
     }
 }

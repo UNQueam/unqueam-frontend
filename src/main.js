@@ -2,6 +2,7 @@ import {createApp} from 'vue'
 import {createPinia} from 'pinia'
 import './assets/theme.css'
 import ToastService from 'primevue/toastservice';
+import ConfirmationService from 'primevue/confirmationservice';
 
 import App from './App.vue'
 import router from './router'
@@ -32,6 +33,7 @@ import Password from "primevue/password";
 import Menu from "primevue/menu"
 import Toast from "primevue/toast";
 import InlineMessage from "primevue/inlinemessage";
+import ConfirmDialog from "primevue/confirmdialog";
 
 const app = createApp(App)
 
@@ -42,6 +44,7 @@ app.use(pinia)
 app.use(router)
 app.use(PrimeVue, {ripple:true})
 app.use(ToastService);
+app.use(ConfirmationService);
 app.use(Vuelidate);
 
 app.use(VueAxios, axios);
@@ -53,6 +56,7 @@ app.component('InlineMessage', InlineMessage);
 app.component('DataViewLayoutOptions', DataViewLayoutOptions);
 app.component('Dropdown', Dropdown);
 app.component('Rating', Rating);
+app.component('ConfirmDialog', ConfirmDialog);
 app.component('Button', Button);
 app.component('PickList', PickList);
 app.component('OrderList', OrderList);

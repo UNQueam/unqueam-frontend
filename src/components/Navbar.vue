@@ -25,7 +25,7 @@
             </template>
 
             <template #end>
-              <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround">
+              <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="handleLogout">
                 <i class="pi pi-sign-out" />
                 <span class="ml-2">Cerrar sesión</span>
               </button>
@@ -36,14 +36,24 @@
       </ul>
     </div>
   </nav>
+  <ConfirmDialog></ConfirmDialog>
+  <Toast group="br" position="bottom-right" />
 </template>
 
 <script setup>
 
 import {useAuthStore} from "@/stores/authStore";
 import {computed, ref} from "vue";
+import {useConfirm} from "primevue/useconfirm";
+import {useRouter} from "vue-router";
+import AuthenticationService from "@/service/AuthenticationService";
+import {useToast} from "primevue/usetoast";
+
+const toast = useToast();
 
 const authStore = useAuthStore()
+const router = useRouter()
+const authService = new AuthenticationService()
 
 const menu = ref();
 const items = ref([
@@ -66,6 +76,29 @@ const toggle = (event) => {
 
 const isUserAuthenticated = computed(() => authStore.isAuthenticated());
 
+const confirm = useConfirm();
+
+const handleLogout = () => {
+  confirm.require({
+    message: '¿Estás seguro que deseas cerrar la sesión?',
+    header: 'Sesión',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Sí, cerrar sesión',
+    rejectLabel: 'Cancelar',
+    accept: async () => {
+      try {
+        await authService.logout();
+        router.push({path: '/login', query: {logout: true}});
+      } catch (error) {
+        showLogoutError()
+      }
+    }
+  });
+};
+
+const showLogoutError = () => {
+  toast.add({ severity: 'error', summary: 'Sesión', detail: 'No fue posible cerrar tu sesión, intenta nuevamente.', group: 'br', life: 7000 });
+};
 </script>
 
 <style scoped>

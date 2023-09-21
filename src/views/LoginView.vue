@@ -1,8 +1,12 @@
 <script setup>
-import {computed, ref} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import AuthenticationService from '@/service/AuthenticationService';
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {useAuthStore} from "@/stores/authStore";
+import {useToast} from 'primevue/usetoast';
+
+const route = useRoute();
+const toast = useToast();
 
 const username = ref('');
 const password = ref('');
@@ -26,6 +30,12 @@ async function handleLogin() {
   }
 }
 
+onMounted(() => {
+  if (route.query.logout === 'true') {
+    toast.add({ severity: 'info', summary: 'Sesión', detail: 'Has cerrado sesión exitosamente.', group: 'br', life: 5000 });
+  }
+});
+
 const isButtonDisabled = computed(() => {
   return isProcessingRequest.value || username.value.length === 0 || password.value.length === 0;
 });
@@ -43,7 +53,6 @@ const isButtonDisabled = computed(() => {
           <InlineMessage v-if="errorMessage" class="mb-5 col-12" severity="error">{{errorMessage}}</InlineMessage>
 
           <div>
-
             <form @submit.prevent="handleLogin">
             <label class="block text-900 font-medium mb-2" for="email1">Nombre de usuario</label>
             <InputText id="email1" v-model="username" class="w-full md:w-30rem mb-5" placeholder="Tú nombre de usuario" style="padding: 1rem" type="text" />
@@ -61,6 +70,7 @@ const isButtonDisabled = computed(() => {
         </div>
       </div>
     </div>
+  <Toast group="br" position="bottom-right" />
 </template>
 
 <style scoped>

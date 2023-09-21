@@ -16,7 +16,6 @@ export const useAuthStore = defineStore('auth', {
         storage: sessionStorage, // data in sessionStorage is cleared when the page session ends.
     },
     getters: {
-        getAuthToken: (state) => state.authenticationInfo?.authToken || '',
         getUsername: (state) => state.authenticationInfo?.username || '',
         getUserRole: (state) => state.authenticationInfo?.role || ''
     },
@@ -33,6 +32,9 @@ export const useAuthStore = defineStore('auth', {
         },
         isAuthenticated(): boolean {
             return this.authenticationInfo?.authToken != null;
+        },
+        getAuthToken(): string {
+            return this.authenticationInfo?.authToken || '';
         },
         clearAuthData() {
             this.authenticationInfo = null;
