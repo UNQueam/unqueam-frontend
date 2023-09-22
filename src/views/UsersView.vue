@@ -14,16 +14,14 @@ const usersData = [{
   "username": "Sheridan Zane",
   "email": "Sheridan Zane@mail",
   "date": "2016-02-15",
-  "role": "Developer",
-  "allowed": false
+  "role": "Developer"
 },
   {
     "id": 1141,
     "username": "Sheridan Zane",
     "email": "Sheridan Zane@mail",
     "date": "2016-02-15",
-    "role": "User",
-    "allowed": true
+    "role": "User"
   }
 ]
 
@@ -41,8 +39,7 @@ const initfilters = () => {
     username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-    role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-    allowed: { value: null, matchMode: FilterMatchMode.EQUALS }
+    role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
   };
 };
 
@@ -134,14 +131,6 @@ const formatDate = (value) => {
             </template>
             <template #filter="{ filterModel }">
               <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
-            </template>
-          </Column>
-          <Column bodyClass="text-center" dataType="boolean" field="allowed" header="Acceso" style="min-width: 5rem">
-            <template #body="{ data }">
-              <i :class="{ 'text-green-500 pi-check-circle': data.allowed, 'text-pink-500 pi-times-circle': !data.allowed }" class="pi"></i>
-            </template>
-            <template #filter="{ filterModel }">
-              <TriStateCheckbox v-model="filterModel.value" />
             </template>
           </Column>
         </DataTable>
