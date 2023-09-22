@@ -32,7 +32,7 @@ async function handleLogin() {
 
 onMounted(() => {
   if (route.query.logout === 'true') {
-    toast.add({ severity: 'info', summary: 'Sesión', detail: 'Has cerrado sesión exitosamente.', group: 'br', life: 5000 });
+    toast.add({ severity: 'info', summary: 'Sesión', detail: 'Has cerrado sesión exitosamente.', group: 'tr', life: 5000 });
   }
 });
 
@@ -50,15 +50,18 @@ const isButtonDisabled = computed(() => {
             <div class="text-900 text-2xl font-medium mb-3">¡Bienvenido!</div>
             <span class="text-600 font-medium">Inicia sesion para continuar</span>
           </div>
-          <InlineMessage v-if="errorMessage" class="mb-5 col-12" severity="error">{{errorMessage}}</InlineMessage>
 
           <div>
+            <div class="md:w-30rem"/>
             <form @submit.prevent="handleLogin">
             <label class="block text-900 font-medium mb-2" for="email1">Nombre de usuario</label>
-            <InputText id="email1" v-model="username" class="w-full md:w-30rem mb-5" placeholder="Tú nombre de usuario" style="padding: 1rem" type="text" />
-
+            <InputText id="email1" v-model="username" class="w-full mb-5" placeholder="Tú nombre de usuario" style="padding: 1rem" type="text" />
             <label class="block text-900 font-medium mb-2" for="password1">Contraseña</label>
             <Password id="password1" v-model="password" :feedback="false" :inputStyle="{ padding: '1rem' }" :toggleMask="true" class="w-full mb-3" inputClass="w-full" placeholder="Contraseña"></Password>
+
+              <div v-if="errorMessage" class="error-message">
+                {{errorMessage}}
+              </div>
 
             <Button :disabled="isButtonDisabled" class="w-full p-3 mt-5" label="Ingresar" type="submit"></Button>
             <ProgressBar v-if="isProcessingRequest" mode="indeterminate" style="height: 3px" />
@@ -70,8 +73,19 @@ const isButtonDisabled = computed(() => {
         </div>
       </div>
     </div>
-  <Toast group="br" position="bottom-right" />
+  <Toast group="tr" position="top-right" />
 </template>
 
 <style scoped>
+.error-message {
+  background-color: #fde0e3;
+  color: #424242;
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  border: 3px solid #9b2a3a;
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 20px;
+}
 </style>
