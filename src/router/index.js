@@ -1,8 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import NotFound from '../views/NotFound.vue'
 import SomethingBroke from '../views/SomethingBroke.vue'
 import GameDetailsView from "../views/GameDetailsView.vue";
+import LoginView from "@/views/LoginView.vue";
+import RegisterView from "@/views/RegisterView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +19,16 @@ const router = createRouter({
       name: 'GameDetails',
       component: GameDetailsView,
       props: true
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: RegisterView
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: LoginView
     },
     { 
       path: '/404',
