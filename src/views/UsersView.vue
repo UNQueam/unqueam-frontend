@@ -2,34 +2,22 @@
 import {FilterMatchMode, FilterOperator} from 'primevue/api';
 import {onBeforeMount, ref} from 'vue';
 import UserSeverityColorProvider from "@/services/UserSeverityColorProvider";
+import {fetchUsers} from "@/service/UsersService";
 
 const users = ref(null);
 const filters = ref(null);
 const isLoading = ref(true);
 const roles = ref(['Admin', 'Developer', 'User']);
-
-// Fetch data from API
-const usersData = [{
-  "id": 1141,
-  "username": "Sheridan Zane",
-  "email": "Sheridan Zane@mail",
-  "date": "2016-02-15",
-  "role": "Developer"
-},
-  {
-    "id": 1141,
-    "username": "Sheridan Zane",
-    "email": "Sheridan Zane@mail",
-    "date": "2016-02-15",
-    "role": "User"
-  }
-]
+const error = ref(null);
 
 onBeforeMount(() => {
-  users.value = usersData;
-  isLoading.value = false;
-  users.value.forEach((customer) => (customer.date = new Date(customer.date)));
+  try {
+    users.value = fetchUsers();
+  } catch (err) {
+    error.value = err;
+  }
 
+  isLoading.value = false;
   initfilters();
 });
 
@@ -64,7 +52,7 @@ const formatDate = (value) => {
         <DataTable
             v-model:filters="filters"
             :filters="filters"
-            :globalFilterFields="['username', 'role']"
+            :globalFilterFields="['user_id', 'username', 'role']"
             :loading="isLoading"
             :paginator="true"
             :rowHover="true"
@@ -86,6 +74,11 @@ const formatDate = (value) => {
           </template>
           <template #empty> No se encontraron usuarios. </template>
           <template #loading> Cargando informacion de usuarios. Por favor espera. </template>
+          <Column field="user_id" header="#" style="min-width: 2rem">
+            <template #body="{ data }">
+              {{ data.user_id }}
+            </template>
+          </Column>
           <Column field="username" header="Usuario" style="min-width: 12rem">
             <template #body="{ data }">
               {{ data.username }}
@@ -102,7 +95,7 @@ const formatDate = (value) => {
               <InputText v-model="filterModel.value" class="p-column-filter" placeholder="Search by email" type="text" />
             </template>
           </Column>
-          <Column :filterMenuStyle="{ width: '14rem' }" field="role" header="Role" style="min-width: 12rem">
+          <Column :filterMenuStyle="{ width: '14rem' }" field="role" header="Role" style="min-width: 2rem">
             <template #body="{ data }">
               <div>
                 <Tag
@@ -125,7 +118,7 @@ const formatDate = (value) => {
               </Dropdown>
             </template>
           </Column>
-          <Column dataType="date" filterField="date" header="Registro" style="min-width: 5rem; max-width: 7rem">
+          <Column dataType="date" filterField="date" header="Registro" style="min-width: 2rem; max-width: 7rem">
             <template #body="{ data }">
               {{ formatDate(data.date) }}
             </template>
