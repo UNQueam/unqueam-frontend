@@ -10,9 +10,9 @@ const isLoading = ref(true);
 const roles = ref(['Admin', 'Developer', 'User']);
 const error = ref(null);
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   try {
-    users.value = fetchUsers();
+    users.value = await fetchUsers();
   } catch (err) {
     error.value = err;
   }
@@ -36,11 +36,14 @@ const clearFilter1 = () => {
 };
 
 const formatDate = (value) => {
-  return value.toLocaleDateString('en-US', {
+  if (value){
+    return value.toLocaleDateString('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
   });
+  }
+  
 };
 </script>
 
@@ -76,12 +79,12 @@ const formatDate = (value) => {
           <template #loading> Cargando informacion de usuarios. Por favor espera. </template>
           <Column field="user_id" header="#" style="min-width: 2rem">
             <template #body="{ data }">
-              {{ data.user_id }}
+              {{ data?.user_id }}
             </template>
           </Column>
           <Column field="username" header="Usuario" style="min-width: 12rem">
             <template #body="{ data }">
-              {{ data.username }}
+              {{ data?.username }}
             </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" class="p-column-filter" placeholder="Search by username" type="text" />
@@ -89,7 +92,7 @@ const formatDate = (value) => {
           </Column>
           <Column field="email" header="Email" style="min-width: 12rem">
             <template #body="{ data }">
-              {{ data.email }}
+              {{ data?.email }}
             </template>
             <template #filter="{ filterModel }">
               <InputText v-model="filterModel.value" class="p-column-filter" placeholder="Search by email" type="text" />
@@ -101,8 +104,8 @@ const formatDate = (value) => {
                 <Tag
                     :class="'mr-2'"
                     :rounded="true"
-                    :severity="UserSeverityColorProvider.getForRole(data.role)"
-                    :value="data.role"
+                    :severity="UserSeverityColorProvider.getForRole(data?.role)"
+                    :value="data?.role"
                 ></Tag>
               </div>
             </template>
@@ -120,7 +123,7 @@ const formatDate = (value) => {
           </Column>
           <Column dataType="date" filterField="date" header="Registro" style="min-width: 2rem; max-width: 7rem">
             <template #body="{ data }">
-              {{ formatDate(data.date) }}
+              {{ formatDate(data?.date) }}
             </template>
             <template #filter="{ filterModel }">
               <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />

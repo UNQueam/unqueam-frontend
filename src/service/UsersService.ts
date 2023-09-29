@@ -1,26 +1,10 @@
-//import axios from 'axios';
+import axios from 'axios';
+import {useAuthStore} from "../stores/authStore";
 
-/*
 const apiService = axios.create({
-    baseURL: 'http://localhost:8080/api/games',
+    baseURL: 'http://localhost:8080/api/users',
 });
-*/
 
-const usersData = [{
-    "user_id": 1141,
-    "username": "Sheridan Zane",
-    "email": "Sheridan Zane@mail",
-    "date": "2016-02-15",
-    "role": "Developer"
-},
-    {
-        "user_id": 1142,
-        "username": "Sheridan Zane",
-        "email": "Sheridan Zane@mail",
-        "date": "2016-02-15",
-        "role": "User"
-    }
-]
 
 interface PlatformUser {
     user_id: bigint,
@@ -30,15 +14,16 @@ interface PlatformUser {
     role: string;
 }
 
-export const fetchUsers = () => {
+export const fetchUsers = async () => {
     try {
-        //const response = await apiService.get('');
-        //return response.data;
+        let authStore = useAuthStore();
+        const response = await apiService.get('', {
+            headers: {
+                'Authorization': `Bearer ${authStore.getAuthToken()}`
+            }
+        });
+        return response.data;
 
-        const users = usersData;
-        // @ts-ignore
-        users.forEach((user) => (user.date = new Date(user.date)));
-        return users;
     } catch (error) {
         if(error.response && error.response.status === 404){
             console.log(error.response.data);

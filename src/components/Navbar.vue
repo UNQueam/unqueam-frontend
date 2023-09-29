@@ -10,7 +10,7 @@
     </div>
     <div class="navbar-links">
       <ul>
-        <li v-if="!authStore.isAdmin()">
+        <li v-if="authStore.isAdmin()">
           <span aria-controls="overlay_menu" aria-haspopup="true" class="cursor-pointer" @click="toggle_admin">Admin</span>
           <Menu id="overlay_menu" ref="menu_admin" :model="admin_items" :popup="true" />
         </li>
