@@ -7,6 +7,7 @@ import UsersView from "@/views/UsersView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import {useAuthStore} from "@/stores/authStore";
+import AccessDenied from "@/views/AccessDenied.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,7 +44,12 @@ const router = createRouter({
       name: 'NotFound',
       component: NotFound 
     },
-    { 
+    {
+      path: '/access-denied',
+      name: 'Access Denied',
+      component: AccessDenied
+    },
+    {
       path: '/500',
       name: 'SomethingBroke',
       component: SomethingBroke 
@@ -62,7 +68,7 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !isAuthenticated) {
     next('/login');
   } else if (requiresAuth && !authStore.hasRole(requiredRole)) {
-    next('/500'); // Llevar a un access-denied?
+    next('/access-denied');
   } else {
     next();
   }
