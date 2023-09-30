@@ -10,15 +10,21 @@ const isLoading = ref(true);
 const roles = ref(['Admin', 'Developer', 'User']);
 const error = ref(null);
 
+filters.value = {
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+  role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
+};
+
 onBeforeMount(async () => {
   try {
     users.value = await fetchUsers();
   } catch (err) {
     error.value = err;
   }
-
   isLoading.value = false;
-  initfilters();
 });
 
 const initfilters = () => {
@@ -26,24 +32,13 @@ const initfilters = () => {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+    created_at: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
     role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
   };
 };
 
 const clearFilter1 = () => {
   initfilters();
-};
-
-const formatDate = (value) => {
-  if (value){
-    return value.toLocaleDateString('en-US', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-  }
-  
 };
 </script>
 
@@ -71,7 +66,7 @@ const formatDate = (value) => {
               <Button class="p-button-outlined mb-2" icon="pi pi-filter-slash" label="Quitar filtros" type="button" @click="clearFilter1()" />
               <span class="p-input-icon-left mb-2">
                                 <i class="pi pi-search" />
-                                <InputText v-model="filters['global'].value" placeholder="Buscar ..." style="width: 100%" />
+                                <InputText v-model="filters.global.value" placeholder="Buscar ..." style="width: 100%" />
               </span>
             </div>
           </template>
@@ -121,9 +116,9 @@ const formatDate = (value) => {
               </Dropdown>
             </template>
           </Column>
-          <Column dataType="date" filterField="date" header="Registro" style="min-width: 2rem; max-width: 7rem">
+          <Column dataType="created_at" filterField="created_at" header="Registro" style="min-width: 2rem; max-width: 7rem">
             <template #body="{ data }">
-              {{ formatDate(data?.date) }}
+              {{ data?.created_at }}
             </template>
             <template #filter="{ filterModel }">
               <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
