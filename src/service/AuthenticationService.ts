@@ -47,11 +47,13 @@ class AuthenticationService {
                 'Authorization': `Bearer ${authToken}`
             };
             await axios.get('http://localhost:8080/api/auth/logout', {headers});
+        } catch (error) {
+            //do nothing
+        } finally {
             // @ts-ignore
             this.authStore.clearAuthData();
-        } catch (error) {
-            throw error
         }
+
     }
 }
 

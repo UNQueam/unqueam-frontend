@@ -113,7 +113,7 @@ const handleLogout = () => {
         await authService.logout();
         router.push({path: '/login', query: {logout: true}});
       } catch (error) {
-        showLogoutError()
+        //do nothing
       }
     }
   });
