@@ -86,7 +86,7 @@ onMounted(async () => {
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
               <div class="text-500 w-6 md:w-2 font-medium mr-3">Géneros</div>
               <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-                <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.name" class="mr-2"></Chip>
+                <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.spanish_name" class="mr-2"></Chip>
               </div>
             </li>
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
