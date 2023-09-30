@@ -2,9 +2,9 @@ export default class UserSeverityColorProvider {
 
     static getForRole(role) {
         switch (role) {
-            case 'Developer':
+            case 'DEVELOPER':
                 return 'info';
-            case 'Admin':
+            case 'ADMIN':
                 return 'warning';
             default:
                 return 'success';
