@@ -10,6 +10,10 @@
     </div>
     <div class="navbar-links">
       <ul>
+        <li v-if="authStore.isAdmin()">
+          <span aria-controls="overlay_menu" aria-haspopup="true" class="cursor-pointer" @click="toggle_admin">Admin</span>
+          <Menu id="overlay_menu" ref="menu_admin" :model="admin_items" :popup="true" />
+        </li>
         <li><router-link to="/">Juegos</router-link></li>
         <li v-if="!isUserAuthenticated"><router-link to="/login">Iniciar sesión</router-link></li>
         <li><button aria-controls="overlay_menu" aria-haspopup="true" class="p-link" @click="toggle">{{authStore.getUsername}}</button>
@@ -56,6 +60,8 @@ const router = useRouter()
 const authService = new AuthenticationService()
 
 const menu = ref();
+const menu_admin = ref();
+
 const items = ref([
   { separator: true },
   {
@@ -70,8 +76,25 @@ const items = ref([
   { separator: true }
 ]);
 
+const admin_items = ref([
+  {
+    label: 'Acciones',
+    items: [
+      {
+        label: 'Usuarios',
+        icon: 'pi pi-users',
+        command: () => router.push("/admin/users")
+      }
+    ]
+  }
+])
+
 const toggle = (event) => {
   menu.value.toggle(event);
+};
+
+const toggle_admin = (event) => {
+  menu_admin.value.toggle(event);
 };
 
 const isUserAuthenticated = computed(() => authStore.isAuthenticated());

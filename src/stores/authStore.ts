@@ -39,5 +39,11 @@ export const useAuthStore = defineStore('auth', {
         clearAuthData() {
             this.authenticationInfo = null;
         },
+        isAdmin(): boolean {
+            return this.authenticationInfo?.role.toLowerCase() === 'admin';
+        },
+        hasRole(aRole: string): boolean {
+            return this.authenticationInfo?.role.toLowerCase() === aRole.toLowerCase();
+        }
     },
 });
