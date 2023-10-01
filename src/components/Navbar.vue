@@ -84,6 +84,11 @@ const admin_items = ref([
         label: 'Usuarios',
         icon: 'pi pi-users',
         command: () => router.push("/admin/users")
+      },
+      {
+        label: 'Solicitudes',
+        icon: 'pi pi-inbox',
+        command: () => router.push("/admin/requests")
       }
     ]
   }

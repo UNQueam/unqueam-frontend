@@ -3,19 +3,19 @@ import {useAuthStore} from "../stores/authStore";
 import {formatDate} from "../utils/DateFormatter";
 
 const apiService = axios.create({
-    baseURL: 'http://localhost:8080/api/users',
+    baseURL: 'http://localhost:8080/api/requests',
 });
 
 
-interface PlatformUser {
-    user_id: bigint,
-    email: string;
-    username: string;
-    created_at: Date;
-    role: string;
+interface Request {
+    request_id: bigint,
+    issuer_username: string;
+    reason: string;
+    timestamp: Date;
+    status: string;
 }
 
-export const fetchUsers = async () => {
+export const fetchRequests = async () => {
     try {
         let authStore = useAuthStore();
         const response = await apiService.get('', {
@@ -23,9 +23,10 @@ export const fetchUsers = async () => {
                 'Authorization': `Bearer ${authStore.getAuthToken()}`
             }
         });
-        let users = response.data;
-        users.forEach(user => user.created_at = formatDate(user.created_at))
-        return users
+        let requests = response.data;
+        requests.forEach(user => user.timestamp = formatDate(user.timestamp))
+        console.log(requests)
+        return requests
     } catch (error) {
         if(error.response && error.response.status === 404){
             console.log(error.response.data);
@@ -33,6 +34,7 @@ export const fetchUsers = async () => {
         if(error.response && error.response.status === 400){
             return Promise.reject(error.response.data);
         } else {
+            //do nothing
         }
     }
 };
