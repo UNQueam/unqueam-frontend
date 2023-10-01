@@ -29,6 +29,11 @@
             </template>
 
             <template #end>
+              <button v-if="authStore.isUser()" class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="showBeDeveloperModal = true">
+                <i class="pi pi-box" />
+                <span class="ml-2">Ser desarrollador</span>
+              </button>
+              <hr class="my-2"/>
               <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="handleLogout">
                 <i class="pi pi-sign-out" />
                 <span class="ml-2">Cerrar sesión</span>
@@ -40,8 +45,22 @@
       </ul>
     </div>
   </nav>
+  <Dialog v-model:visible="showBeDeveloperModal" class="m-3 lg:w-30rem" header="Convertirme en desarrollador" modal static="true">
+    <p>
+      Al unirte a la comunidad de desarrolladores podrás publicar tus juegos para alcanzar usuarios que naveguen en la plataforma y poder recibir valoraciones y comentarios, a la vez de popularidad.
+    </p>
+    <form class="flex flex-column gap-2 mt-5" @submit.prevent="sendRequestToBeDeveloper">
+              <label for="username">Motivo para ser desarrollador</label>
+                <InputText id="value" v-model="reasonToBeDeveloper" class="w-full" placeholder="Quiero ser desarrollador porque ..." type="text"/>
+      <small class="p-error" >{{ errorMessage || '&nbsp;' }}</small>
+      <div class="w-full flex justify-content-end">
+        <Button label="Cerrar" text @click="closeModalToBeDeveloper" />
+        <Button :loading="isProcessingRequestToBeDeveloper" icon="pi pi-check" label="Enviar solicitud" type="submit" />
+      </div>
+    </form>
+  </Dialog>
   <ConfirmDialog></ConfirmDialog>
-  <Toast group="br" position="bottom-right" />
+  <Toast group="tr" position="top-right" />
 </template>
 
 <script setup>
@@ -52,12 +71,51 @@ import {useConfirm} from "primevue/useconfirm";
 import {useRouter} from "vue-router";
 import AuthenticationService from "@/service/AuthenticationService";
 import {useToast} from "primevue/usetoast";
+import {processRequestToBeDeveloper} from "@/service/RequestToBeDeveloperService";
 
 const toast = useToast();
 
 const authStore = useAuthStore()
 const router = useRouter()
 const authService = new AuthenticationService()
+
+/* Functions and variables related to Modal for send request to be developer */
+const showBeDeveloperModal = ref(false)
+const reasonToBeDeveloper = ref("")
+const isProcessingRequestToBeDeveloper = ref(false)
+const errorMessage = ref("")
+
+function closeModalToBeDeveloper() {
+  errorMessage.value = ""
+  showBeDeveloperModal.value = false
+  reasonToBeDeveloper.value = ""
+  isProcessingRequestToBeDeveloper.value = false
+}
+
+async function sendRequestToBeDeveloper() {
+  errorMessage.value = ""
+
+  if (reasonToBeDeveloper.value.length === 0) {
+    errorMessage.value = "Debes ingresar una razón por la cual quieres ser desarrollador."
+  } else {
+    try {
+      isProcessingRequestToBeDeveloper.value = true
+      await processRequestToBeDeveloper(reasonToBeDeveloper.value)
+      showBeDeveloperModal.value = false
+      reasonToBeDeveloper.value = ""
+      showSucessRequestToBeDeveloper()
+    } catch (error) {
+      errorMessage.value = error.message
+    } finally {
+      isProcessingRequestToBeDeveloper.value = false
+    }
+  }
+}
+
+const showSucessRequestToBeDeveloper = () => {
+  toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tú solicitud fue enviada correctamente. En breve, un administrador la revisara.', group: 'tr', life: 7000 });
+};
+/* End variables and functions - request to be developer */
 
 const menu = ref();
 const menu_admin = ref();
@@ -119,9 +177,6 @@ const handleLogout = () => {
   });
 };
 
-const showLogoutError = () => {
-  toast.add({ severity: 'error', summary: 'Sesión', detail: 'No fue posible cerrar tu sesión, intenta nuevamente.', group: 'br', life: 7000 });
-};
 </script>
 
 <style scoped>
