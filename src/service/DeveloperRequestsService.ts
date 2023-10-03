@@ -38,3 +38,47 @@ export const fetchRequests = async () => {
         }
     }
 };
+
+export const approveRequest = async (requestId: bigint) => {
+    try {
+        let authStore = useAuthStore();
+
+        const response = await apiService.put('/' + requestId + "/approve", {},{
+            headers: {
+                'Authorization': `Bearer ${authStore.getAuthToken()}`
+            }
+        });
+    } catch (error) {
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            //do nothing
+        }
+    }
+};
+
+export const rejectRequest = async (requestId: bigint , reason: string) => {
+    try {
+        let authStore = useAuthStore();
+
+        const response = await apiService.put('/' + requestId + "/reject", {
+            reason
+            },{
+                headers: {
+                    'Authorization': `Bearer ${authStore.getAuthToken()}`
+                }
+        });
+    } catch (error) {
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            //do nothing
+        }
+    }
+};

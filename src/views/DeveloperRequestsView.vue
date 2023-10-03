@@ -2,22 +2,18 @@
 import {FilterMatchMode, FilterOperator} from 'primevue/api';
 import {onBeforeMount, ref} from 'vue';
 import DeveloperRequestColorProvider from "@/services/DeveloperRequestColorProvider";
-import {fetchRequests} from "@/service/DeveloperRequestsService";
+import {fetchRequests, approveRequest,  rejectRequest} from "@/service/DeveloperRequestsService";
+import OverlayPanel from 'primevue/overlaypanel';
+import {useToast} from "primevue/usetoast";
+
+//Setup
 
 const requests = ref(null);
 const filters = ref(null);
 const isLoading = ref(true);
 const statuses = ref(['Pending', 'Rejected', 'Approved']);
 const error = ref(null);
-
-const DEFAULT_FILTERS = {
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-  timestamp: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-  status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
-};
-
-filters.value = DEFAULT_FILTERS;
+const toast = useToast();
 
 onBeforeMount(async () => {
   try {
@@ -28,9 +24,82 @@ onBeforeMount(async () => {
   isLoading.value = false;
 });
 
+//Toasts
+const showRejectSuccess = () => {
+  toast.add({ severity: 'success', summary: 'Rechazo realizado', detail: 'Se ha rechazado correctamente la solicitud', life: 5000 });
+};
+
+const showFailure = () => {
+  toast.add({ severity: 'error', summary: 'Rechazo no realizado', detail: 'Ha habido un error, intente nuevamente', life: 5000 });
+};
+
+const showApproveSuccess = () => {
+  toast.add({ severity: 'success', summary: 'Solicitud aceptada', detail: 'Se ha aceptado correctamente la solicitud', life: 5000 });
+};
+
+// Table data
+const DEFAULT_FILTERS = {
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  timestamp: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+  status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
+};
+
+filters.value = DEFAULT_FILTERS;
+
 const clearFilter1 = () => {
   filters.value = DEFAULT_FILTERS;
 };
+
+// Approve/ Reject Modal
+const rejectedPanel = ref();
+const approvedPanel = ref();
+const rejectionText = ref("");
+const toggle = (event) => {
+  rejectedPanel.value.toggle(event);
+}
+
+const toggleApprove = (event) => {
+  approvedPanel.value.toggle(event);
+}
+
+const cancelRejectModal = () => {
+  rejectionText.value = "";
+  toggle()
+}
+
+const cancelApproveModal = () => {
+  toggleApprove()
+}
+
+const  sendRejectMessage = async(data) => {
+  try {
+    await rejectRequest(data.request_id, rejectionText.value);
+
+    requests.value = await fetchRequests()
+
+    rejectionText.value = "";
+    toggle();
+    showRejectSuccess()
+
+  } catch (error) {
+    showFailure()
+  }
+}
+
+const approveDevRequest = async (data) => {
+  try {
+    await approveRequest(data.request_id);
+
+    requests.value = await fetchRequests();
+
+    showApproveSuccess()
+
+  } catch(error) {
+    showFailure()
+  }
+}
+
 </script>
 
 <template>
@@ -61,7 +130,9 @@ const clearFilter1 = () => {
               </span>
             </div>
           </template>
-          <template #empty> No se encontraron solicitudes. </template>
+          <template #empty>
+            <div class="no-requests"> No se encontraron solicitudes. </div>
+          </template>
           <template #loading> Cargando las solicitudes. Por favor espera. </template>
           <Column field="request_id" header="#" style="min-width: 2rem">
             <template #body="{ data }">
@@ -99,8 +170,28 @@ const clearFilter1 = () => {
                     :value="data?.status"
                 ></Tag>
                 <div style="display:flex; justify-content: space-between; align-items: flex-start" v-if="data?.status === 'PENDING'">
-                  <i class="pi pi-check mr-3 tick clickable-icon"  />
-                  <i class="pi pi-times cross clickable-icon" />
+                  <i class="pi pi-check mr-3 tick clickable-icon"  @click="toggleApprove"/>
+                  <OverlayPanel ref="approvedPanel">
+                    <div>
+                      <h5>¿Está seguro que quiere aprobar la solicitud?.</h5>
+                      <div class="flex justify-content-end mt-2">
+                        <Button class="p-3 ml-2 mr-2" label="Aceptar" type="button" style="width: 100px;"  @click="approveDevRequest(data)"></Button>
+                        <Button class="p-3 cancel-button" label="Cancelar" type="button" @click="cancelApproveModal"></Button>
+                      </div>
+                    </div>
+                  </OverlayPanel>
+                  <i class="pi pi-times cross clickable-icon" @click="toggle" />
+                  <OverlayPanel ref="rejectedPanel">
+                    <div>
+                      <h5>Ingrese la razón por la cuál se está rechazando la solicitud.</h5>
+                      <InputText v-model="rejectionText" placeholder="Ingrese la razon del rechazo" type="text" class="w-full" />
+                      <div class="flex justify-content-end mt-2">
+                        <Button class="p-3 ml-2 mr-2" label="Enviar" type="button" style="width: 100px;" @disabled="!rejectionText" @click="sendRejectMessage(data)"></Button>
+                        <Button class="p-3 cancel-button" label="Cancelar" type="button" @click="cancelRejectModal"></Button>
+                      </div>
+                    </div>
+                  </OverlayPanel>
+
                 </div>
               </div>
             </template>
@@ -120,6 +211,8 @@ const clearFilter1 = () => {
       </div>
     </div>
   </div>
+  <Toast position="top-right"/>
+
 </template>
 
 <style lang="scss" scoped>
@@ -132,12 +225,12 @@ const clearFilter1 = () => {
 }
 
 .clickable-icon {
-  cursor: pointer; /* Cambia el cursor al pasar el ratón por encima para indicar que es clickeable. */
-  transition: transform 0.3s, color 0.3s; /* Agrega transiciones de transformación y color suaves al pasar el ratón por encima. */
+  cursor: pointer;
+  transition: transform 0.3s, color 0.3s;
 }
 
 .clickable-icon:hover {
-  transform: scale(1.3); /* Aumenta el tamaño al pasar el ratón por encima. Puedes ajustar el valor para controlar el grado de agrandamiento. */
+  transform: scale(1.3);
 }
 
 .tick {
@@ -154,5 +247,25 @@ const clearFilter1 = () => {
 
 .cross:hover {
   color: #FF6654;
+}
+
+.cancel-button {
+  width: 100px;
+  background-color: rgba(255, 255, 255, 0.87);
+  border: none;
+  color: #9b2a3a;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.cancel-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+  color: #FF0000;
+}
+
+.no-requests {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  transition: color 0.3s;
 }
 </style>
