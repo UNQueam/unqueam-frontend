@@ -72,7 +72,7 @@ import {useConfirm} from "primevue/useconfirm";
 import {useRouter} from "vue-router";
 import AuthenticationService from "@/service/AuthenticationService";
 import {useToast} from "primevue/usetoast";
-import {processRequestToBeDeveloper} from "@/service/RequestToBeDeveloperService";
+import {processRequestToBeDeveloper} from "@/service/DeveloperRequestsService";
 
 const toast = useToast();
 
