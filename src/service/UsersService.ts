@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {useAuthStore} from "../stores/authStore";
+import {formatDate} from "../utils/DateFormatter";
 
 const apiService = axios.create({
     baseURL: 'http://localhost:8080/api/users',
@@ -33,16 +34,5 @@ export const fetchUsers = async () => {
             return Promise.reject(error.response.data);
         } else {
         }
-    }
-};
-
-const formatDate = (value: string) => {
-    if (value) {
-        const date = new Date(value);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear().toString().slice(-2);
-
-        return `${day}/${month}/${year}`;
     }
 };

@@ -10,12 +10,14 @@ const isLoading = ref(true);
 const roles = ref(['Admin', 'Developer', 'User']);
 const error = ref(null);
 
-filters.value = {
+const DEFAULT_FILTERS = {
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
   email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
   role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
 };
+
+filters.value = DEFAULT_FILTERS;
 
 onBeforeMount(async () => {
   try {
@@ -36,7 +38,7 @@ const initfilters = () => {
 };
 
 const clearFilter1 = () => {
-  initfilters();
+  filters.value = DEFAULT_FILTERS;
 };
 </script>
 

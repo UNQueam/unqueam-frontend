@@ -8,6 +8,7 @@ import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import {useAuthStore} from "@/stores/authStore";
 import AccessDenied from "@/views/AccessDenied.vue";
+import PetitionsView from "@/views/DeveloperRequestsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,12 @@ const router = createRouter({
       path: '/admin/users',
       name: 'Users',
       component: UsersView,
+      meta: { requiresAuth: true, requiredRole: 'admin' }
+    },
+    {
+      path: '/admin/requests',
+      name: 'Requests',
+      component: PetitionsView,
       meta: { requiresAuth: true, requiredRole: 'admin' }
     },
     {

@@ -22,7 +22,6 @@ export const useAuthStore = defineStore('auth', {
 
     actions: {
         saveAuthenticationInfo(data: any) {
-            console.log(data)
             this.authenticationInfo = {
                 authToken: data['auth_token'],
                 userId: data['user_id'],
