@@ -63,16 +63,6 @@ const menu = ref();
 const menu_admin = ref();
 
 const items = ref([
-  { separator: true },
-  {
-    label: 'Mí perfil',
-    icon: 'pi pi-fw pi-user'
-  },
-  {
-    label: 'Preferencias',
-    icon: 'pi pi-fw pi-cog',
-    badge: 2
-  },
   { separator: true }
 ]);
 

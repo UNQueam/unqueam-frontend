@@ -14,6 +14,7 @@ const isLoading = ref(true);
 const statuses = ref(['Pending', 'Rejected', 'Approved']);
 const error = ref(null);
 const toast = useToast();
+const isProcessingRequest = ref(false);
 
 onBeforeMount(async () => {
   try {
@@ -40,8 +41,7 @@ const showApproveSuccess = () => {
 // Table data
 const DEFAULT_FILTERS = {
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-  timestamp: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+  issuer_username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
   status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
 };
 
@@ -55,7 +55,7 @@ const clearFilter1 = () => {
 const rejectedPanel = ref();
 const approvedPanel = ref();
 const rejectionText = ref("");
-const toggle = (event) => {
+const toggleReject = (event) => {
   rejectedPanel.value.toggle(event);
 }
 
@@ -65,7 +65,7 @@ const toggleApprove = (event) => {
 
 const cancelRejectModal = () => {
   rejectionText.value = "";
-  toggle()
+  toggleReject()
 }
 
 const cancelApproveModal = () => {
@@ -73,21 +73,25 @@ const cancelApproveModal = () => {
 }
 
 const  sendRejectMessage = async(data) => {
+  isProcessingRequest.value = true;
   try {
     await rejectRequest(data.request_id, rejectionText.value);
 
     requests.value = await fetchRequests()
 
     rejectionText.value = "";
-    toggle();
+    toggleReject();
     showRejectSuccess()
 
   } catch (error) {
     showFailure()
+  } finally {
+    isProcessingRequest.value = false;
   }
 }
 
 const approveDevRequest = async (data) => {
+  isProcessingRequest.value = true;
   try {
     await approveRequest(data.request_id);
 
@@ -97,6 +101,8 @@ const approveDevRequest = async (data) => {
 
   } catch(error) {
     showFailure()
+  } finally {
+    isProcessingRequest.value = false;
   }
 }
 
@@ -139,7 +145,7 @@ const approveDevRequest = async (data) => {
               {{ data?.request_id }}
             </template>
           </Column>
-          <Column field="username" header="Usuario" style="min-width: 12rem">
+          <Column field="issuer_username" header="Usuario" style="min-width: 12rem">
             <template #body="{ data }">
               {{ data?.issuer_username }}
             </template>
@@ -152,12 +158,9 @@ const approveDevRequest = async (data) => {
               {{ data?.reason }}
             </template>
           </Column>
-          <Column dataType="timestamp" filterField="timestamp" header="Fecha" style="min-width: 2rem; max-width: 7rem">
+          <Column dataType="timestamp" header="Fecha" style="min-width: 2rem; max-width: 7rem">
             <template #body="{ data }">
               {{ data?.timestamp }}
-            </template>
-            <template #filter="{ filterModel }">
-              <Calendar v-model="filterModel.value" dateFormat="dd/mm/yy" placeholder="dd/mm/yy" />
             </template>
           </Column>
           <Column :filterMenuStyle="{ width: '14rem' }" field="status" header="Status" style="min-width: 2rem">
@@ -169,25 +172,30 @@ const approveDevRequest = async (data) => {
                     :severity="DeveloperRequestColorProvider.getForStatus(data?.status)"
                     :value="data?.status"
                 ></Tag>
-                <div style="display:flex; justify-content: space-between; align-items: flex-start" v-if="data?.status === 'PENDING'">
-                  <i class="pi pi-check mr-3 tick clickable-icon"  @click="toggleApprove"/>
-                  <OverlayPanel ref="approvedPanel">
-                    <div>
-                      <h5>¿Está seguro que quiere aprobar la solicitud?.</h5>
-                      <div class="flex justify-content-end mt-2">
-                        <Button class="p-3 ml-2 mr-2" label="Aceptar" type="button" style="width: 100px;"  @click="approveDevRequest(data)"></Button>
-                        <Button class="p-3 cancel-button" label="Cancelar" type="button" @click="cancelApproveModal"></Button>
-                      </div>
-                    </div>
-                  </OverlayPanel>
-                  <i class="pi pi-times cross clickable-icon" @click="toggle" />
+                <div style="display:flex; justify-content: space-between; align-items: flex-start;" v-if="data?.status === 'PENDING'">
+
+                  <i class="pi pi-times cross clickable-icon mr-3 pt-1" @click="toggleReject" />
                   <OverlayPanel ref="rejectedPanel">
                     <div>
                       <h5>Ingrese la razón por la cuál se está rechazando la solicitud.</h5>
                       <InputText v-model="rejectionText" placeholder="Ingrese la razon del rechazo" type="text" class="w-full" />
                       <div class="flex justify-content-end mt-2">
-                        <Button class="p-3 ml-2 mr-2" label="Enviar" type="button" style="width: 100px;" @disabled="!rejectionText" @click="sendRejectMessage(data)"></Button>
-                        <Button class="p-3 cancel-button" label="Cancelar" type="button" @click="cancelRejectModal"></Button>
+                        <Button class="p-2 cancel-button" label="Cancelar" type="button" @click="cancelRejectModal"></Button>
+                        <Button class="p-2 ml-2" label="Enviar" type="button" style="width: 100px;" @disabled="!rejectionText" @click="sendRejectMessage(data)"></Button>
+
+                      </div>
+                    </div>
+                  </OverlayPanel>
+
+                  <i class="pi pi-check tick clickable-icon pt-1"  @click="toggleApprove"/>
+                  <OverlayPanel ref="approvedPanel">
+                    <div>
+                      <h5>¿Está seguro que quiere aprobar la solicitud?.</h5>
+                      <div class="flex justify-content-end mt-2">
+                        <Button class="p-2 cancel-button" label="Cancelar" type="button" @click="cancelApproveModal"></Button>
+                        <Button class="p-2 ml-2" label="Aceptar" type="button" style="width: 100px;"  @click="approveDevRequest(data)"></Button>
+
+
                       </div>
                     </div>
                   </OverlayPanel>
