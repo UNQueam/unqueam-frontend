@@ -33,7 +33,7 @@
                 <i class="pi pi-box" />
                 <span class="ml-2">Ser desarrollador</span>
               </button>
-              <hr class="my-2"/>
+              <hr class="my-2" v-if="authStore.isUser()"/>
               <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="handleLogout">
                 <i class="pi pi-sign-out" />
                 <span class="ml-2">Cerrar sesión</span>
@@ -54,8 +54,9 @@
                 <InputText id="value" v-model="reasonToBeDeveloper" class="w-full" placeholder="Quiero ser desarrollador porque ..." type="text"/>
       <small class="p-error" >{{ errorMessage || '&nbsp;' }}</small>
       <div class="w-full flex justify-content-end">
-        <Button label="Cerrar" text @click="closeModalToBeDeveloper" />
-        <Button :loading="isProcessingRequestToBeDeveloper" icon="pi pi-check" label="Enviar solicitud" type="submit" />
+        <Button label="Cerrar" class="p-2 cancel-button" text @click="closeModalToBeDeveloper" />
+        <Button class="p-2 ml-2" :loading="isProcessingRequestToBeDeveloper" icon="pi pi-check" label="Enviar solicitud" type="submit" />
+
       </div>
     </form>
   </Dialog>
@@ -220,5 +221,18 @@ a {
   color: white;
   text-decoration: none;
   font-weight: bold;
+}
+
+.cancel-button {
+  width: 100px;
+  background-color: rgba(255, 255, 255, 0.87);
+  border: none;
+  color: #9b2a3a;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.cancel-button:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+  color: #FF0000 !important;
 }
 </style>

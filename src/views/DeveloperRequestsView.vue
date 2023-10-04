@@ -1,6 +1,6 @@
 <script setup>
 import {FilterMatchMode, FilterOperator} from 'primevue/api';
-import {onBeforeMount, ref} from 'vue';
+import {computed, onBeforeMount, ref} from 'vue';
 import DeveloperRequestColorProvider from "@/services/DeveloperRequestColorProvider";
 import {fetchRequests, approveRequest,  rejectRequest} from "@/service/DeveloperRequestsService";
 import OverlayPanel from 'primevue/overlaypanel';
@@ -106,6 +106,10 @@ const approveDevRequest = async (data) => {
   }
 }
 
+const isButtonDisabled = computed(() => {
+  return isProcessingRequest.value || rejectionText.value.length === 0;
+});
+
 </script>
 
 <template>
@@ -181,9 +185,9 @@ const approveDevRequest = async (data) => {
                       <InputText v-model="rejectionText" placeholder="Ingrese la razon del rechazo" type="text" class="w-full" />
                       <div class="flex justify-content-end mt-2">
                         <Button class="p-2 cancel-button" label="Cancelar" type="button" @click="cancelRejectModal"></Button>
-                        <Button class="p-2 ml-2" label="Enviar" type="button" style="width: 100px;" @disabled="!rejectionText" @click="sendRejectMessage(data)"></Button>
-
+                        <Button class="p-2 ml-2" label="Enviar" type="button" style="width: 100px;" :disabled="isButtonDisabled" @click="sendRejectMessage(data)"></Button>
                       </div>
+
                     </div>
                   </OverlayPanel>
 
@@ -193,9 +197,7 @@ const approveDevRequest = async (data) => {
                       <h5>¿Está seguro que quiere aprobar la solicitud?.</h5>
                       <div class="flex justify-content-end mt-2">
                         <Button class="p-2 cancel-button" label="Cancelar" type="button" @click="cancelApproveModal"></Button>
-                        <Button class="p-2 ml-2" label="Aceptar" type="button" style="width: 100px;"  @click="approveDevRequest(data)"></Button>
-
-
+                        <Button :loading="isProcessingRequest" class="p-2 ml-2" label="Aceptar" type="button" style="width: 100px;" @click="approveDevRequest(data)"></Button>
                       </div>
                     </div>
                   </OverlayPanel>
