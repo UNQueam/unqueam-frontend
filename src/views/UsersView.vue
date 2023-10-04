@@ -14,7 +14,6 @@ const DEFAULT_FILTERS = {
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
   email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-  date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
   role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
 };
 
@@ -28,6 +27,15 @@ onBeforeMount(async () => {
   }
   isLoading.value = false;
 });
+
+const initfilters = () => {
+  filters.value = {
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    username: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    email: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    role: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
+  };
+};
 
 const clearFilter1 = () => {
   filters.value = DEFAULT_FILTERS;
@@ -108,12 +116,9 @@ const clearFilter1 = () => {
               </Dropdown>
             </template>
           </Column>
-          <Column dataType="created_at" filterField="created_at" header="Registro" style="min-width: 2rem; max-width: 7rem">
+          <Column dataType="created_at" header="Registro" style="min-width: 2rem; max-width: 7rem">
             <template #body="{ data }">
               {{ data?.created_at }}
-            </template>
-            <template #filter="{ filterModel }">
-              <Calendar v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy" />
             </template>
           </Column>
         </DataTable>
