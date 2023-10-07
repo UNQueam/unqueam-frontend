@@ -45,7 +45,7 @@
       </ul>
     </div>
   </nav>
-  <Dialog v-model:visible="showBeDeveloperModal" class="m-3 lg:w-30rem" header="Convertirme en desarrollador" modal static="true">
+  <Dialog v-model:visible="showBeDeveloperModal" class="m-3 lg:w-30rem" header="Convertirme en desarrollador" modal @after-hide="closeModalToBeDeveloper">
     <p>
       Al unirte a la comunidad de desarrolladores podrás publicar tus juegos para alcanzar usuarios que naveguen en la plataforma y poder recibir valoraciones y comentarios, a la vez de popularidad.
     </p>
