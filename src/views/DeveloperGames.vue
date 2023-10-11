@@ -4,7 +4,7 @@ import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'
 import 'primeflex/primeflex.css';
 import InputSwitch from 'primevue/inputswitch';
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed  } from "vue";
 
 onMounted(() => {
   //ProductService.getProductsSmall().then((data) => (products.value = data));
@@ -71,6 +71,34 @@ products.value = [{
     quantity: 24,
     rating: 3
   }]
+
+  const isHideSwitcherEnabled = ref(true);
+
+  const toggleSwitcher = () => {
+    if (isHideSwitcherEnabled.value) {
+      isHideSwitcherEnabled.value = false;
+      setTimeout(() => {
+        isHideSwitcherEnabled.value = true;
+      }, 2000);
+    }
+  };
+
+  const goToGame = () => {
+    console.log("LETS GOOOOOOO");
+  }
+
+const stopPropagation = (event) => {
+  event.stopPropagation();
+}
+
+const iconClass = computed(() => {
+  if (! isHideSwitcherEnabled.value) {
+    return 'pi pi-spinner pi-spin';
+  } else {
+    return 'pi pi-ban';
+  }
+});
+
 </script>
 
 <template>
@@ -90,11 +118,11 @@ products.value = [{
         </div>
       </template>
       <template #list="slotProps">
-        <div class="col-12">
+        <div class="col-12 clickeable-item" @click="goToGame">
           <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-            <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" :src="slotProps.data.image" :alt="slotProps.data.name" />
+            <img @click="goToGame" class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" :src="slotProps.data.image" :alt="slotProps.data.name" />
             <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
-              <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+              <div @click="goToGame" class="flex flex-column align-items-center sm:align-items-start gap-3">
                 <div class="text-2xl font-bold text-900 xl:w-10rem">{{ slotProps.data.name }}</div>
                 <Rating :modelValue="slotProps.data.rating" readonly :cancel="false"></Rating>
                 <div class="flex align-items-center gap-3">
@@ -103,19 +131,20 @@ products.value = [{
                                     </span>
                 </div>
               </div>
-              <div>lorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
-                lorem lorem lolorem lorem loremlorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
-                lorem lorem lo lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
-                lorem lorem lolorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
-                lorem lorem lo</div>
+              <div class="h-full">
+                <div @click="goToGame">lorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
+                  lorem lorem lolorem lorem loremlorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
+                  lorem lorem lo lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
+                  lorem lorem lolorem lorem lorem lorem lorem lorem lorem loremlorem lorem lorem loremlorem lorem lorem loremlorem
+                  lorem lorem lo</div>
+              </div>
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                <Button icon="pi pi-eye" rounded :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'"></Button>
                 <Button icon="pi pi-pencil" rounded :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'"></Button>
-                <label class="switcher">
-                  <input type="checkbox" class="switcher-input">
+                <label class="switcher" @click="stopPropagation">
+                  <input type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher">
                   <span class="switcher-slider">
                     <span class="slider-circle">
-                      <i class="pi pi-ban"></i>
+                      <i :class="iconClass"></i>
                     </span>
                   </span>
                 </label>
@@ -134,8 +163,8 @@ products.value = [{
   display: inline-block;
   width: 60px;
   height: 30px;
-  background-color: #2a2a2a; /* Color rojo predominante */
-  border-radius: 15px; /* Bordes circulares */
+  background-color: #2a2a2a;
+  border-radius: 15px;
   overflow: hidden;
 }
 
@@ -150,9 +179,9 @@ products.value = [{
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #2a2a2a; /* Color del slider */
-  border-radius: 15px; /* Bordes circulares */
-  transition: 0.4s; /* Animación de transición */
+  background-color: #2a2a2a;
+  border-radius: 15px;
+  transition: 0.4s;
 }
 
 .slider-circle {
@@ -161,18 +190,44 @@ products.value = [{
   justify-content: center;
   width: 30px;
   height: 30px;
-  background-color: #717171; /* Color rojo predominante para la esfera */
-  border-radius: 50%; /* Forma de esfera */
-  transition: 0.4s; /* Animación de transición */
-  transform: translateX(0); /* Restablece la posición inicial */
+  background-color: #717171;
+  border-radius: 50%;
+  transition: 0.4s;
+  transform: translateX(0);
 }
 
 .switcher-slider i.pi-ban {
-  color: white; /* Color blanco para el icono "pi-ban" dentro de la esfera */
+  color: white;
 }
 
 .switcher-input:checked + .switcher-slider .slider-circle {
-  background-color: #9b2a3a; /* Cambia el color de la esfera cuando está activo */
-  transform: translateX(30px); /* Mueve la esfera a la derecha cuando está activo */
+  background-color: #9b2a3a;
+  transform: translateX(30px);
+}
+
+.clickeable-item {
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+
+.clickeable-item:hover {
+  animation: bounce 0.8s;
+  background-color: #414141;
+}
+
+
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
 }
 </style>
