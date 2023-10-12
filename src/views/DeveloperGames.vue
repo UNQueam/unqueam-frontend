@@ -75,12 +75,41 @@ const iconClass = computed(() => {
 </script>
 
 <template>
+  <div class="col-9 m-auto surface-section px-4 py-5 md:px-6 lg:px-8">
+    <ul class="list-none p-0 m-0 flex align-items-center font-medium mb-3">
+      <li>
+        <router-link to="/" class="text-500 no-underline line-height-3 cursor-pointer">Home</router-link>
+
+      </li>
+      <li class="px-2">
+        <i class="pi pi-angle-right text-500 line-height-3"></i>
+      </li>
+      <li>
+        <span class="text-900 line-height-3">Mis juegos</span>
+      </li>
+    </ul>
+    <div class="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
+      <div>
+        <div class="font-medium text-3xl text-900">Mis Juegos</div>
+        <div class="flex align-items-center text-700 flex-wrap">
+          <div class="mr-5 flex align-items-center mt-3">
+            <i class="pi pi-star-fill mr-2 red"></i>
+            <span class="red">4.2 avg ratings</span>
+          </div>
+          <div class="mr-5 flex align-items-center mt-3">
+            <i class="pi pi-comment mr-2 red"></i>
+            <span class="red">50 comments</span>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 lg:mt-0">
+        <Button label="Publicar" class=" mr-2" icon="pi pi-plus"></Button>
+      </div>
+    </div>
+  </div>
   <div class="card col-9 m-auto mt-5">
     <DataView :value="games" paginator :rows="5" :sortOrder="sortOrder" :sortField="sortField">
       <template #header>
-        <div class="flex justify-content-center mb-5 text-2xl font-bold text-900">
-          Mis Juegos
-        </div>
         <div class="flex sm:flex-column md:flex-column lg:flex-row flex-wrap gap-4">
           <div class="lg:col-4 md:col-3 sm:col-3">
             <Dropdown v-model="sortKey" :options="sortOptions" optionLabel="label" placeholder="Selecciona un orden" @change="onSortChange($event)" />
@@ -106,8 +135,8 @@ const iconClass = computed(() => {
               </div>
               <div class="font-bold text-600" style="font-size: 15px;">{{ slotProps.data.description }}</div>
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                <Button icon="pi pi-pencil" rounded :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'"></Button>
-                <label class="switcher" @click="stopPropagation">
+                <Button icon="pi pi-pencil" rounded :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'" v-tooltip="'Editar juego'"></Button>
+                <label class="switcher" @click="stopPropagation" v-tooltip="'Esconder juego'">
                   <input type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher">
                   <span class="switcher-slider">
                     <span class="slider-circle">
@@ -170,6 +199,10 @@ const iconClass = computed(() => {
 .switcher-input:checked + .switcher-slider .slider-circle {
   background-color: #9b2a3a;
   transform: translateX(30px);
+}
+
+.red {
+  color: #9b2a3a;
 }
 
 .clickeable-item {
