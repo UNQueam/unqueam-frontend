@@ -21,6 +21,7 @@ function executePlay() {
 import {onMounted, ref} from 'vue';
 import {useRoute} from 'vue-router';
 import {fetchGame} from "@/service/GamesService"
+import GameCommentsCard from "@/components/GameCommentsCard.vue";
 
 const route = useRoute();
 const gameId = ref('');
@@ -105,6 +106,9 @@ onMounted(async () => {
         </div>
       </div>
   </div>
+
+  <GameCommentsCard></GameCommentsCard>
+  <p class="m-5 opacity-0">.</p>
 </template>
 
 <style>
