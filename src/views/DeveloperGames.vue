@@ -3,8 +3,9 @@ import DataView from 'primevue/dataview';
 import 'primeflex/primeflex.css';
 
 import {ref, computed, onBeforeMount} from "vue";
-import {fetchDeveloperGames} from "@/service/GamesService"
+import {exposeGame, fetchDeveloperGames, hideGame} from "@/service/GamesService"
 import {useAuthStore} from "@/stores/authStore";
+import {useToast} from "primevue/usetoast";
 
 const authStore = useAuthStore();
 
@@ -20,10 +21,12 @@ const sortOptions = ref([
   {label: 'Comentarios de mayor a menor cantidad', value: '!comments'},
   {label: 'Comentarios de menor a mayor cantidad', value: 'comments'},
 ]);
+const toast = useToast();
 
 onBeforeMount(async () => {
   try {
     games.value = await fetchDeveloperGames(authStore.getUsername);
+    console.log(games.value)
   } catch (err) {
     //do nothing
   }
@@ -45,20 +48,46 @@ const onSortChange = (event) => {
   }
 };
 
-  const isHideSwitcherEnabled = ref(true);
+const showToggleHideStatusSuccess = () => {
+  toast.add({ severity: 'success', summary: 'Estado cambiado', detail: 'Se ha cambiado satisfactoriamente el estado del juego', life: 5000 });
+}
+const showToggleHideStatusFailure = () => {
+  toast.add({ severity: 'error', summary: 'Estado no cambiado', detail: 'Algo ha ocurrido, intenta nuevamente mas tarde', life: 5000 });
+}
 
-  const toggleSwitcher = () => {
-    if (isHideSwitcherEnabled.value) {
-      isHideSwitcherEnabled.value = false;
-      setTimeout(() => {
-        isHideSwitcherEnabled.value = true;
-      }, 2000);
-    }
-  };
+const isHideSwitcherEnabled = ref(true);
 
-  const goToGame = () => {
-    console.log("LETS GOOOOOOO");
+const toggleSwitcher = async (gameId) => {
+  const gamePosInArr = gameId - 1;
+  if (isHideSwitcherEnabled.value) {
+    isHideSwitcherEnabled.value = false;
+    setTimeout(() => {
+      isHideSwitcherEnabled.value = true;
+    }, 2000);
   }
+
+  try {
+    const isHidden = games.value[gamePosInArr].is_hidden;
+
+    if(isHidden) {
+      await exposeGame(gameId);
+      showToggleHideStatusSuccess();
+    } else {
+      await hideGame(gameId);
+      showToggleHideStatusSuccess();
+    }
+    games.value[gameId].is_hidden = !isHidden;
+
+
+  } catch (error) {
+    showToggleHideStatusFailure();
+  }
+
+};
+
+const goToGame = () => {
+  console.log("LETS GOOOOOOO");
+}
 
 const stopPropagation = (event) => {
   event.stopPropagation();
@@ -71,6 +100,7 @@ const iconClass = computed(() => {
     return 'pi pi-ban';
   }
 });
+
 
 </script>
 
@@ -137,7 +167,7 @@ const iconClass = computed(() => {
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
                 <Button icon="pi pi-pencil" rounded :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'" v-tooltip="'Editar juego'"></Button>
                 <label class="switcher" @click="stopPropagation" v-tooltip="'Esconder juego'">
-                  <input type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher">
+                  <input v-model="slotProps.data.is_hidden" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher(slotProps.data.id)">
                   <span class="switcher-slider">
                     <span class="slider-circle">
                       <i :class="iconClass"></i>
@@ -151,6 +181,7 @@ const iconClass = computed(() => {
       </template>
     </DataView>
   </div>
+  <Toast position="top-right"/>
 </template>
 
 <style scoped>
