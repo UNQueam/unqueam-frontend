@@ -46,11 +46,8 @@ import InlineMessage from "primevue/inlinemessage";
 import ConfirmDialog from "primevue/confirmdialog";
 import Paginator from "primevue/paginator";
 import Textarea from "primevue/textarea";
-import Tooltip from 'primevue/tooltip';
 
 const app = createApp(App)
-
-app.directive('tooltip', Tooltip);
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedState)
