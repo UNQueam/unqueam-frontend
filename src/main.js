@@ -32,6 +32,7 @@ import Avatar from "primevue/avatar";
 import ProgressBar from "primevue/progressbar";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import Card from "primevue/card";
 import MultiSelect from "primevue/multiselect";
 import Calendar from "primevue/calendar";
 import InputNumber from "primevue/inputnumber";
@@ -43,8 +44,13 @@ import Menu from "primevue/menu"
 import Toast from "primevue/toast";
 import InlineMessage from "primevue/inlinemessage";
 import ConfirmDialog from "primevue/confirmdialog";
+import Paginator from "primevue/paginator";
+import Textarea from "primevue/textarea";
+import Tooltip from 'primevue/tooltip';
 
 const app = createApp(App)
+
+app.directive('tooltip', Tooltip);
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedState)
@@ -61,18 +67,21 @@ app.provide("axios", app.config.globalProperties.axios);
 
 //Primevue components
 app.component('DataView', DataView);
+app.component('Textarea', Textarea);
 app.component('InlineMessage', InlineMessage);
 app.component('DataViewLayoutOptions', DataViewLayoutOptions);
 app.component('Dropdown', Dropdown);
-app.component('Rating', Rating);
+app.component('Paginator', Paginator);
 app.component('ConfirmDialog', ConfirmDialog);
 app.component('Button', Button);
 app.component('PickList', PickList);
 app.component('OrderList', OrderList);
+app.component('Rating', Rating);
 app.component('InputText', InputText);
 app.component('Dialog', Dialog);
 app.component('Chip', Chip)
 app.component('Menu', Menu)
+app.component('Card', Card)
 app.component('Toast', Toast)
 app.component('DataTable', DataTable)
 app.component('Image', Image)

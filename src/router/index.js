@@ -74,7 +74,13 @@ const router = createRouter({
   ]
 })
 
+const scrollToTop = () => {
+  window.scrollTo(0, 0);
+};
+
 router.beforeEach((to, from, next) => {
+  scrollToTop();
+
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated();
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);

@@ -6,6 +6,10 @@ const customErrors = {
     username: {
       required: 'El nombre de usuario es requerido',
     },
+    comment: {
+        required: 'Debes ingresar un comentario a cerca de tu valoración del juego',
+        minLength: 'Tú comentario debe contener al menos 10 caractéres'
+    },
     password: {
       required: 'La contraseña es requerida',
       regex: 'La contraseña debe tener al menos 8 caracteres y 1 mayúscula',
