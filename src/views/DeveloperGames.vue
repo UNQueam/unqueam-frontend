@@ -2,7 +2,7 @@
 import DataView from 'primevue/dataview';
 import 'primeflex/primeflex.css';
 
-import {ref, computed, onBeforeMount} from "vue";
+import {computed, onBeforeMount, ref} from "vue";
 import {exposeGame, fetchDeveloperGames, hideGame} from "@/service/GamesService"
 import {useAuthStore} from "@/stores/authStore";
 import {useToast} from "primevue/usetoast";
@@ -76,7 +76,7 @@ const toggleSwitcher = async (gameId) => {
       await hideGame(gameId);
       showToggleHideStatusSuccess();
     }
-    games.value[gameId].is_hidden = !isHidden;
+    games.value[gamePosInArr].is_hidden = !isHidden;
 
 
   } catch (error) {
