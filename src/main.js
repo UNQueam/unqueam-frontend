@@ -46,6 +46,8 @@ import InlineMessage from "primevue/inlinemessage";
 import ConfirmDialog from "primevue/confirmdialog";
 import Paginator from "primevue/paginator";
 import Textarea from "primevue/textarea";
+import FileUpload from "primevue/fileupload";
+import Chips from "primevue/chips";
 
 const app = createApp(App)
 
@@ -64,7 +66,9 @@ app.provide("axios", app.config.globalProperties.axios);
 
 //Primevue components
 app.component('DataView', DataView);
+app.component('Chips', Chips);
 app.component('Textarea', Textarea);
+app.component('FileUpload', FileUpload);
 app.component('InlineMessage', InlineMessage);
 app.component('DataViewLayoutOptions', DataViewLayoutOptions);
 app.component('Dropdown', Dropdown);
