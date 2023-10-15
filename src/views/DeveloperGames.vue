@@ -6,9 +6,11 @@ import {computed, onBeforeMount, ref} from "vue";
 import {exposeGame, fetchDeveloperGames, hideGame} from "@/service/GamesService"
 import {useAuthStore} from "@/stores/authStore";
 import {useToast} from "primevue/usetoast";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 const authStore = useAuthStore();
-
 
 const games = ref();
 const inputKey = ref('');
@@ -86,7 +88,8 @@ const toggleSwitcher = async (gameId) => {
 };
 
 const goToGame = () => {
-  console.log("LETS GOOOOOOO");
+  console.log("go!")
+  //router.push("/games/1")
 }
 
 const stopPropagation = (event) => {
@@ -166,7 +169,7 @@ const iconClass = computed(() => {
               <div class="font-bold text-600" style="font-size: 15px;">{{ slotProps.data.description }}</div>
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
                 <Button icon="pi pi-pencil" rounded :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'" v-tooltip="'Editar juego'"></Button>
-                <label class="switcher" @click="stopPropagation" v-tooltip="'Esconder juego'">
+                <label v-tooltip="slotProps.data.is_hidden ? 'Exponer juego' : 'Ocultar juego'" class="switcher" @click="stopPropagation">
                   <input v-model="slotProps.data.is_hidden" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher(slotProps.data.id)">
                   <span class="switcher-slider">
                     <span class="slider-circle">
