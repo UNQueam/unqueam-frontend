@@ -63,7 +63,25 @@
 
     <label class="block text-600 font-medium mb-2" for="email1">Imágenes</label>
     <GameImagesUploader></GameImagesUploader>
-
+    <input v-model="imageUrl" placeholder="URL de la imagen" />
+    <button type="button" @click="loadImageDimensions">Obtener resolución</button>
+    <p v-if="imageWidth !== null && imageHeight !== null">
+      Resolución de la imagen: {{ imageWidth }}x{{ imageHeight }}
+    </p>
+    <div class="w-full">
+      <Galleria :value="images" :responsiveOptions="galleryResponsiveOptions" :numVisible="5" containerStyle="max-width: 640px; margin: auto"
+                 :showThumbnails="false" :showItemNavigatorsOnHover="true" :showIndicators="true" :circular="true"
+                 :changeItemOnIndicatorHover="true" :key="galleryRefreshKey">
+        <template #item="slotProps" >
+          <div class="image-container">
+            <img :src="slotProps.item?.itemImageSrc" :alt="slotProps.item?.alt" class="game-image" />
+            <button class="delete-button" @click="removeImage(slotProps.item)" type="button">
+              <i class="pi pi-trash" style="color: white; font-size: 24px;"></i>
+            </button>
+          </div>
+        </template>
+      </Galleria>
+    </div>
       <Button :loading="false" class="p-2 mt-3" label="Publicar videojuego" style="float: right;" type="submit"></Button>
     </form>
   </div>
@@ -74,6 +92,7 @@
 import {onBeforeMount, ref} from "vue";
 import {fetchGenres} from "@/service/GenresService";
 import GameImagesUploader from "@/components/GameImagesUploader.vue";
+import Galleria from 'primevue/galleria';
 
 const selectedReleaseDate = ref();
 const selectedGenres = ref([]);
@@ -82,6 +101,61 @@ const selectedDevelopers = ref();
 const genres = ref([])
 
 const maxReleaseDate = ref(new Date());
+
+//IMAGENES.
+//***************************************************************
+const images = ref([]);
+const galleryRefreshKey = ref(0);
+const galleryResponsiveOptions = ref([
+  {
+    breakpoint: '991px',
+    numVisible: 4
+  },
+  {
+    breakpoint: '767px',
+    numVisible: 3
+  },
+  {
+    breakpoint: '575px',
+    numVisible: 1
+  }
+]);
+
+
+const imageUrl = ref("");
+const nextImgId = ref(0)
+const imageWidth = ref(null);
+const imageHeight = ref(null);
+
+const loadImageDimensions = () => {
+  //ACA HAY QUE VER EL TEMA VALIDACIONES. Deje sentadas las bases para poder acceder al height y width y los imprimo abajo del input.
+  if (imageUrl.value) {
+    const img = new Image();
+    img.src = imageUrl.value;
+
+    img.onload = () => {
+      imageWidth.value = img.width;
+      imageHeight.value = img.height;
+    };
+    images.value.push(
+        {
+          id: nextImgId.value,
+          itemImageSrc: imageUrl.value
+        });
+    nextImgId.value = nextImgId.value + 1
+  }
+};
+
+const removeImage = (imageToBeRemoved) => {
+  images.value = images.value.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
+  galleryRefreshKey.value++; //Se usa esta key para refrescar el component gallery asi se ven reflejados los cambios.
+};
+
+
+//***************************************************************
+
+
+
 
 /*
 TODO:
@@ -137,5 +211,35 @@ onBeforeMount(async () => {
 </script>
 
 <style>
+.image-container {
+  position: relative;
+}
 
+.game-image {
+  width: 100%;
+  max-height: 500px;
+  display: block;
+}
+
+.delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #9b2a3a;
+  border: 2px solid #9b2a3a;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s;
+}
+
+.delete-button:hover {
+  transform: scale(1.1);
+}
 </style>
+
+
+
+
+
+
