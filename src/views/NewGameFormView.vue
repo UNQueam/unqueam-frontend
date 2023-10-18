@@ -61,182 +61,193 @@
     <label class="block text-600 font-medium mb-2" for="email1">Logo de videojuego</label>
     <FileUpload :auto="true" :chooseLabel="'Seleccionar logo'" accept="image/*" class="mb-5" customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadGameLogo" />
 
-    <label class="block text-600 font-medium mb-2" for="email1">Imágenes</label>
-    <GameImagesUploader></GameImagesUploader>
-    <input v-model="imageUrl" placeholder="URL de la imagen" />
-    <button type="button" @click="loadImageDimensions">Obtener resolución</button>
-    <p v-if="imageWidth !== null && imageHeight !== null">
-      Resolución de la imagen: {{ imageWidth }}x{{ imageHeight }}
-    </p>
-    <div class="w-full">
-      <Galleria :value="images" :responsiveOptions="galleryResponsiveOptions" :numVisible="5" containerStyle="max-width: 640px; margin: auto"
-                 :showThumbnails="false" :showItemNavigatorsOnHover="true" :showIndicators="true" :circular="true"
-                 :changeItemOnIndicatorHover="true" :key="galleryRefreshKey">
-        <template #item="slotProps" >
-          <div class="image-container">
-            <img :src="slotProps.item?.itemImageSrc" :alt="slotProps.item?.alt" class="game-image" />
-            <button class="delete-button" @click="removeImage(slotProps.item)" type="button">
-              <i class="pi pi-trash" style="color: white; font-size: 24px;"></i>
-            </button>
-          </div>
-        </template>
-      </Galleria>
-    </div>
+      <!--<label class="block text-600 font-medium mb-2" for="email1">Imágenes</label>
+      <GameImagesUploader></GameImagesUploader>
+        <label class="block text-600 font-medium mb-2" for="images">Imágenes</label>
+        <div class="flex gap-5">
+          <InputText id="images" v-model="imageUrl" class="w-full mb-5 input-height" placeholder="URL de la imagen" style="padding: 1rem" type="text" />
+          <Button class="input-height" type="button" @click="loadImageDimensions">Agregar imagen</Button>
+        </div>
+
+      <p v-if="imageWidth !== null && imageHeight !== null">
+        Resolución de la imagen: {{ imageWidth }}x{{ imageHeight }}
+      </p>
+      <div class="w-full">
+        <Galleria :value="images" :responsiveOptions="galleryResponsiveOptions" :numVisible="5" containerStyle="max-width: 640px; margin: auto"
+                   :showThumbnails="false" :showItemNavigatorsOnHover="true" :showIndicators="true" :circular="true"
+                   :changeItemOnIndicatorHover="true" :key="galleryRefreshKey">
+          <template #item="slotProps" >
+            <div class="image-container">
+              <img :src="slotProps.item?.itemImageSrc" :alt="slotProps.item?.alt" class="game-image" />
+              <button class="delete-button" @click="removeImage(slotProps.item)" type="button">
+                <i class="pi pi-trash" style="color: white; font-size: 24px;"></i>
+              </button>
+            </div>
+          </template>
+        </Galleria>
+      </div>-->
+      <GameImageManager v-model:images="images" />
+        {{images}}
       <Button :loading="false" class="p-2 mt-3" label="Publicar videojuego" style="float: right;" type="submit"></Button>
-    </form>
-  </div>
-  <Toast position="top-right"/>
-</template>
+      </form>
+    </div>
+    <Toast position="top-right"/>
+  </template>
 
-<script setup>
-import {onBeforeMount, ref} from "vue";
-import {fetchGenres} from "@/service/GenresService";
-import GameImagesUploader from "@/components/GameImagesUploader.vue";
-import Galleria from 'primevue/galleria';
+  <script setup>
+  import {onBeforeMount, ref} from "vue";
+  import {fetchGenres} from "@/service/GenresService";
+  import GameImagesUploader from "@/components/GameImagesUploader.vue";
+  import Galleria from 'primevue/galleria';
+  import GameImageManager from "@/components/GameImageManager.vue";
 
-const selectedReleaseDate = ref();
-const selectedGenres = ref([]);
-const selectedDevelopers = ref();
+  const selectedReleaseDate = ref();
+  const selectedGenres = ref([]);
+  const selectedDevelopers = ref();
 
-const genres = ref([])
+  const genres = ref([])
 
-const maxReleaseDate = ref(new Date());
+  const maxReleaseDate = ref(new Date());
 
-//IMAGENES.
-//***************************************************************
-const images = ref([]);
-const galleryRefreshKey = ref(0);
-const galleryResponsiveOptions = ref([
-  {
-    breakpoint: '991px',
-    numVisible: 4
-  },
-  {
-    breakpoint: '767px',
-    numVisible: 3
-  },
-  {
-    breakpoint: '575px',
-    numVisible: 1
-  }
-]);
+  //IMAGENES.
+  //***************************************************************
+  const images = ref([]);
+  const galleryRefreshKey = ref(0);
+  const galleryResponsiveOptions = ref([
+    {
+      breakpoint: '991px',
+      numVisible: 4
+    },
+    {
+      breakpoint: '767px',
+      numVisible: 3
+    },
+    {
+      breakpoint: '575px',
+      numVisible: 1
+    }
+  ]);
 
 
-const imageUrl = ref("");
-const nextImgId = ref(0)
-const imageWidth = ref(null);
-const imageHeight = ref(null);
+  const imageUrl = ref("");
+  const nextImgId = ref(0)
+  const imageWidth = ref(null);
+  const imageHeight = ref(null);
 
-const loadImageDimensions = () => {
-  //ACA HAY QUE VER EL TEMA VALIDACIONES. Deje sentadas las bases para poder acceder al height y width y los imprimo abajo del input.
-  if (imageUrl.value) {
-    const img = new Image();
-    img.src = imageUrl.value;
+  const loadImageDimensions = () => {
+    //ACA HAY QUE VER EL TEMA VALIDACIONES. Deje sentadas las bases para poder acceder al height y width y los imprimo abajo del input.
+    if (imageUrl.value) {
+      const img = new Image();
+      img.src = imageUrl.value;
 
-    img.onload = () => {
-      imageWidth.value = img.width;
-      imageHeight.value = img.height;
+      img.onload = () => {
+        imageWidth.value = img.width;
+        imageHeight.value = img.height;
+      };
+      images.value.push(
+          {
+            id: nextImgId.value,
+            itemImageSrc: imageUrl.value
+          });
+      nextImgId.value = nextImgId.value + 1
+    }
+  };
+
+  const removeImage = (imageToBeRemoved) => {
+    images.value = images.value.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
+    galleryRefreshKey.value++; //Se usa esta key para refrescar el component gallery asi se ven reflejados los cambios.
+  };
+
+
+  //***************************************************************
+
+
+
+
+  /*
+  TODO:
+  - Sobre imagenes:
+  falta validar que sean de una extension imagen el file que carga el user (jpg, png, etc)
+  comprobar los sizes que no sean muy pesados
+  lo mismo la resolucion, que no sea tan grande
+   */
+  const uploadGameLogo = async (event) => {
+    const file = event.files[0];
+    console.log(file)
+    console.log(event.files)
+    const reader = new FileReader();
+    let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
+
+    reader.readAsDataURL(blob);
+
+    reader.onloadend = function () {
+      const base64data = reader.result;
     };
-    images.value.push(
-        {
-          id: nextImgId.value,
-          itemImageSrc: imageUrl.value
-        });
-    nextImgId.value = nextImgId.value + 1
-  }
-};
-
-const removeImage = (imageToBeRemoved) => {
-  images.value = images.value.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
-  galleryRefreshKey.value++; //Se usa esta key para refrescar el component gallery asi se ven reflejados los cambios.
-};
-
-
-//***************************************************************
-
-
-
-
-/*
-TODO:
-- Sobre imagenes:
-falta validar que sean de una extension imagen el file que carga el user (jpg, png, etc)
-comprobar los sizes que no sean muy pesados
-lo mismo la resolucion, que no sea tan grande
- */
-const uploadGameLogo = async (event) => {
-  const file = event.files[0];
-  console.log(file)
-  console.log(event.files)
-  const reader = new FileReader();
-  let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
-
-  reader.readAsDataURL(blob);
-
-  reader.onloadend = function () {
-    const base64data = reader.result;
   };
-};
 
-const customBase64Uploader = async (event) => {
-  const file = event.files[0];
-  console.log(file)
-  console.log(event.files)
-  const reader = new FileReader();
-  let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
+  const customBase64Uploader = async (event) => {
+    const file = event.files[0];
+    console.log(file)
+    console.log(event.files)
+    const reader = new FileReader();
+    let blob = await fetch(file.objectURL).then((r) => r.blob()); //blob:url
 
-  reader.readAsDataURL(blob);
+    reader.readAsDataURL(blob);
 
-  reader.onloadend = function () {
-    const base64data = reader.result;
+    reader.onloadend = function () {
+      const base64data = reader.result;
+    };
   };
-};
 
-const publishGame = () => {
-  console.log("publish")
-}
-
-onBeforeMount(async () => {
-  try {
-    genres.value = await fetchGenres();
-    genres.value = genres.value.map(item => ({
-      ...item,
-      name: item.spanish_name
-    }));
-  } catch (err) {
-    //do nothing
+  const publishGame = () => {
+    console.log("publish")
   }
-});
 
-</script>
+  onBeforeMount(async () => {
+    try {
+      genres.value = await fetchGenres();
+      genres.value = genres.value.map(item => ({
+        ...item,
+        name: item.spanish_name
+      }));
+    } catch (err) {
+      //do nothing
+    }
+  });
 
-<style>
-.image-container {
-  position: relative;
-}
+  </script>
 
-.game-image {
-  width: 100%;
-  max-height: 500px;
-  display: block;
-}
+  <style>
+  .image-container {
+    position: relative;
+  }
 
-.delete-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #9b2a3a;
-  border: 2px solid #9b2a3a;
-  border-radius: 10px;
-  cursor: pointer;
-  outline: none;
-  transition: transform 0.2s;
-}
+  .game-image {
+    width: 100%;
+    max-height: 500px;
+    display: block;
+  }
 
-.delete-button:hover {
-  transform: scale(1.1);
-}
-</style>
+  .delete-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #9b2a3a;
+    border: 2px solid #9b2a3a;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.2s;
+  }
+
+  .delete-button:hover {
+    transform: scale(1.1);
+  }
+
+  .input-height {
+    height: 50px;
+  }
+  </style>
 
 
 
