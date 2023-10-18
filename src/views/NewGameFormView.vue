@@ -27,7 +27,7 @@
   <div class="card col-9 m-auto my-5 p-6">
     <form onsubmit="publishGame">
       <label class="block text-600 font-medium mb-2" for="email1">Título del juego</label>
-      <InputText id="email1" v-model="username" class="w-25rem mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
+      <InputText id="email1" v-model="name" class="w-25rem mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
 
     <label class="block text-600 font-medium mb-2" for="email1">Descripción</label>
@@ -57,36 +57,49 @@
     </div>
     <small id="username-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
 
-    <hr class="my-2">
-    <label class="block text-600 font-medium mb-2" for="email1">Logo de videojuego</label>
-    <FileUpload :auto="true" :chooseLabel="'Seleccionar logo'" accept="image/*" class="mb-5" customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadGameLogo" />
+    <label class="block text-600 font-medium mb-2 mt-5" for="logo">Logo de videojuego</label>
+      <!-- <FileUpload :auto="true" :chooseLabel="'Seleccionar logo'" accept="image/*" class="mb-5" customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadGameLogo" /> -->
+       <div class="flex gap-5">
+         <InputText id="logo" v-model="logoField" class="w-full mb-5 input-height" placeholder="URL de la imagen" style="padding: 1rem" type="text" />
+         <Button class="input-height" type="button" @click="loadLogoImage">Seleccionar Logo</Button>
+       </div>
+       <div v-if="logoURL" class="flip-card m-auto mb-5">
+         <div class="face front">
+           <img
+               :src="logoURL"
+               class="shadow-2 my-1 mx-0 preview-image"
+           />
+           <h3 class="text-center">{{ name }}</h3>
+         </div>
+       </div>
 
-      <!--<label class="block text-600 font-medium mb-2" for="email1">Imágenes</label>
-      <GameImagesUploader></GameImagesUploader>
-        <label class="block text-600 font-medium mb-2" for="images">Imágenes</label>
-        <div class="flex gap-5">
-          <InputText id="images" v-model="imageUrl" class="w-full mb-5 input-height" placeholder="URL de la imagen" style="padding: 1rem" type="text" />
-          <Button class="input-height" type="button" @click="loadImageDimensions">Agregar imagen</Button>
-        </div>
+         <!--<label class="block text-600 font-medium mb-2" for="email1">Imágenes</label>
+         <GameImagesUploader></GameImagesUploader>
+           <label class="block text-600 font-medium mb-2" for="images">Imágenes</label>
+           <div class="flex gap-5">
+             <InputText id="images" v-model="imageUrl" class="w-full mb-5 input-height" placeholder="URL de la imagen" style="padding: 1rem" type="text" />
+             <Button class="input-height" type="button" @click="loadImageDimensions">Agregar imagen</Button>
+           </div>
 
-      <p v-if="imageWidth !== null && imageHeight !== null">
-        Resolución de la imagen: {{ imageWidth }}x{{ imageHeight }}
-      </p>
-      <div class="w-full">
-        <Galleria :value="images" :responsiveOptions="galleryResponsiveOptions" :numVisible="5" containerStyle="max-width: 640px; margin: auto"
-                   :showThumbnails="false" :showItemNavigatorsOnHover="true" :showIndicators="true" :circular="true"
-                   :changeItemOnIndicatorHover="true" :key="galleryRefreshKey">
-          <template #item="slotProps" >
-            <div class="image-container">
-              <img :src="slotProps.item?.itemImageSrc" :alt="slotProps.item?.alt" class="game-image" />
-              <button class="delete-button" @click="removeImage(slotProps.item)" type="button">
-                <i class="pi pi-trash" style="color: white; font-size: 24px;"></i>
-              </button>
-            </div>
-          </template>
-        </Galleria>
-      </div>-->
-      <GameImageManager v-model:images="images" />
+         <p v-if="imageWidth !== null && imageHeight !== null">
+           Resolución de la imagen: {{ imageWidth }}x{{ imageHeight }}
+         </p>
+         <div class="w-full">
+           <Galleria :value="images" :responsiveOptions="galleryResponsiveOptions" :numVisible="5" containerStyle="max-width: 640px; margin: auto"
+                      :showThumbnails="false" :showItemNavigatorsOnHover="true" :showIndicators="true" :circular="true"
+                      :changeItemOnIndicatorHover="true" :key="galleryRefreshKey">
+             <template #item="slotProps" >
+               <div class="image-container">
+                 <img :src="slotProps.item?.itemImageSrc" :alt="slotProps.item?.alt" class="game-image" />
+                 <button class="delete-button" @click="removeImage(slotProps.item)" type="button">
+                   <i class="pi pi-trash" style="color: white; font-size: 24px;"></i>
+                 </button>
+               </div>
+             </template>
+           </Galleria>
+         </div>-->
+      <label class="block text-600 font-medium mb-2" for="images">Imágenes</label>
+      <GameImageManager id="images" v-model:images="images" />
         {{images}}
       <Button :loading="false" class="p-2 mt-3" label="Publicar videojuego" style="float: right;" type="submit"></Button>
       </form>
@@ -101,6 +114,7 @@
   import Galleria from 'primevue/galleria';
   import GameImageManager from "@/components/GameImageManager.vue";
 
+  const name = ref("");
   const selectedReleaseDate = ref();
   const selectedGenres = ref([]);
   const selectedDevelopers = ref();
@@ -112,7 +126,9 @@
   //IMAGENES.
   //***************************************************************
   const images = ref([]);
-  const galleryRefreshKey = ref(0);
+  const logoField = ref("")
+  const logoURL = ref ("")
+  /*const galleryRefreshKey = ref(0);
   const galleryResponsiveOptions = ref([
     {
       breakpoint: '991px',
@@ -156,7 +172,11 @@
   const removeImage = (imageToBeRemoved) => {
     images.value = images.value.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
     galleryRefreshKey.value++; //Se usa esta key para refrescar el component gallery asi se ven reflejados los cambios.
-  };
+  };*/
+
+  const loadLogoImage = () => {
+    logoURL.value = logoField.value
+  }
 
 
   //***************************************************************
@@ -246,6 +266,49 @@
 
   .input-height {
     height: 50px;
+  }
+
+  .flip-card {
+    position: relative;
+    width: 25rem;
+    height: 28rem;
+    margin: 10px;
+  }
+
+  .flip-card .face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .flip-card .front {
+    box-shadow: 0 5px 10px #000;
+  }
+
+  .flip-card .front img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .flip-card .front h3 {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 45px;
+    line-height: 45px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.4);
+    text-align: center;
+  }
+
+  .preview-image {
+    max-width: 350px; /* Ancho máximo */
+    max-height: 392px; /* Alto máximo */
   }
   </style>
 
