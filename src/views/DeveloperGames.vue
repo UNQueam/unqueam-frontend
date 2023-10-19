@@ -104,6 +104,9 @@ const iconClass = computed(() => {
   }
 });
 
+const goToNewGameForm = () => {
+  router.push("/dev/games/publish")
+}
 
 </script>
 
@@ -136,7 +139,7 @@ const iconClass = computed(() => {
         </div>
       </div>
       <div class="mt-3 lg:mt-0">
-        <Button label="Publicar" class=" mr-2" icon="pi pi-plus"></Button>
+        <Button class=" mr-2" icon="pi pi-plus" label="Publicar" @click="goToNewGameForm"></Button>
       </div>
     </div>
   </div>

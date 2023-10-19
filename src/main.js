@@ -10,6 +10,7 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 import Vuelidate from 'vuelidate';
 import Tooltip from 'primevue/tooltip';
+import Galleria from 'primevue/galleria';
 
 import PrimeVue from 'primevue/config';
 import '@/assets/styles.scss';
@@ -46,6 +47,8 @@ import InlineMessage from "primevue/inlinemessage";
 import ConfirmDialog from "primevue/confirmdialog";
 import Paginator from "primevue/paginator";
 import Textarea from "primevue/textarea";
+import FileUpload from "primevue/fileupload";
+import Chips from "primevue/chips";
 
 const app = createApp(App)
 
@@ -64,7 +67,9 @@ app.provide("axios", app.config.globalProperties.axios);
 
 //Primevue components
 app.component('DataView', DataView);
+app.component('Chips', Chips);
 app.component('Textarea', Textarea);
+app.component('FileUpload', FileUpload);
 app.component('InlineMessage', InlineMessage);
 app.component('DataViewLayoutOptions', DataViewLayoutOptions);
 app.component('Dropdown', Dropdown);
@@ -93,6 +98,7 @@ app.component('Slider', Slider)
 app.component('TriStateCheckbox', TriStateCheckbox)
 app.component('Tag', Tag)
 app.directive('tooltip', Tooltip);
+app.directive('Galleria', Galleria);
 
 app.component('Password', Password)
 

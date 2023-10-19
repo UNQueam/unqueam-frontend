@@ -178,7 +178,7 @@ const handleLogout = () => {
 };
 
 const handleGoToDeveloperGames = () => {
-  router.push({path: '/dev/' + authStore.getUserId + '/games'});
+  router.push({path: '/dev/games'});
 };
 
 </script>
