@@ -24,84 +24,61 @@
     </div>
   </div>
 
-  <div class="card col-9 m-auto my-5 p-6">
-    <form onsubmit="publishGame">
-      <label class="block text-600 font-medium mb-2" for="email1">Título del juego</label>
-      <InputText id="email1" v-model="name" class="w-25rem mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
+  <div class="card col-9 m-auto my-5 p-6 ">
+    <form @submit.prevent="publishGame">
+      <label class="block text-600 font-medium mb-2" for="name">Título del juego</label>
+      <InputText id="name" v-model="name" class="md:w-25rem w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
+      <label class="block text-600 font-medium mb-2" for="description">Descripción</label>
+      <Textarea id="description" v-model="description" class="w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
-    <label class="block text-600 font-medium mb-2" for="email1">Descripción</label>
-    <Textarea id="email1" v-model="username" class="w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
+      <label class="block text-600 font-medium mb-2" for="game">Link al github pages</label>
+      <InputText id="game" v-model="gameUrl" class="w-full mb-5" placeholder="El enlace al deploy en github pages" style="padding: 1rem" type="text" />
 
-    <hr class="my-2">
+      <label class="block text-600 font-medium mb-2" for="devTeam">Equipo desarrollador</label>
+      <InputText id="devTeam" v-model="devTeam" class="w-full mb-5" placeholder="El nombre del equipo desarrollador" style="padding: 1rem" type="text" />
 
-    <label class="block text-600 font-medium mb-2" for="email1">Equipo desarrollador</label>
-    <InputText id="email1" v-model="username" class="w-full mb-5" placeholder="El nombre del equipo desarrollador" style="padding: 1rem" type="text" />
+      <label class="block text-600 font-medium mb-2" for="release">Fecha de lanzamiento</label>
+      <Calendar id="release" v-model="selectedReleaseDate" :maxDate="maxReleaseDate" class="w-full mb-5 input-height" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" showButtonBar showIcon/>
 
-    <label class="block text-600 font-medium mb-2" for="email1">Fecha de lanzamiento</label>
-    <Calendar v-model="selectedReleaseDate" :maxDate="maxReleaseDate" class="w-full mb-5" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" showButtonBar showIcon/>
+      <label class="block text-600 font-medium mb-2 " for="genres">Géneros</label>
+      <MultiSelect id="genres" v-model="selectedGenres" :maxSelectedLabels="10" :options="genres" class="w-full md:w-25rem input-height align-items-center" display="chip" filter
+                     optionLabel="name" placeholder="Seleccionar géneros" />
 
-    <label class="block text-600 font-medium mb-2" for="email1">Géneros</label>
-    <MultiSelect v-model="selectedGenres" :maxSelectedLabels="10" :options="genres" class="w-full md:w-25rem mb-5" display="chip" filter
-                   optionLabel="name" placeholder="Seleccionar géneros" />
+      <label class="block text-600 font-medium mb-2 mt-5" for="devs">Desarrolladores</label>
+      <div class="p-fluid">
+        <Chips id="devs" v-model="selectedDevelopers" separator="," class="input-height" placeholder="Desarrolladores">
+          <template #chip="slotProps">
+            <div>
+              <span>{{ slotProps.value }}</span>
+            </div>
+          </template>
+        </Chips>
+      </div>
+      <small id="username-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
 
-    <label class="block text-600 font-medium mb-2 mt-5" for="email1">Desarrolladores</label>
-    <div class="p-fluid">
-      <Chips v-model="selectedDevelopers" separator=",">
-        <template #chip="slotProps">
-          <div>
-            <span>{{ slotProps.value }}</span>
-          </div>
-        </template>
-      </Chips>
-    </div>
-    <small id="username-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
-
-    <label class="block text-600 font-medium mb-2 mt-5" for="logo">Logo de videojuego</label>
+      <label class="block text-600 font-medium mb-2 mt-5" for="logo">Logo de videojuego</label>
       <!-- <FileUpload :auto="true" :chooseLabel="'Seleccionar logo'" accept="image/*" class="mb-5" customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadGameLogo" /> -->
        <div class="flex gap-5">
-         <InputText id="logo" v-model="logoField" class="w-full mb-5 input-height" placeholder="URL de la imagen" style="padding: 1rem" type="text" />
+         <InputText id="logo" v-model="logoField" class="w-full input-height" placeholder="URL de la imagen" style="padding: 1rem" type="text" />
          <Button class="input-height" type="button" @click="loadLogoImage">Seleccionar Logo</Button>
        </div>
-       <div v-if="logoURL" class="flip-card m-auto mb-5">
-         <div class="face front">
-           <img
-               :src="logoURL"
-               class="shadow-2 my-1 mx-0 preview-image"
-           />
-           <h3 class="text-center">{{ name }}</h3>
-         </div>
-       </div>
-
-         <!--<label class="block text-600 font-medium mb-2" for="email1">Imágenes</label>
-         <GameImagesUploader></GameImagesUploader>
-           <label class="block text-600 font-medium mb-2" for="images">Imágenes</label>
-           <div class="flex gap-5">
-             <InputText id="images" v-model="imageUrl" class="w-full mb-5 input-height" placeholder="URL de la imagen" style="padding: 1rem" type="text" />
-             <Button class="input-height" type="button" @click="loadImageDimensions">Agregar imagen</Button>
+      <small class="mb-5" id="logo-help">Resolucion recomendada: 1024x1024.</small>
+         <div v-if="logoURL" class="flip-card m-auto mb-5">
+           <div class="face front">
+             <img
+                 :src="logoURL"
+                 class="shadow-2 my-1 mx-0 preview-image"
+             />
+             <h3 class="text-center">{{ name }}</h3>
            </div>
+         </div>
+        <label class="block text-600 font-medium mt-5 mb-2" for="images">Imágenes</label>
+        <GameImageManager id="images" v-model:images="images" class="mb-5"/>
+        <div class="flex flex-row justify-content-end">
+          <Button :loading="false" class="input-height" label="Publicar videojuego" type="submit"></Button>
+        </div>
 
-         <p v-if="imageWidth !== null && imageHeight !== null">
-           Resolución de la imagen: {{ imageWidth }}x{{ imageHeight }}
-         </p>
-         <div class="w-full">
-           <Galleria :value="images" :responsiveOptions="galleryResponsiveOptions" :numVisible="5" containerStyle="max-width: 640px; margin: auto"
-                      :showThumbnails="false" :showItemNavigatorsOnHover="true" :showIndicators="true" :circular="true"
-                      :changeItemOnIndicatorHover="true" :key="galleryRefreshKey">
-             <template #item="slotProps" >
-               <div class="image-container">
-                 <img :src="slotProps.item?.itemImageSrc" :alt="slotProps.item?.alt" class="game-image" />
-                 <button class="delete-button" @click="removeImage(slotProps.item)" type="button">
-                   <i class="pi pi-trash" style="color: white; font-size: 24px;"></i>
-                 </button>
-               </div>
-             </template>
-           </Galleria>
-         </div>-->
-      <label class="block text-600 font-medium mb-2" for="images">Imágenes</label>
-      <GameImageManager id="images" v-model:images="images" />
-        {{images}}
-      <Button :loading="false" class="p-2 mt-3" label="Publicar videojuego" style="float: right;" type="submit"></Button>
       </form>
     </div>
     <Toast position="top-right"/>
@@ -110,11 +87,12 @@
   <script setup>
   import {onBeforeMount, ref} from "vue";
   import {fetchGenres} from "@/service/GenresService";
-  import GameImagesUploader from "@/components/GameImagesUploader.vue";
-  import Galleria from 'primevue/galleria';
   import GameImageManager from "@/components/GameImageManager.vue";
 
   const name = ref("");
+  const gameUrl = ref("");
+  const description = ref("");
+  const devTeam = ref("");
   const selectedReleaseDate = ref();
   const selectedGenres = ref([]);
   const selectedDevelopers = ref();
@@ -128,69 +106,38 @@
   const images = ref([]);
   const logoField = ref("")
   const logoURL = ref ("")
-  /*const galleryRefreshKey = ref(0);
-  const galleryResponsiveOptions = ref([
-    {
-      breakpoint: '991px',
-      numVisible: 4
-    },
-    {
-      breakpoint: '767px',
-      numVisible: 3
-    },
-    {
-      breakpoint: '575px',
-      numVisible: 1
-    }
-  ]);
-
-
-  const imageUrl = ref("");
-  const nextImgId = ref(0)
-  const imageWidth = ref(null);
-  const imageHeight = ref(null);
-
-  const loadImageDimensions = () => {
-    //ACA HAY QUE VER EL TEMA VALIDACIONES. Deje sentadas las bases para poder acceder al height y width y los imprimo abajo del input.
-    if (imageUrl.value) {
-      const img = new Image();
-      img.src = imageUrl.value;
-
-      img.onload = () => {
-        imageWidth.value = img.width;
-        imageHeight.value = img.height;
-      };
-      images.value.push(
-          {
-            id: nextImgId.value,
-            itemImageSrc: imageUrl.value
-          });
-      nextImgId.value = nextImgId.value + 1
-    }
-  };
-
-  const removeImage = (imageToBeRemoved) => {
-    images.value = images.value.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
-    galleryRefreshKey.value++; //Se usa esta key para refrescar el component gallery asi se ven reflejados los cambios.
-  };*/
 
   const loadLogoImage = () => {
     logoURL.value = logoField.value
   }
 
-
   //***************************************************************
 
+  const publishGame = () => {
+    console.log("publish")
+  }
+
+  onBeforeMount(async () => {
+    try {
+      genres.value = await fetchGenres();
+      genres.value = genres.value.map(item => ({
+        ...item,
+        name: item.spanish_name
+      }));
+    } catch (err) {
+      //do nothing
+    }
+  });
 
 
 
   /*
-  TODO:
+  IDEA PARA IMAGENES A FUTURO.
   - Sobre imagenes:
   falta validar que sean de una extension imagen el file que carga el user (jpg, png, etc)
   comprobar los sizes que no sean muy pesados
   lo mismo la resolucion, que no sea tan grande
-   */
+
   const uploadGameLogo = async (event) => {
     const file = event.files[0];
     console.log(file)
@@ -219,21 +166,7 @@
     };
   };
 
-  const publishGame = () => {
-    console.log("publish")
-  }
-
-  onBeforeMount(async () => {
-    try {
-      genres.value = await fetchGenres();
-      genres.value = genres.value.map(item => ({
-        ...item,
-        name: item.spanish_name
-      }));
-    } catch (err) {
-      //do nothing
-    }
-  });
+   */
 
   </script>
 
