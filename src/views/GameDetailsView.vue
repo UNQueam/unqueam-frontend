@@ -32,7 +32,6 @@ const getDeveloperNames = (developers) => {
     const nameStrings = developers.map(item => `${item.first_name} ${item.last_name}`);
     return nameStrings.join(', ');
   }
-  
 }
 
 onMounted(async () => {
@@ -106,8 +105,7 @@ onMounted(async () => {
         </div>
       </div>
   </div>
-
-  <GameCommentsCard></GameCommentsCard>
+  <GameCommentsCard v-if="gameData && gameId" :comments="gameData.comments ? gameData.comments : []" :game-id="gameId" :game-publisher="gameData?.publisher.username"/>
   <p class="m-5 opacity-0">.</p>
 </template>
 
