@@ -13,6 +13,8 @@ const router = useRouter()
 const authStore = useAuthStore();
 
 const games = ref([]);
+const commentsQuantity = ref(0);
+const avgRating = ref(0);
 const inputKey = ref('');
 const sortKey = ref();
 const sortOrder = ref();
@@ -28,11 +30,28 @@ const toast = useToast();
 onBeforeMount(async () => {
   try {
     games.value = await fetchDeveloperGames(authStore.getUsername);
-    console.log(games.value)
+    getGeneralMetrics();
   } catch (err) {
     //do nothing
   }
 });
+
+const getGeneralMetrics = () => {
+  let sumOfAvgRatings = 0;
+  let sumOfComments = 0;
+  games.value.forEach(game => {
+    if(game.comments) {
+      if (getGameAvgRating(game.comments) >= 1){
+        sumOfAvgRatings+= getGameAvgRating(game.comments);
+      }
+      sumOfComments+= game.comments.length
+    }
+  })
+  commentsQuantity.value = sumOfComments;
+  if (games.value.length) {
+    avgRating.value = Math.max(1,Math.round(sumOfAvgRatings / games.value.length));
+  }
+}
 
 const getGameAvgRating = (comments) => {
   if (comments) {
@@ -126,9 +145,8 @@ const goToNewGameForm = () => {
   router.push("/dev/games/publish")
 }
 
-const editGame = (event) => {
-  event.stopPropagation();
-  router.push("/dev/games/publish") //ACA HAY QUE MANDAR EL ID TAMBIEN.
+const editGame = (gameId) => {
+  router.push("/dev/games/"+ gameId + "/edit")
 }
 
 const filteredData = computed(() => {
@@ -162,11 +180,11 @@ const filteredData = computed(() => {
         <div class="flex align-items-center text-700 flex-wrap">
           <div class="mr-5 flex align-items-center mt-3">
             <i class="pi pi-star-fill mr-2 red"></i>
-            <span class="red">4.2 avg ratings</span>
+            <span class="red">{{avgRating}} avg ratings</span>
           </div>
           <div class="mr-5 flex align-items-center mt-3">
             <i class="pi pi-comment mr-2 red"></i>
-            <span class="red">50 comments</span>
+            <span class="red">{{ commentsQuantity }} comments</span>
           </div>
         </div>
       </div>
@@ -202,8 +220,8 @@ const filteredData = computed(() => {
                 </div>
               </div>
               <div class="font-bold text-600" style="font-size: 15px;">{{ slotProps.data.description }}</div>
-              <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'" @click="editGame"></Button>
+              <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2" @click="stopPropagation">
+                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'" @click="editGame(slotProps.data.id)"></Button>
                 <label v-tooltip="slotProps.data.is_hidden ? 'Exponer juego' : 'Ocultar juego'" class="switcher" @click="stopPropagation">
                   <input v-model="slotProps.data.is_hidden" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher(slotProps.data.id)">
                   <span class="switcher-slider">
