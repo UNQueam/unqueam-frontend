@@ -12,7 +12,7 @@ const router = useRouter()
 
 const authStore = useAuthStore();
 
-const games = ref();
+const games = ref([]);
 const inputKey = ref('');
 const sortKey = ref();
 const sortOrder = ref();
@@ -33,6 +33,25 @@ onBeforeMount(async () => {
     //do nothing
   }
 });
+
+const getGameAvgRating = (comments) => {
+  if (comments) {
+    let ratingsSum = 0;
+    comments.forEach((comment) => {
+      ratingsSum+= comment.rating
+    })
+    return ratingsSum / comments.length
+  }
+  return 0;
+}
+
+const getCommentsQuantity = (comments) => {
+  if (comments){
+    return comments.length;
+  }
+  return 0;
+
+}
 
 const onSortChange = (event) => {
   const value = event.value.value;
@@ -87,9 +106,8 @@ const toggleSwitcher = async (gameId) => {
 
 };
 
-const goToGame = () => {
-  console.log("go!")
-  //router.push("/games/1")
+const goToGame = (gameId) => {
+  router.push("/games/" + gameId)
 }
 
 const stopPropagation = (event) => {
@@ -107,6 +125,20 @@ const iconClass = computed(() => {
 const goToNewGameForm = () => {
   router.push("/dev/games/publish")
 }
+
+const editGame = (event) => {
+  event.stopPropagation();
+  router.push("/dev/games/publish") //ACA HAY QUE MANDAR EL ID TAMBIEN.
+}
+
+const filteredData = computed(() => {
+  const lowerCaseFilter = inputKey.value.toLowerCase()
+  return games.value.filter(
+      (item) =>
+          item.name.toLowerCase().includes(lowerCaseFilter) ||
+          item.description.toLowerCase().includes(lowerCaseFilter)
+  )
+})
 
 </script>
 
@@ -144,7 +176,7 @@ const goToNewGameForm = () => {
     </div>
   </div>
   <div class="card col-9 m-auto mt-5">
-    <DataView :value="games" paginator :rows="5" :sortOrder="sortOrder" :sortField="sortField">
+    <DataView :value="filteredData" paginator :rows="5" :sortOrder="sortOrder" :sortField="sortField">
       <template #header>
         <div class="flex sm:flex-column md:flex-column lg:flex-row flex-wrap gap-4">
           <div class="lg:col-4 md:col-3 sm:col-3">
@@ -156,22 +188,22 @@ const goToNewGameForm = () => {
         </div>
       </template>
       <template #list="slotProps">
-        <div class="col-12 clickeable-item" @click="goToGame">
+        <div class="col-12 clickeable-item" @click="goToGame(slotProps.data.id)">
           <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
             <img class=" product-image w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" :src="slotProps.data.logo_url" :alt="slotProps.data.name" />
             <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
               <div class="flex flex-column align-items-center sm:align-items-start gap-3">
                 <div class="text-2xl font-bold text-900 xl:w-10rem">{{ slotProps.data.name }}</div>
-                <Rating :modelValue="slotProps.data.rating" readonly :cancel="false"></Rating>
+                <Rating :modelValue="getGameAvgRating(slotProps.data.comments)" readonly :cancel="false"></Rating>
                 <div class="flex align-items-center gap-3">
                                     <span class="flex align-items-center gap-2">
-                                        <span class="font-semibold">{{ slotProps.data.comments }} comentarios</span>
+                                        <span class="font-semibold">{{ getCommentsQuantity(slotProps.data.comments) }} comentarios</span>
                                     </span>
                 </div>
               </div>
               <div class="font-bold text-600" style="font-size: 15px;">{{ slotProps.data.description }}</div>
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
-                <Button icon="pi pi-pencil" rounded :disabled="slotProps.data.inventoryStatus === 'OUTOFSTOCK'" v-tooltip="'Editar juego'"></Button>
+                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'" @click="editGame"></Button>
                 <label v-tooltip="slotProps.data.is_hidden ? 'Exponer juego' : 'Ocultar juego'" class="switcher" @click="stopPropagation">
                   <input v-model="slotProps.data.is_hidden" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher(slotProps.data.id)">
                   <span class="switcher-slider">
