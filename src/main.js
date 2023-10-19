@@ -9,6 +9,7 @@ import router from './router'
 import axios from "axios";
 import VueAxios from "vue-axios";
 import Vuelidate from 'vuelidate';
+import Tooltip from 'primevue/tooltip';
 
 import PrimeVue from 'primevue/config';
 import '@/assets/styles.scss';
@@ -45,11 +46,8 @@ import InlineMessage from "primevue/inlinemessage";
 import ConfirmDialog from "primevue/confirmdialog";
 import Paginator from "primevue/paginator";
 import Textarea from "primevue/textarea";
-import Tooltip from 'primevue/tooltip';
 
 const app = createApp(App)
-
-app.directive('tooltip', Tooltip);
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedState)
@@ -94,6 +92,7 @@ app.component('InputNumber', InputNumber)
 app.component('Slider', Slider)
 app.component('TriStateCheckbox', TriStateCheckbox)
 app.component('Tag', Tag)
+app.directive('tooltip', Tooltip);
 
 app.component('Password', Password)
 

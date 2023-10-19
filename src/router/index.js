@@ -9,6 +9,7 @@ import RegisterView from "@/views/RegisterView.vue";
 import {useAuthStore} from "@/stores/authStore";
 import AccessDenied from "@/views/AccessDenied.vue";
 import PetitionsView from "@/views/DeveloperRequestsView.vue";
+import DeveloperGames from "@/views/DeveloperGames.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,13 @@ const router = createRouter({
       name: 'GameDetails',
       component: GameDetailsView,
       props: true
+    },
+    {
+      path: '/dev/:id/games',
+      name: 'DeveloperGames',
+      component: DeveloperGames,
+      props: true,
+      meta: { requiresAuth: true, requiredRole: 'developer' }
     },
     {
       path: '/register',

@@ -33,6 +33,10 @@
                 <i class="pi pi-box" />
                 <span class="ml-2">Ser desarrollador</span>
               </button>
+              <button v-if="authStore.isDeveloper()" class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="handleGoToDeveloperGames">
+                <i class="pi pi-box" />
+                <span class="ml-2">Mis Juegos</span>
+              </button>
               <hr class="my-2" v-if="authStore.isUser()"/>
               <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="handleLogout">
                 <i class="pi pi-sign-out" />
@@ -171,6 +175,10 @@ const handleLogout = () => {
       }
     }
   });
+};
+
+const handleGoToDeveloperGames = () => {
+  router.push({path: '/dev/' + authStore.getUserId + '/games'});
 };
 
 </script>
