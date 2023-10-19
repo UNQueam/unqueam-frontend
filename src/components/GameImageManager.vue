@@ -15,7 +15,7 @@
                 :changeItemOnIndicatorHover="true" :key="galleryRefreshKey">
         <template #item="slotProps" >
           <div class="image-container">
-            <img :src="slotProps.item?.itemImageSrc" :alt="slotProps.item?.alt" class="game-image" />
+            <img :src="slotProps.item?.url" :alt="slotProps.item?.alt" class="game-image" />
             <button class="delete-button" @click="removeImage(slotProps.item)" type="button">
               <i class="pi pi-trash" style="color: white; font-size: 24px;"></i>
             </button>
@@ -27,17 +27,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import Galleria from 'primevue/galleria';
 
 const imageUrl = ref('');
 const imageWidth = ref(null);
 const imageHeight = ref(null);
 const { images } = defineProps(['images']);
-const localImages = ref(images);
-const emit = defineEmits(['update:images']);
+const emit = defineEmits(['remove-image', 'add-image']);
 const galleryRefreshKey = ref(0);
-const nextImgId = ref(0)
+const nextImgId = ref(999)
+
 const galleryResponsiveOptions = ref([
   {
     breakpoint: '991px',
@@ -63,18 +63,22 @@ const loadImageDimensions = () => {
       imageWidth.value = img.width;
       imageHeight.value = img.height;
     };
-    localImages.value.push({
-      id: localImages.value.length,
-      itemImageSrc: imageUrl.value,
-    });
+    const newImage = {
+      id: nextImgId.value,
+      url: imageUrl.value,
+    };
+    nextImgId.value++;
 
-    nextImgId.value = nextImgId.value + 1
-    emit('update:images', localImages.value);
+    //emit('update:images', localImages);
+    emit('add-image', newImage);
   }
 };
-
 const removeImage = (imageToBeRemoved) => {
-  localImages.value = localImages.value.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
+  emit('remove-image', imageToBeRemoved);
+  galleryRefreshKey.value++;
+};
+
+const removeImaged = (imageToBeRemoved) => {
   galleryRefreshKey.value++; //Se usa esta key para refrescar el component gallery asi se ven reflejados los cambios.
   emit('update:images', localImages.value);
 };

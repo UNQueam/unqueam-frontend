@@ -27,27 +27,27 @@
   <div class="card col-9 m-auto my-5 p-6 ">
     <form @submit.prevent="publishGame">
       <label class="block text-600 font-medium mb-2" for="name">Título del juego</label>
-      <InputText id="name" v-model="name" class="md:w-25rem w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
+      <InputText id="name" v-model="game.name" class="md:w-25rem w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
       <label class="block text-600 font-medium mb-2" for="description">Descripción</label>
-      <Textarea id="description" v-model="description" class="w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
+      <Textarea id="description" v-model="game.description" class="w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
       <label class="block text-600 font-medium mb-2" for="game">Link al github pages</label>
-      <InputText id="game" v-model="gameUrl" class="w-full mb-5" placeholder="El enlace al deploy en github pages" style="padding: 1rem" type="text" />
+      <InputText id="game" v-model="game.link_to_game" class="w-full mb-5" placeholder="El enlace al deploy en github pages" style="padding: 1rem" type="text" />
 
       <label class="block text-600 font-medium mb-2" for="devTeam">Equipo desarrollador</label>
-      <InputText id="devTeam" v-model="devTeam" class="w-full mb-5" placeholder="El nombre del equipo desarrollador" style="padding: 1rem" type="text" />
+      <InputText id="devTeam" v-model="game.development_team" class="w-full mb-5" placeholder="El nombre del equipo desarrollador" style="padding: 1rem" type="text" />
 
       <label class="block text-600 font-medium mb-2" for="release">Fecha de lanzamiento</label>
-      <Calendar id="release" v-model="selectedReleaseDate" :maxDate="maxReleaseDate" class="w-full mb-5 input-height" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" showButtonBar showIcon/>
+      <Calendar id="release" v-model="game.release_date" :maxDate="maxReleaseDate" class="w-full mb-5 input-height" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" showButtonBar showIcon/>
 
       <label class="block text-600 font-medium mb-2 " for="genres">Géneros</label>
-      <MultiSelect id="genres" v-model="selectedGenres" :maxSelectedLabels="10" :options="genres" class="w-full md:w-25rem input-height align-items-center" display="chip" filter
+      <MultiSelect id="genres" v-model="game.genres" :maxSelectedLabels="10" :options="genres" class="w-full md:w-25rem input-height align-items-center" display="chip" filter
                      optionLabel="name" placeholder="Seleccionar géneros" />
 
       <label class="block text-600 font-medium mb-2 mt-5" for="devs">Desarrolladores</label>
       <div class="p-fluid">
-        <Chips id="devs" v-model="selectedDevelopers" separator="," class="input-height" placeholder="Desarrolladores">
+        <Chips id="devs" v-model="game.developers" separator="," class="input-height" placeholder="">
           <template #chip="slotProps">
             <div>
               <span>{{ slotProps.value }}</span>
@@ -64,17 +64,17 @@
          <Button class="input-height" type="button" @click="loadLogoImage">Seleccionar Logo</Button>
        </div>
       <small class="mb-5" id="logo-help">Resolucion recomendada: 1024x1024.</small>
-         <div v-if="logoURL" class="flip-card m-auto mb-5">
+         <div v-if="game.logo_url" class="flip-card m-auto mb-5">
            <div class="face front">
              <img
-                 :src="logoURL"
+                 :src="game.logo_url"
                  class="shadow-2 my-1 mx-0 preview-image"
              />
-             <h3 class="text-center">{{ name }}</h3>
+             <h3 class="text-center">{{ game.name }}</h3>
            </div>
          </div>
         <label class="block text-600 font-medium mt-5 mb-2" for="images">Imágenes</label>
-        <GameImageManager id="images" v-model:images="images" class="mb-5"/>
+        <GameImageManager id="images" v-model:images="game.images" class="mb-5" @remove-image="handleRemoveImage" @add-image="handleAddImage"/>
         <div class="flex flex-row justify-content-end">
           <Button :loading="false" class="input-height" label="Publicar videojuego" type="submit"></Button>
         </div>
@@ -85,36 +85,49 @@
   </template>
 
   <script setup>
-  import {onBeforeMount, ref} from "vue";
+  import {computed, onBeforeMount, ref} from "vue";
   import {fetchGenres} from "@/service/GenresService";
   import GameImageManager from "@/components/GameImageManager.vue";
+  import {useRoute, useRouter} from "vue-router";
+  import {fetchGame} from "@/service/GamesService";
 
-  const name = ref("");
-  const gameUrl = ref("");
-  const description = ref("");
-  const devTeam = ref("");
-  const selectedReleaseDate = ref();
-  const selectedGenres = ref([]);
-  const selectedDevelopers = ref();
+  // Handle edition --------------------------------------
+  const router = useRouter();
+  const route = useRoute();
+  const gameId = computed(() => route.params.id);
+
+  const isEditMode = computed(() => !!gameId.value);
+  //------------------------------------------------------
+
+  const game = ref({
+    name: "",
+    link_to_game: "",
+    description: "",
+    development_team: "",
+    release_date: null,
+    genres: [],
+    developers: null,
+    images: [],
+    logo_url: ""
+  })
 
   const genres = ref([])
-
   const maxReleaseDate = ref(new Date());
-
-  //IMAGENES.
-  //***************************************************************
-  const images = ref([]);
   const logoField = ref("")
-  const logoURL = ref ("")
 
   const loadLogoImage = () => {
-    logoURL.value = logoField.value
+    game.value.logo_url = logoField.value
   }
 
-  //***************************************************************
-
   const publishGame = () => {
-    console.log("publish")
+    if (isEditMode.value) {
+      //await updateGame(gameId.value, game.value);
+      console.log(game)
+      console.log("Game updated");
+    } else {
+      //await createGame(game.value);
+      console.log("Game created");
+    }
   }
 
   onBeforeMount(async () => {
@@ -124,11 +137,27 @@
         ...item,
         name: item.spanish_name
       }));
+      if (isEditMode.value) {
+        //TIRAR UN ACCESS DENIED SI CORRESPONDE.
+        const existingGame = await fetchGame(gameId.value);
+        game.value = {...game.value, ...existingGame};
+        game.value.genres = game.value.genres.map(item => ({
+          ...item,
+          name: item.spanish_name
+        }));
+        console.log(game.value)
+      }
     } catch (err) {
       //do nothing
     }
   });
 
+  const handleRemoveImage = (imageToBeRemoved) => {
+    game.value.images = game.value.images.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
+  };
+  const handleAddImage = (newImage) => {
+    game.value.images.push(newImage);
+  };
 
 
   /*

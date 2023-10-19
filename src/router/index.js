@@ -41,6 +41,13 @@ const router = createRouter({
       meta: { requiresAuth: true, requiredRole: 'developer' }
     },
     {
+      path: '/dev/games/:id/edit',
+      name: 'EditGame',
+      component: NewGameFormView,
+      props: true,
+      meta: { requiresAuth: true, requiredRole: 'developer' }
+    },
+    {
       path: '/register',
       name: 'Register',
       component: RegisterView
