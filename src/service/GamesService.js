@@ -1,6 +1,8 @@
 import axios from 'axios';
 import router from '@/router/index.js';
-import {useAuthStore} from "../stores/authStore";
+
+import {useAuthStore} from "@/stores/authStore";
+
 const apiService = axios.create({
     baseURL: 'http://localhost:8080/api/games',
   });
@@ -69,3 +71,80 @@ function handleRequestError(error) {
         router.push('/500');
     }
 }
+
+export const publishComment = async ({gameId, content, rating}) => {
+    try {
+        const response = await apiService.post(`/${gameId}/comments`,
+            {
+                content: content,
+                rating: rating
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+            router.push('/404');
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            router.push('/500');
+        }
+    }
+};
+
+export const editComment = async ({gameId, commentId, content, rating}) => {
+    try {
+        const response = await apiService.put(`/${gameId}/comments/${commentId}`,
+            {
+                content: content,
+                rating: rating
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+            router.push('/404');
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            router.push('/500');
+        }
+    }
+};
+
+export const deleteComment = async ({gameId, commentId}) => {
+    try {
+        const response = await apiService.delete(`/${gameId}/comments/${commentId}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+            router.push('/404');
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            router.push('/500');
+        }
+    }
+};

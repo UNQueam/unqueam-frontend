@@ -42,7 +42,6 @@ class AuthenticationService {
         try {
             // @ts-ignore
             const authToken = this.authStore.getAuthToken();
-            console.log(authToken)
             const headers = {
                 'Authorization': `Bearer ${authToken}`
             };

@@ -25,7 +25,6 @@ export const fetchRequests = async () => {
         });
         let requests = response.data;
         requests.forEach(user => user.timestamp = formatDate(user.timestamp))
-        console.log(requests)
         return requests
     } catch (error) {
         if(error.response && error.response.status === 404){

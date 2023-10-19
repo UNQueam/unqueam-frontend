@@ -23,6 +23,7 @@ const customErrors = {
 const customValidators = [
    "$externalResults",
    "passwordRegexVal",
+    "commentRating"
 ]
   
 export const getCustomError = (field, validator, error) => {
