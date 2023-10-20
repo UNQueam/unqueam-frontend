@@ -17,7 +17,8 @@ export const useAuthStore = defineStore('auth', {
     },
     getters: {
         getUsername: (state) => state.authenticationInfo?.username || '',
-        getUserRole: (state) => state.authenticationInfo?.role || ''
+        getUserRole: (state) => state.authenticationInfo?.role || '',
+        getUserId: (state) => state.authenticationInfo?.userId || ''
     },
 
     actions: {
@@ -40,6 +41,9 @@ export const useAuthStore = defineStore('auth', {
         },
         isAdmin(): boolean {
             return this.authenticationInfo?.role.toLowerCase() === 'admin';
+        },
+        isDeveloper(): boolean {
+            return this.authenticationInfo?.role.toLowerCase() === 'developer';
         },
         isUser(): boolean {
             return this.authenticationInfo?.role.toLowerCase() === 'user';
