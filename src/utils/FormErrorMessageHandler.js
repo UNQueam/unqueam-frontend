@@ -18,12 +18,40 @@ const customErrors = {
       required: 'La confirmación de contraseña es requerida',
       sameAsPassword: 'Las contraseñas no coinciden',
     },
+    name: {
+        required: 'El nombre es requerido',
+    },
+    link_to_game: {
+        required: 'El enlace al videojuego es requerido',
+    },
+    description: {
+        required: 'La descripción es requerida',
+    },
+    development_team: {
+        required: 'El nombre del equipo de desarrollo es requerido',
+    },
+    release_date: {
+        required: 'La fecha de lanzamiento es requerida',
+    },
+    genres: {
+        required: 'Los géneros son requeridos',
+    },
+    developers: {
+        required: 'Los nombres de los desarrolladores son requeridos',
+    },
+    images: {
+        required: 'Debe haber al menos una imágen',
+    },
+    logo_url: {
+        required: 'El enlace al logo es requerido',
+    },
   };
 
 const customValidators = [
    "$externalResults",
    "passwordRegexVal",
-    "commentRating"
+    "commentRating",
+    "linkToGameRegex"
 ]
   
 export const getCustomError = (field, validator, error) => {

@@ -239,6 +239,7 @@ const filteredData = computed(() => {
       </template>
     </DataView>
   </div>
+  <hr class="my-5">
   <Toast position="top-right"/>
 </template>
 

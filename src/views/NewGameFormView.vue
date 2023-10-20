@@ -14,12 +14,12 @@
         <i class="pi pi-angle-right text-500 line-height-3"></i>
       </li>
       <li>
-        <span class="text-900 line-height-3">Publicar</span>
+        <span class="text-900 line-height-3">{{ isEditMode ? 'Editar' : 'Publicar' }}</span>
       </li>
     </ul>
     <div class="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
       <div>
-        <div class="font-medium text-3xl text-900">Publicar</div>
+        <div class="font-medium text-3xl text-900">{{ isEditMode ? 'Editar' : 'Publicar' }}</div>
       </div>
     </div>
   </div>
@@ -27,23 +27,47 @@
   <div class="card col-9 m-auto my-5 p-6 ">
     <form @submit.prevent="publishGame">
       <label class="block text-600 font-medium mb-2" for="name">Título del juego</label>
-      <InputText id="name" v-model="game.name" class="md:w-25rem w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
+      <InputText id="name" v-model="game.name" class="md:w-25rem w-full" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
-      <label class="block text-600 font-medium mb-2" for="description">Descripción</label>
-      <Textarea id="description" v-model="game.description" class="w-full mb-5" placeholder="El título del juego" style="padding: 1rem" type="text" />
+      <div class="error-container">
+        <small v-for="error of v$.name.$errors" :key="error.$uid" class="p-error">{{ getCustomError("name", error.$validator, error) + ". " }}</small>
+      </div>
 
-      <label class="block text-600 font-medium mb-2" for="game">Link al github pages</label>
-      <InputText id="game" v-model="game.link_to_game" class="w-full mb-5" placeholder="El enlace al deploy en github pages" style="padding: 1rem" type="text" />
+      <label class="block text-600 font-medium mb-2 mt-5" for="description">Descripción</label>
+      <Textarea id="description" v-model="game.description" class="w-full" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
-      <label class="block text-600 font-medium mb-2" for="devTeam">Equipo desarrollador</label>
-      <InputText id="devTeam" v-model="game.development_team" class="w-full mb-5" placeholder="El nombre del equipo desarrollador" style="padding: 1rem" type="text" />
+      <div class="error-container">
+        <small v-for="error of v$.description.$errors" :key="error.$uid" class="p-error">{{ getCustomError("description", error.$validator, error) + ". " }}</small>
+      </div>
 
-      <label class="block text-600 font-medium mb-2" for="release">Fecha de lanzamiento</label>
-      <Calendar id="release" v-model="game.release_date" :maxDate="maxReleaseDate" class="w-full mb-5 input-height" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" showButtonBar showIcon/>
+      <label class="block text-600 font-medium mb-2 mt-5" for="game">Link al github pages</label>
+      <InputText id="game" v-model="game.link_to_game" class="w-full" placeholder="El enlace al deploy en github pages" style="padding: 1rem" type="text" />
 
-      <label class="block text-600 font-medium mb-2 " for="genres">Géneros</label>
+      <div class="error-container">
+        <small v-for="error of v$.link_to_game.$errors" :key="error.$uid" class="p-error">{{ getCustomError("link_to_game", error.$validator, error) + ". " }}</small>
+      </div>
+
+      <label class="block text-600 font-medium mb-2 mt-5" for="devTeam">Equipo desarrollador</label>
+      <InputText id="devTeam" v-model="game.development_team" class="w-full " placeholder="El nombre del equipo desarrollador" style="padding: 1rem" type="text" />
+
+      <div class="error-container">
+        <small v-for="error of v$.development_team.$errors" :key="error.$uid" class="p-error">{{ getCustomError("development_team", error.$validator, error) + ". " }}</small>
+      </div>
+
+      <label class="block text-600 font-medium mb-2 mt-5" for="release">Fecha de lanzamiento</label>
+      <Calendar id="release" v-model="game.release_date" :maxDate="maxReleaseDate" class="w-full input-height" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" showButtonBar showIcon/>
+
+      <div class="error-container">
+        <small v-for="error of v$.release_date.$errors" :key="error.$uid" class="p-error">{{ getCustomError("release_date", error.$validator, error) + ". " }}</small>
+      </div>
+
+      <label class="block text-600 font-medium mb-2 mt-5" for="genres">Géneros</label>
       <MultiSelect id="genres" v-model="game.genres" :maxSelectedLabels="10" :options="genres" class="w-full md:w-25rem input-height align-items-center" display="chip" filter
                      optionLabel="name" placeholder="Seleccionar géneros" />
+
+      <div class="error-container">
+        <small v-for="error of v$.genres.$errors" :key="error.$uid" class="p-error">{{ getCustomError("genres", error.$validator, error) + ". " }}</small>
+      </div>
 
       <label class="block text-600 font-medium mb-2 mt-5" for="devs">Desarrolladores</label>
       <div class="p-fluid">
@@ -56,6 +80,10 @@
         </Chips>
       </div>
       <small id="username-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
+
+      <div class="error-container">
+        <small v-for="error of v$.developers.$errors" :key="error.$uid" class="p-error">{{ getCustomError("developers", error.$validator, error) + ". " }}</small>
+      </div>
 
       <label class="block text-600 font-medium mb-2 mt-5" for="logo">Logo de videojuego</label>
       <!-- <FileUpload :auto="true" :chooseLabel="'Seleccionar logo'" accept="image/*" class="mb-5" customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadGameLogo" /> -->
@@ -73,14 +101,23 @@
              <h3 class="text-center">{{ game.name }}</h3>
            </div>
          </div>
-        <label class="block text-600 font-medium mt-5 mb-2" for="images">Imágenes</label>
-        <GameImageManager id="images" v-model:images="game.images" class="mb-5" @remove-image="handleRemoveImage" @add-image="handleAddImage"/>
-        <div class="flex flex-row justify-content-end">
-          <Button :loading="false" class="input-height" label="Publicar videojuego" type="submit"></Button>
-        </div>
 
+      <div class="error-container">
+        <small v-for="error of v$.logo_url.$errors" :key="error.$uid" class="p-error">{{ getCustomError("logo_url", error.$validator, error) + ". " }}</small>
+      </div>
+
+        <label class="block text-600 font-medium mt-5 mb-2" for="images">Imágenes</label>
+        <GameImageManager id="images" v-model:images="game.images"  @remove-image="handleRemoveImage" @add-image="handleAddImage"/>
+      <div class="error-container">
+        <small v-for="error of v$.images.$errors" :key="error.$uid" class="p-error">{{ getCustomError("images", error.$validator, error) + ". " }}</small>
+      </div>
+        <div class="flex flex-row justify-content-end mt-5 gap-3">
+          <Button :loading="false" class="input-height w-8rem cancel-button" label="Cancelar" type="button" @click="router.back()"></Button>
+          <Button :label="isEditMode ? 'Editar' : 'Publicar'" :loading="false" class="input-height w-8rem" type="submit"></Button>
+        </div>
       </form>
     </div>
+  <hr class="mb-5">
     <Toast position="top-right"/>
   </template>
 
@@ -93,8 +130,9 @@
   import {useVuelidate} from "@vuelidate/core";
   import AuthenticationService from "@/service/AuthenticationService";
   import {useAuthStore} from "@/stores/authStore";
-  import {required} from "@vuelidate/validators";
+  import {helpers, required} from "@vuelidate/validators";
   import {formatGameDate} from "@/utils/DateFormatter";
+  import {getCustomError} from "@/utils/FormErrorMessageHandler";
 
   // Handle edition --------------------------------------
   const router = useRouter();
@@ -167,15 +205,21 @@
   const handleRemoveImage = (imageToBeRemoved) => {
     game.value.images = game.value.images.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
   };
-  const handleAddImage = (newImage) => {
-    game.value.images.push(newImage);
+
+  const handleAddImage = async (newImage) => {
+      game.value.images.push(newImage);
   };
 
   //Vuelidate:
+  const linkToGameRegex = (value) => {
+    return /^https:\/\/(.*?)\.github\.io\/(.*?)$/.test(value);
+  }
 
   const rules = {
     name: {required},
-    link_to_game: {required},
+    link_to_game: {
+      required,
+      linkToGameRegex: helpers.withMessage("El link debe ser un enlace válido de GitHub Pages", linkToGameRegex)},
     description: {required},
     development_team: {required},
     release_date: {required},
@@ -341,6 +385,19 @@
   .preview-image {
     max-width: 350px; /* Ancho máximo */
     max-height: 392px; /* Alto máximo */
+  }
+
+  .cancel-button {
+    width: 100px;
+    background-color: rgba(255, 255, 255, 0.87);
+    border: none;
+    color: #9b2a3a;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .cancel-button:hover {
+    background-color: rgba(255, 255, 255, 1) !important;
+    color: #FF0000 !important;
   }
   </style>
 
