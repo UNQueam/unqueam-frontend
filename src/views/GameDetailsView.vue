@@ -29,7 +29,7 @@ const gameData = ref(null);
 
 const getDeveloperNames = (developers) => {
   if(developers) {
-    const nameStrings = developers.map(item => `${item.first_name} ${item.last_name}`);
+    const nameStrings = developers.map(item => `${item.name}`);
     return nameStrings.join(', ');
   }
 }
