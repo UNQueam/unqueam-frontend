@@ -51,6 +51,9 @@ const getGeneralMetrics = () => {
   if (games.value.length) {
     avgRating.value = Math.max(1,Math.round(sumOfAvgRatings / games.value.length));
   }
+  games.value = games.value.map(game => {
+    return {...game, rating: getGameAvgRating(game.comments)}
+  })
 }
 
 const getGameAvgRating = (comments) => {
@@ -153,8 +156,7 @@ const filteredData = computed(() => {
   const lowerCaseFilter = inputKey.value.toLowerCase()
   return games.value.filter(
       (item) =>
-          item.name.toLowerCase().includes(lowerCaseFilter) ||
-          item.description.toLowerCase().includes(lowerCaseFilter)
+          item.name.toLowerCase().includes(lowerCaseFilter)
   )
 })
 
@@ -212,7 +214,7 @@ const filteredData = computed(() => {
             <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
               <div class="flex flex-column align-items-center sm:align-items-start gap-3">
                 <div class="text-2xl font-bold text-900 xl:w-10rem">{{ slotProps.data.name }}</div>
-                <Rating :modelValue="getGameAvgRating(slotProps.data.comments)" readonly :cancel="false"></Rating>
+                <Rating :modelValue="slotProps.data.rating" readonly :cancel="false"></Rating>
                 <div class="flex align-items-center gap-3">
                                     <span class="flex align-items-center gap-2">
                                         <span class="font-semibold">{{ getCommentsQuantity(slotProps.data.comments) }} comentarios</span>
