@@ -207,6 +207,9 @@ const filteredData = computed(() => {
           </div>
         </div>
       </template>
+      <template #empty >
+        <div  class="no-games mb-5 mt-5"> No se encontraron juegos. </div>
+      </template>
       <template #list="slotProps">
         <div class="col-12 clickeable-item" @click="goToGame(slotProps.data.id)">
           <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
@@ -325,5 +328,12 @@ const filteredData = computed(() => {
   60% {
     transform: translateY(-15px);
   }
+}
+
+.no-games {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  transition: color 0.3s;
 }
 </style>

@@ -70,7 +70,9 @@ const clearFilter1 = () => {
               </span>
             </div>
           </template>
-          <template #empty> No se encontraron usuarios. </template>
+          <template #empty>
+            <div class="no-users mt-5 mb-5">No se encontraron usuarios.</div>
+          </template>
           <template #loading> Cargando informacion de usuarios. Por favor espera. </template>
           <Column field="user_id" header="#" style="min-width: 2rem">
             <template #body="{ data }">
@@ -130,6 +132,13 @@ const clearFilter1 = () => {
 <style lang="scss" scoped>
 ::v-deep(.p-datatable-frozen-tbody) {
   font-weight: bold;
+}
+
+.no-users {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  transition: color 0.3s;
 }
 
 ::v-deep(.p-datatable-scrollable .p-frozen-column) {
