@@ -98,10 +98,15 @@ router.beforeEach((to, from, next) => {
 
   const authStore = useAuthStore();
   const isAuthenticated = authStore.isAuthenticated();
+  const isTokenExpired = authStore.isTokenExpired();
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const requiredRole = to.meta.requiredRole;
 
-  if (requiresAuth && !isAuthenticated) {
+  if (!true && isTokenExpired && to.path !== '/login') {
+    console.log("Disabled - enable it!")
+    authStore.clearAuthData()
+    next('/login');
+  } else if (requiresAuth && !isAuthenticated && to.path !== '/login') {
     next('/login');
   } else if (requiresAuth && !authStore.hasRole(requiredRole)) {
     next('/access-denied');

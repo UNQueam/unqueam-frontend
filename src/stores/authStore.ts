@@ -7,6 +7,12 @@ interface AuthenticationInfo {
     role: string | null;
 }
 
+const buildExpirationTokenDate = (millis: number) => {
+    const now = new Date().getTime();
+    const newTime = now + millis;
+    return new Date(newTime);
+}
+
 // @ts-ignore
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -27,11 +33,16 @@ export const useAuthStore = defineStore('auth', {
                 authToken: data['auth_token'],
                 userId: data['user_id'],
                 username: data['username'],
-                role: data['role']
+                role: data['role'],
+                tokenExpirationTimestamp: buildExpirationTokenDate(data['token_ttl_ms'])
             };
         },
         isAuthenticated(): boolean {
             return this.authenticationInfo?.authToken != null;
+        },
+        isTokenExpired(): boolean {
+            const expirationDate: Date = this.authenticationInfo?.tokenExpirationTimestamp
+            return new Date(expirationDate).getTime() < new Date().getTime();
         },
         getAuthToken(): string {
             return this.authenticationInfo?.authToken || '';
