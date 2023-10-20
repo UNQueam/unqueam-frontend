@@ -7,13 +7,13 @@
     <form v-if="showCommentForm" class="my-4 card p-4" @submit.prevent="sendComment">
       <div class=" shaking-input flex align-items-center gap-2 ml-3">
         <p class="m-0 p-0 text-500">Valoración</p>
-          <Rating v-model="commentStructure.rating" :cancel="false" :class="{ 'p-invalid': submitted && v$.rating.$error }" class="m-0 p-0"/>
+          <Rating v-model="commentStructure.rating" :cancel="false" class="m-0 p-0"/>
       </div>
 
       <Textarea v-model="commentStructure.comment"  class="w-full mt-3 p-2" rows="4" />
       <div class="error-container">
-        <small v-for="error of v$.comment.$errors" :key="error.$uid" class="p-error">{{ getCustomError("comment", error.$validator, error) + ". " }}</small>
-        <small v-for="error of v$.rating.$errors" :key="error.$uid" class="p-error">{{ getCustomError("rating", error.$validator, error) + ". " }}</small>
+        <small v-if="formErrors.comment != null" class="p-error">{{ formErrors.comment }}</small>
+        <small v-if="formErrors.rating != null" class="p-error">{{ formErrors.rating }}</small>
       </div>
 
       <div class="flex justify-content-end gap-2 mt-3">
@@ -31,9 +31,6 @@
 <script setup>
 import UserGameComment from "@/components/UserGameComment.vue";
 import {computed, ref} from "vue";
-import {getCustomError} from "@/utils/FormErrorMessageHandler";
-import {helpers, minLength, required} from "@vuelidate/validators";
-import {useVuelidate} from "@vuelidate/core";
 import {publishComment} from "@/service/GamesService";
 import {useAuthStore} from "@/stores/authStore";
 
@@ -72,35 +69,31 @@ const gameId = props.gameId;
 
 const showCommentForm = ref(false)
 
-const commentRating = (value) => {
-  return value != null && value > 0 && value <=5
-}
-
 const deleteComment = (commentId) => {
   comments.value = comments.value.filter(comment => comment.comment_id !== commentId)
 }
 
-const submitted = ref(false);
 const isProcessingRequest = ref(false)
-const rules = {
-  comment: {
-    minLength: minLength(10),
-    required
-  },
-  rating: {
-    commentRating: helpers.withMessage("Debes seleccionar una valoración", commentRating)
-  }
-};
 
-const $externalResults = ref({})
 const commentStructure = ref({
   comment: '',
   rating: null
 });
 
+const formErrors = ref({
+  comment: null,
+  rating: null,
+})
+
+const resetFormErrors = () => {
+  formErrors.value.comment = null
+  formErrors.value.rating = null
+}
+
 const resetCommentForm = () => {
   commentStructure.value.comment = ""
   commentStructure.value.rating = null
+  resetFormErrors()
 }
 
 function openCommentBox() {
@@ -110,28 +103,34 @@ function openCommentBox() {
 
 function cancelComment() {
   resetCommentForm()
-  v$.value.$reset();
   showCommentForm.value = false
 }
 
-const v$ = useVuelidate(rules, commentStructure, {$externalResults});
-
 async function sendComment() {
   isProcessingRequest.value = true
-  $externalResults.value = {}
-  submitted.value = true;
-  v$.value.$validate();
 
-  if (!v$.value.$error) {
+  const content = commentStructure.value.comment
+  const rating = commentStructure.value.rating
+  if (content == null || content.length < 10) {
+    formErrors.value.comment = "Debes ingresar un comentario de al menos 10 caracteres. "
+  } else {
+    formErrors.value.comment = null
+  }
+  if (rating == null) {
+    formErrors.value.rating = "Debes seleccionar una valoración. "
+  } else {
+    formErrors.value.rating = null
+  }
+
+  if (formErrors.value.comment == null && formErrors.value.rating == null) {
     try {
       const publishedComment = await publishComment({ gameId: gameId, content: commentStructure.value.comment, rating: commentStructure.value.rating })
       comments.value.push(publishedComment)
       isSearchingComments.value = true
       showCommentForm.value = false
       resetCommentForm()
-      v$.value.$reset();
     } catch (error) {
-      $externalResults.value = error.response?.data.errors
+      console.log(error)
     } finally {
       isSearchingComments.value = false
       isProcessingRequest.value = false
