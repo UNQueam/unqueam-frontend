@@ -89,7 +89,12 @@
   import {fetchGenres} from "@/service/GenresService";
   import GameImageManager from "@/components/GameImageManager.vue";
   import {useRoute, useRouter} from "vue-router";
-  import {fetchGame} from "@/service/GamesService";
+  import {createGame, editGame, fetchGame} from "@/service/GamesService";
+  import {useVuelidate} from "@vuelidate/core";
+  import AuthenticationService from "@/service/AuthenticationService";
+  import {useAuthStore} from "@/stores/authStore";
+  import {required} from "@vuelidate/validators";
+  import {formatGameDate} from "@/utils/DateFormatter";
 
   // Handle edition --------------------------------------
   const router = useRouter();
@@ -97,6 +102,8 @@
   const gameId = computed(() => route.params.id);
 
   const isEditMode = computed(() => !!gameId.value);
+  const authService = new AuthenticationService();
+  const authStore = useAuthStore();
   //------------------------------------------------------
 
   const game = ref({
@@ -119,7 +126,10 @@
     game.value.logo_url = logoField.value
   }
 
-  const publishGame = () => {
+  /*const publishGame = () => {
+    game.value.developers = game.value.developers.map((developer) => {
+          return {name: developer}
+    })
     if (isEditMode.value) {
       //await updateGame(gameId.value, game.value);
       console.log(game)
@@ -128,7 +138,7 @@
       //await createGame(game.value);
       console.log("Game created");
     }
-  }
+  }*/
 
   onBeforeMount(async () => {
     try {
@@ -138,14 +148,16 @@
         name: item.spanish_name
       }));
       if (isEditMode.value) {
-        //TIRAR UN ACCESS DENIED SI CORRESPONDE.
         const existingGame = await fetchGame(gameId.value);
+        if(existingGame.publisher.username !== authStore.getUsername) {
+          await router.push("/access-denied")
+        }
         game.value = {...game.value, ...existingGame};
         game.value.genres = game.value.genres.map(item => ({
           ...item,
           name: item.spanish_name
         }));
-        console.log(game.value)
+        game.value.developers = game.value.developers.map(developer => developer.name);
       }
     } catch (err) {
       //do nothing
@@ -159,6 +171,64 @@
     game.value.images.push(newImage);
   };
 
+  //Vuelidate:
+
+  const rules = {
+    name: {required},
+    link_to_game: {required},
+    description: {required},
+    development_team: {required},
+    release_date: {required},
+    genres: {required},
+    developers: {required},
+    images: {required},
+    logo_url: {required}
+  };
+
+  const $externalResults = ref({})
+
+  const submitted = ref(false);
+
+  const v$ = useVuelidate(rules, game, {$externalResults});
+
+  const isProcessingRequest = ref(false)
+
+
+
+  const publishGame = async () => {
+    isProcessingRequest.value = true;
+    $externalResults.value = {};
+    submitted.value = true;
+    v$.value.$validate();
+    console.log(v$.value)
+
+
+    if (!v$.value.$error) {
+      try {
+        if (game.value.developers) {
+          game.value.developers = game.value.developers.map((developer) => {
+            return {name: developer}
+          });
+        }
+        game.value.release_date = formatGameDate(game.value.release_date);
+        if (isEditMode.value) {
+          await editGame(gameId.value, game.value);
+          router.push('/dev/games');
+          console.log(game)
+        } else {
+          await createGame(game.value);
+          router.push('/dev/games');
+        }
+
+      } catch (error) {
+        console.log(error.response.data)
+        $externalResults.value = error.response.data.errors
+      } finally {
+        isProcessingRequest.value = false
+      }
+    }
+    isProcessingRequest.value = false
+  }
 
   /*
   IDEA PARA IMAGENES A FUTURO.

@@ -36,6 +36,56 @@ export const fetchGame = async (gameId) => {
     }
 };
 
+export const createGame = async (game) => {
+    try {
+        const response = await apiService.post("",
+            game,
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        if(error.response && error.response.status === 404){
+            await router.push('/404');
+            return Promise.reject(error.response.data);
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            await router.push('/500');
+            return Promise.reject(error.response.data);
+        }
+    }
+};
+
+export const editGame = async (gameId, game) => {
+    try {
+        const response = await apiService.put(`/${gameId}`,
+            game,
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+            router.push('/404');
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+            return Promise.reject(error.response.data);
+            router.push('/500');
+        }
+    }
+};
+
 export const hideGame = async (gameId) => {
     try {
         let authStore = useAuthStore();
