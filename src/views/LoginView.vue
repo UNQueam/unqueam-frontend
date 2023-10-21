@@ -32,7 +32,7 @@ async function handleLogin() {
 
 onMounted(() => {
   if (route.query.logout === 'true') {
-    toast.add({ severity: 'info', summary: 'Sesión', detail: 'Has cerrado sesión exitosamente.', group: 'tr', life: 5000 });
+    toast.add({ severity: 'info', summary: 'Sesión', detail: 'Has cerrado sesión exitosamente.', life: 3000 });
   }
 });
 
@@ -73,7 +73,7 @@ const isButtonDisabled = computed(() => {
         </div>
       </div>
     </div>
-  <Toast group="tr" position="top-right" />
+  <Toast position="top-right" />
 </template>
 
 <style scoped>

@@ -133,6 +133,9 @@
   import {helpers, required} from "@vuelidate/validators";
   import {formatGameDate} from "@/utils/DateFormatter";
   import {getCustomError} from "@/utils/FormErrorMessageHandler";
+  import {useToast} from "primevue/usetoast";
+
+  const toast = useToast();
 
   // Handle edition --------------------------------------
   const router = useRouter();
@@ -246,7 +249,6 @@
     v$.value.$validate();
     console.log(v$.value)
 
-
     if (!v$.value.$error) {
       try {
         if (game.value.developers) {
@@ -257,19 +259,23 @@
         game.value.release_date = formatGameDate(game.value.release_date);
         if (isEditMode.value) {
           await editGame(gameId.value, game.value);
+          toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha editado correctamente', life: 3500 });
           router.push('/dev/games');
-          console.log(game)
         } else {
           await createGame(game.value);
+          toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha publicado correctamente', life: 3500 });
           router.push('/dev/games');
         }
 
       } catch (error) {
         console.log(error.response.data)
         $externalResults.value = error.response.data.errors
+        toast.add({ severity: 'error', summary: 'Operación fallida', detail: 'Ocurrió un error durante la publicación de tu juego', life: 3500 });
       } finally {
         isProcessingRequest.value = false
       }
+    } else {
+      toast.add({ severity: 'error', summary: 'Operación fallida', detail: 'Algunos de los campos del formulario es inválido', life: 3500 });
     }
     isProcessingRequest.value = false
   }
@@ -385,6 +391,26 @@
   .preview-image {
     max-width: 350px; /* Ancho máximo */
     max-height: 392px; /* Alto máximo */
+  }
+
+  @media (max-width: 600px) {
+    .flip-card {
+      max-width: 100%;
+      font-size: 0.1rem/* Asegura que la imagen se ajuste al contenedor */
+    }
+
+    .flip-card .front h3 {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 45px;
+      padding: 1rem;
+      font-size: 1.2rem;
+      line-height: 15px;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
   }
 
   .cancel-button {

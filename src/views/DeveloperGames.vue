@@ -101,31 +101,26 @@ const showToggleHideStatusFailure = () => {
 const isHideSwitcherEnabled = ref(true);
 
 const toggleSwitcher = async (gameId) => {
-  const gamePosInArr = gameId - 1;
+  const game = games.value.filter(game => game.id === gameId)[0]
   if (isHideSwitcherEnabled.value) {
     isHideSwitcherEnabled.value = false;
     setTimeout(() => {
       isHideSwitcherEnabled.value = true;
     }, 2000);
   }
-
   try {
-    const isHidden = games.value[gamePosInArr].is_hidden;
-
-    if(isHidden) {
+    const isHidden = game.is_hidden;
+    if (isHidden) {
       await exposeGame(gameId);
       showToggleHideStatusSuccess();
     } else {
       await hideGame(gameId);
       showToggleHideStatusSuccess();
     }
-    games.value[gamePosInArr].is_hidden = !isHidden;
-
-
+    games.value[games.value.indexOf(game)].is_hidden = !isHidden;
   } catch (error) {
     showToggleHideStatusFailure();
   }
-
 };
 
 const goToGame = (gameId) => {
@@ -242,7 +237,7 @@ const filteredData = computed(() => {
       </template>
     </DataView>
   </div>
-  <hr class="my-5">
+  <hr class="my-5 opacity-0">
   <Toast position="top-right"/>
 </template>
 
