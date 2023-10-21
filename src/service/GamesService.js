@@ -114,8 +114,7 @@ function handleRequestError(error) {
     if (error.response && error.response.status === 404) {
         console.log(error.response.data);
         router.push('/404');
-    }
-    if (error.response && error.response.status === 400) {
+    } else if (error.response && error.response.status === 400) {
         return Promise.reject(error.response.data);
     } else {
         router.push('/500');
