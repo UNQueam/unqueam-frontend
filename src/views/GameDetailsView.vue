@@ -68,13 +68,14 @@ onMounted(async () => {
         <div v-if="isUserPlaying" class="gameplay flex flex-column">
           <iframe ref="gameIframe" :src="gameData?.link_to_game" allowfullscreen="true" class="game"></iframe>
         </div>
-
-        <div class="carousel">
-          <div v-for="(image, index) in gameData?.images" :key="index" class="carousel-item" >
-            <Image :key="index" :src="image.url" alt="Image" preview />
+        <div>
+          <div class="font-medium text-2xl text-900 mb-3 mt-3">Galeria</div>
+          <div class="carousel">
+            <div v-for="(image, index) in gameData?.images" :key="index" class="carousel-item" >
+              <Image :key="index" :src="image.url" alt="Image" preview />
+            </div>
           </div>
         </div>
-
         <div>
           <div class="font-medium text-2xl text-900 mb-3 mt-3">Información</div>
           <div class="text-500 mb-5">{{gameData?.description}}</div>
