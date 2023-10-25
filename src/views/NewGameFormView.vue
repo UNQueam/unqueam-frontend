@@ -33,6 +33,13 @@
         <small v-for="error of v$.name.$errors" :key="error.$uid" class="p-error">{{ getCustomError("name", error.$validator, error) + ". " }}</small>
       </div>
 
+      <label class="block text-600 font-medium mb-2" for="alias">Título del juego</label>
+      <InputText id="alias" v-model="game.alias" class="md:w-25rem w-full" placeholder="Alias del juego" style="padding: 1rem" type="text" />
+
+      <div class="error-container">
+        <small v-for="error of v$.alias.$errors" :key="error.$uid" class="p-error">{{ getCustomError("alias", error.$validator, error) + ". " }}</small>
+      </div>
+
       <label class="block text-600 font-medium mb-2 mt-5" for="description">Descripción</label>
       <Textarea id="description" v-model="game.description" class="w-full" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
@@ -140,15 +147,16 @@
   // Handle edition --------------------------------------
   const router = useRouter();
   const route = useRoute();
-  const gameId = computed(() => route.params.id);
+  const gameAlias = computed(() => route.params.alias);
 
-  const isEditMode = computed(() => !!gameId.value);
+  const isEditMode = computed(() => !!gameAlias.value);
   const authService = new AuthenticationService();
   const authStore = useAuthStore();
   //------------------------------------------------------
 
   const game = ref({
     name: "",
+    alias: "",
     link_to_game: "",
     description: "",
     development_team: "",
@@ -189,7 +197,7 @@
         name: item.spanish_name
       }));
       if (isEditMode.value) {
-        const existingGame = await fetchGame(gameId.value);
+        const existingGame = await fetchGame(gameAlias.value);
         if(existingGame.publisher.username !== authStore.getUsername) {
           await router.push("/access-denied")
         }
@@ -220,6 +228,7 @@
 
   const rules = {
     name: {required},
+    alias: {required},
     link_to_game: {
       required,
       linkToGameRegex: helpers.withMessage("El link debe ser un enlace válido de GitHub Pages", linkToGameRegex)},
@@ -251,18 +260,24 @@
 
     if (!v$.value.$error) {
       try {
+        let gameToSend = {};
         if (game.value.developers) {
-          game.value.developers = game.value.developers.map((developer) => {
+          gameToSend = {...game.value};
+          gameToSend.developers = gameToSend.developers.map((developer) => {
             return {name: developer}
           });
         }
-        game.value.release_date = formatGameDate(game.value.release_date);
+        gameToSend.release_date = formatGameDate(gameToSend.release_date);
+        console.log(gameToSend)
         if (isEditMode.value) {
-          await editGame(gameId.value, game.value);
+          console.log("edit")
+          await editGame(game.value.id, gameToSend);
           toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha editado correctamente', life: 3500 });
+
           router.push('/dev/games');
         } else {
-          await createGame(game.value);
+          console.log("create")
+          await createGame(gameToSend);
           toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha publicado correctamente', life: 3500 });
           router.push('/dev/games');
         }

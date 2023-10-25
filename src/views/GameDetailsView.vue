@@ -24,7 +24,7 @@ import {fetchGame} from "@/service/GamesService"
 import GameCommentsCard from "@/components/GameCommentsCard.vue";
 
 const route = useRoute();
-const gameId = ref('');
+const gameAlias = ref('');
 const gameData = ref(null);
 
 const getDeveloperNames = (developers) => {
@@ -35,10 +35,10 @@ const getDeveloperNames = (developers) => {
 }
 
 onMounted(async () => {
-  gameId.value = route.params.id;
+  gameAlias.value = route.params.alias;
 
   try {
-    const response = await fetchGame(gameId.value);
+    const response = await fetchGame(gameAlias.value);
     gameData.value = response;
   } catch (error) {
     console.error('Error al cargar el juego:', error);
@@ -106,7 +106,7 @@ onMounted(async () => {
         </div>
       </div>
   </div>
-  <GameCommentsCard v-if="gameData && gameId" :comments="gameData.comments ? gameData.comments : []" :game-id="gameId" :game-publisher="gameData?.publisher.username"/>
+  <GameCommentsCard v-if="gameData && gameData.id" :comments="gameData.comments ? gameData.comments : []" :game-id="gameData.id" :game-publisher="gameData?.publisher.username"/>
   <p class="m-5 opacity-0">.</p>
 </template>
 

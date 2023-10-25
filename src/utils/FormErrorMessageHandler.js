@@ -45,6 +45,9 @@ const customErrors = {
     logo_url: {
         required: 'El enlace al logo es requerido',
     },
+    alias: {
+        required: 'El alias del juego es requerido',
+    },
   };
 
 const customValidators = [

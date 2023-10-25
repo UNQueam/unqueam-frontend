@@ -21,7 +21,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/games/:id',
+      path: '/games/:alias',
       name: 'GameDetails',
       component: GameDetailsView,
       props: true
@@ -41,7 +41,7 @@ const router = createRouter({
       meta: { requiresAuth: true, requiredRole: 'developer' }
     },
     {
-      path: '/dev/games/:id/edit',
+      path: '/dev/games/:alias/edit',
       name: 'EditGame',
       component: NewGameFormView,
       props: true,

@@ -143,8 +143,8 @@ const goToNewGameForm = () => {
   router.push("/dev/games/publish")
 }
 
-const editGame = (gameId) => {
-  router.push("/dev/games/"+ gameId + "/edit")
+const editGame = (gameAlias) => {
+  router.push("/dev/games/"+ gameAlias + "/edit")
 }
 
 const filteredData = computed(() => {
@@ -221,7 +221,7 @@ const filteredData = computed(() => {
               </div>
               <div class="font-bold text-600" style="font-size: 15px;">{{ slotProps.data.description }}</div>
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2" @click="stopPropagation">
-                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'" @click="editGame(slotProps.data.id)"></Button>
+                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'" @click="editGame(slotProps.data.alias)"></Button>
                 <label v-tooltip="slotProps.data.is_hidden ? 'Exponer juego' : 'Ocultar juego'" class="switcher" @click="stopPropagation">
                   <input v-model="slotProps.data.is_hidden" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher(slotProps.data.id)">
                   <span class="switcher-slider">
