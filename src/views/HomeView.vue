@@ -31,8 +31,8 @@ const filteredData = computed(() => {
   )
 })
 
-const goToGame = (gameId) => {
-  router.push({ name: 'GameDetails', params: { id: gameId } });
+const goToGame = (gameAlias) => {
+  router.push({ name: 'GameDetails', params: { alias: gameAlias } });
 };
 
 const layout = ref('grid')
@@ -76,7 +76,7 @@ const layout = ref('grid')
                   <h3>{{ slotProps.data.name }}</h3>
                   <div class="mb-3">{{ slotProps.data.description }}</div>
                   <div class="card-link">
-                    <button class="button-50" type="button" @click="goToGame(slotProps.data.id)">Go to game</button>
+                    <button class="button-50" type="button" @click="goToGame(slotProps.data.alias)">Go to game</button>
                   </div>
                 </div>
               </div>

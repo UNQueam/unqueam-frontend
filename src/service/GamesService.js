@@ -27,9 +27,9 @@ export const fetchDeveloperGames = async (devUsername) => {
     }
 };
 
-export const fetchGame = async (gameId) => {
+export const fetchGame = async (gameAlias) => {
     try {
-      const response = await apiService.get(`/${gameId}`);
+      const response = await apiService.get(`/${gameAlias}`);
       return response.data;
     } catch (error) {
         return handleRequestError(error);
@@ -47,13 +47,12 @@ export const createGame = async (game) => {
             });
         return response.data;
     } catch (error) {
-        console.log(error)
         if(error.response && error.response.status === 404){
             await router.push('/404');
             return Promise.reject(error.response.data);
         }
         if(error.response && error.response.status === 400){
-            return Promise.reject(error.response.data);
+            throw error;
         } else {
             await router.push('/500');
             return Promise.reject(error.response.data);
@@ -72,13 +71,12 @@ export const editGame = async (gameId, game) => {
             });
         return response.data;
     } catch (error) {
-        console.log(error)
         if(error.response && error.response.status === 404){
             console.log(error.response.data);
             router.push('/404');
         }
         if(error.response && error.response.status === 400){
-            return Promise.reject(error.response.data);
+            throw error;
         } else {
             return Promise.reject(error.response.data);
             router.push('/500');

@@ -33,6 +33,17 @@
         <small v-for="error of v$.name.$errors" :key="error.$uid" class="p-error">{{ getCustomError("name", error.$validator, error) + ". " }}</small>
       </div>
 
+      <label class="block text-600 font-medium mb-2 mt-5" for="alias">Alias del juego</label>
+      <div class="flex flex-column">
+        <InputText id="alias" v-model="game.alias" class="md:w-25rem w-full" placeholder="Alias del juego" style="padding: 1rem" type="text" />
+        <small v-if="game.alias" class="mt-1" id="alias-help">Se verá asi en la url: <span style="color:#9b2a3a"> {{toKebabCase(game.alias)}} </span> </small>
+      </div>
+
+
+      <div class="error-container">
+        <small v-for="error of v$.alias.$errors" :key="error.$uid" class="p-error">{{ getCustomError("alias", error.$validator, error) + ". " }}</small>
+      </div>
+
       <label class="block text-600 font-medium mb-2 mt-5" for="description">Descripción</label>
       <Textarea id="description" v-model="game.description" class="w-full" placeholder="El título del juego" style="padding: 1rem" type="text" />
 
@@ -79,7 +90,7 @@
           </template>
         </Chips>
       </div>
-      <small id="username-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
+      <small id="devs-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
 
       <div class="error-container">
         <small v-for="error of v$.developers.$errors" :key="error.$uid" class="p-error">{{ getCustomError("developers", error.$validator, error) + ". " }}</small>
@@ -134,21 +145,23 @@
   import {formatGameDate} from "@/utils/DateFormatter";
   import {getCustomError} from "@/utils/FormErrorMessageHandler";
   import {useToast} from "primevue/usetoast";
+  import {toKebabCase} from "@/utils/stringFormatter";
 
   const toast = useToast();
 
   // Handle edition --------------------------------------
   const router = useRouter();
   const route = useRoute();
-  const gameId = computed(() => route.params.id);
+  const gameAlias = computed(() => route.params.alias);
 
-  const isEditMode = computed(() => !!gameId.value);
+  const isEditMode = computed(() => !!gameAlias.value);
   const authService = new AuthenticationService();
   const authStore = useAuthStore();
   //------------------------------------------------------
 
   const game = ref({
     name: "",
+    alias: "",
     link_to_game: "",
     description: "",
     development_team: "",
@@ -167,20 +180,6 @@
     game.value.logo_url = logoField.value
   }
 
-  /*const publishGame = () => {
-    game.value.developers = game.value.developers.map((developer) => {
-          return {name: developer}
-    })
-    if (isEditMode.value) {
-      //await updateGame(gameId.value, game.value);
-      console.log(game)
-      console.log("Game updated");
-    } else {
-      //await createGame(game.value);
-      console.log("Game created");
-    }
-  }*/
-
   onBeforeMount(async () => {
     try {
       genres.value = await fetchGenres();
@@ -189,7 +188,7 @@
         name: item.spanish_name
       }));
       if (isEditMode.value) {
-        const existingGame = await fetchGame(gameId.value);
+        const existingGame = await fetchGame(gameAlias.value);
         if(existingGame.publisher.username !== authStore.getUsername) {
           await router.push("/access-denied")
         }
@@ -220,6 +219,7 @@
 
   const rules = {
     name: {required},
+    alias: {required},
     link_to_game: {
       required,
       linkToGameRegex: helpers.withMessage("El link debe ser un enlace válido de GitHub Pages", linkToGameRegex)},
@@ -240,36 +240,50 @@
 
   const isProcessingRequest = ref(false)
 
+  const getFormattedGameToSend = () => {
+    let gameToSend = {...game.value};
+    gameToSend.developers = gameToSend.developers.map((developer) => {
+      return {name: developer}
+    });
+    gameToSend.release_date = formatGameDate(gameToSend.release_date);
+    return gameToSend;
+  };
 
-
-  const publishGame = async () => {
-    isProcessingRequest.value = true;
+  function handleFormData() {
     $externalResults.value = {};
     submitted.value = true;
     v$.value.$validate();
-    console.log(v$.value)
+  }
 
+  async function handleEdition() {
+    await editGame(game.value.id, getFormattedGameToSend());
+    toast.add({
+      severity: 'success',
+      summary: 'Operación exitosa',
+      detail: 'Tu juego se ha editado correctamente',
+      life: 3500
+    });
+    router.push('/dev/games');
+  }
+
+  async function handleCreation() {
+    await createGame(getFormattedGameToSend());
+    toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha publicado correctamente', life: 3500 });
+    router.push('/dev/games');
+  }
+
+  const publishGame = async () => {
+    isProcessingRequest.value = true;
+    handleFormData();
     if (!v$.value.$error) {
       try {
-        if (game.value.developers) {
-          game.value.developers = game.value.developers.map((developer) => {
-            return {name: developer}
-          });
-        }
-        game.value.release_date = formatGameDate(game.value.release_date);
         if (isEditMode.value) {
-          await editGame(gameId.value, game.value);
-          toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha editado correctamente', life: 3500 });
-          router.push('/dev/games');
+          await handleEdition();
         } else {
-          await createGame(game.value);
-          toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha publicado correctamente', life: 3500 });
-          router.push('/dev/games');
+          await handleCreation();
         }
-
       } catch (error) {
-        console.log(error.response.data)
-        $externalResults.value = error.response.data.errors
+        $externalResults.value = error.response.data.errors;
         toast.add({ severity: 'error', summary: 'Operación fallida', detail: 'Ocurrió un error durante la publicación de tu juego', life: 3500 });
       } finally {
         isProcessingRequest.value = false
