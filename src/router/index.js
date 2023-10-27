@@ -11,6 +11,7 @@ import AccessDenied from "@/views/AccessDenied.vue";
 import PetitionsView from "@/views/DeveloperRequestsView.vue";
 import DeveloperGames from "@/views/DeveloperGames.vue";
 import NewGameFormView from "@/views/NewGameFormView.vue";
+import BannerFormView from "@/views/BannerFormView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +68,12 @@ const router = createRouter({
       path: '/admin/requests',
       name: 'Requests',
       component: PetitionsView,
+      meta: { requiresAuth: true, requiredRole: 'admin' }
+    },
+    {
+      path: '/admin/banners',
+      name: 'Banners',
+      component: BannerFormView,
       meta: { requiresAuth: true, requiredRole: 'admin' }
     },
     {
