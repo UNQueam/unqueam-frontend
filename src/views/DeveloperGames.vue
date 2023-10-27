@@ -206,7 +206,7 @@ const filteredData = computed(() => {
         <div  class="no-games mb-5 mt-5"> No se encontraron juegos. </div>
       </template>
       <template #list="slotProps">
-        <div class="col-12 clickeable-item" @click="goToGame(slotProps.data.id)">
+        <div class="col-12 clickeable-item" @click="goToGame(slotProps.data.alias)">
           <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
             <img class=" product-image w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" :src="slotProps.data.logo_url" :alt="slotProps.data.name" />
             <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
