@@ -33,8 +33,12 @@
         <small v-for="error of v$.name.$errors" :key="error.$uid" class="p-error">{{ getCustomError("name", error.$validator, error) + ". " }}</small>
       </div>
 
-      <label class="block text-600 font-medium mb-2" for="alias">Título del juego</label>
-      <InputText id="alias" v-model="game.alias" class="md:w-25rem w-full" placeholder="Alias del juego" style="padding: 1rem" type="text" />
+      <label class="block text-600 font-medium mb-2 mt-5" for="alias">Alias del juego</label>
+      <div class="flex flex-column">
+        <InputText id="alias" v-model="game.alias" class="md:w-25rem w-full" placeholder="Alias del juego" style="padding: 1rem" type="text" />
+        <small v-if="game.alias" class="mt-1" id="alias-help">Se verá asi en la url: <span style="color:#9b2a3a"> {{toKebabCase(game.alias)}} </span> </small>
+      </div>
+
 
       <div class="error-container">
         <small v-for="error of v$.alias.$errors" :key="error.$uid" class="p-error">{{ getCustomError("alias", error.$validator, error) + ". " }}</small>
@@ -86,7 +90,7 @@
           </template>
         </Chips>
       </div>
-      <small id="username-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
+      <small id="devs-help">Ingresa los nombres de los desarrolladores separando con 'coma' o 'ENTER'.</small>
 
       <div class="error-container">
         <small v-for="error of v$.developers.$errors" :key="error.$uid" class="p-error">{{ getCustomError("developers", error.$validator, error) + ". " }}</small>
@@ -141,6 +145,7 @@
   import {formatGameDate} from "@/utils/DateFormatter";
   import {getCustomError} from "@/utils/FormErrorMessageHandler";
   import {useToast} from "primevue/usetoast";
+  import {toKebabCase} from "@/utils/stringFormatter";
 
   const toast = useToast();
 
@@ -174,20 +179,6 @@
   const loadLogoImage = () => {
     game.value.logo_url = logoField.value
   }
-
-  /*const publishGame = () => {
-    game.value.developers = game.value.developers.map((developer) => {
-          return {name: developer}
-    })
-    if (isEditMode.value) {
-      //await updateGame(gameId.value, game.value);
-      console.log(game)
-      console.log("Game updated");
-    } else {
-      //await createGame(game.value);
-      console.log("Game created");
-    }
-  }*/
 
   onBeforeMount(async () => {
     try {
@@ -249,42 +240,50 @@
 
   const isProcessingRequest = ref(false)
 
+  const getFormattedGameToSend = () => {
+    let gameToSend = {...game.value};
+    gameToSend.developers = gameToSend.developers.map((developer) => {
+      return {name: developer}
+    });
+    gameToSend.release_date = formatGameDate(gameToSend.release_date);
+    return gameToSend;
+  };
 
-
-  const publishGame = async () => {
-    isProcessingRequest.value = true;
+  function handleFormData() {
     $externalResults.value = {};
     submitted.value = true;
     v$.value.$validate();
-    console.log(v$.value)
+  }
 
+  async function handleEdition() {
+    await editGame(game.value.id, getFormattedGameToSend());
+    toast.add({
+      severity: 'success',
+      summary: 'Operación exitosa',
+      detail: 'Tu juego se ha editado correctamente',
+      life: 3500
+    });
+    router.push('/dev/games');
+  }
+
+  async function handleCreation() {
+    await createGame(getFormattedGameToSend());
+    toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha publicado correctamente', life: 3500 });
+    router.push('/dev/games');
+  }
+
+  const publishGame = async () => {
+    isProcessingRequest.value = true;
+    handleFormData();
     if (!v$.value.$error) {
       try {
-        let gameToSend = {};
-        if (game.value.developers) {
-          gameToSend = {...game.value};
-          gameToSend.developers = gameToSend.developers.map((developer) => {
-            return {name: developer}
-          });
-        }
-        gameToSend.release_date = formatGameDate(gameToSend.release_date);
-        console.log(gameToSend)
         if (isEditMode.value) {
-          console.log("edit")
-          await editGame(game.value.id, gameToSend);
-          toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha editado correctamente', life: 3500 });
-
-          router.push('/dev/games');
+          await handleEdition();
         } else {
-          console.log("create")
-          await createGame(gameToSend);
-          toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu juego se ha publicado correctamente', life: 3500 });
-          router.push('/dev/games');
+          await handleCreation();
         }
-
       } catch (error) {
-        console.log(error.response.data)
-        $externalResults.value = error.response.data.errors
+        $externalResults.value = error.response.data.errors;
         toast.add({ severity: 'error', summary: 'Operación fallida', detail: 'Ocurrió un error durante la publicación de tu juego', life: 3500 });
       } finally {
         isProcessingRequest.value = false
