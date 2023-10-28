@@ -65,6 +65,18 @@ export const fetchBannerById = async (bannerId) => {
     }
 };
 
+export const fetchBannerByAlias = async (alias) => {
+    try {
+        const response = await apiService.get(``, {
+            params: { alias: alias }
+        });
+        return response.data[0];
+    } catch (error) {
+        return handleRequestError(error);
+    }
+};
+
+
 function handleRequestError(error) {
     if (error.response && error.response.status === 404) {
         console.log(error.response.data);

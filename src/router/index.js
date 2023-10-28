@@ -12,6 +12,7 @@ import PetitionsView from "@/views/DeveloperRequestsView.vue";
 import DeveloperGames from "@/views/DeveloperGames.vue";
 import NewGameFormView from "@/views/NewGameFormView.vue";
 import BannerFormView from "@/views/BannerFormView.vue";
+import SingleBannerView from "@/views/SingleBannerView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,6 +70,12 @@ const router = createRouter({
       name: 'Requests',
       component: PetitionsView,
       meta: { requiresAuth: true, requiredRole: 'admin' }
+    },
+    {
+      path: '/banners/:alias',
+      name: 'SingleBanner',
+      component: SingleBannerView,
+      meta: { requiresAuth: false }
     },
     {
       path: '/admin/banners/publish',
