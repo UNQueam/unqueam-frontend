@@ -71,9 +71,17 @@ const router = createRouter({
       meta: { requiresAuth: true, requiredRole: 'admin' }
     },
     {
-      path: '/admin/banners',
+      path: '/admin/banners/publish',
       name: 'Banners',
+      props: true,
       component: BannerFormView,
+      meta: { requiresAuth: true, requiredRole: 'admin' }
+    },
+    {
+      path: '/admin/banners/:id/edit',
+      name: 'EditBanner',
+      component: BannerFormView,
+      props: true,
       meta: { requiresAuth: true, requiredRole: 'admin' }
     },
     {
@@ -109,8 +117,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const requiredRole = to.meta.requiredRole;
 
-  if (!true && isTokenExpired && to.path !== '/login') {
-    console.log("Disabled - enable it!")
+  if (isTokenExpired && to.path !== '/login') {
     authStore.clearAuthData()
     next('/login');
   } else if (requiresAuth && !isAuthenticated && to.path !== '/login') {
