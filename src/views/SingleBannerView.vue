@@ -32,13 +32,27 @@ onMounted(async () => {
   </div>
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
+      <Image :src="bannerData?.picture.byte_array_as_string" alt="Image" ></Image>
       <h3>{{ bannerData?.title }}</h3>
+      <div class="w-full" v-html="bannerData?.rich_text"></div>
     </div>
   </div>
   <p class="m-5 opacity-0">.</p>
 </template>
 
 <style>
+
+.ql-align-center {
+  text-align: center
+}
+
+.ql-align-right {
+  text-align: end;
+}
+
+.ql-align-left {
+  text-align: start;
+}
 
 .carousel {
   display: flex;
