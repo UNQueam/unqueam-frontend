@@ -3,67 +3,119 @@ import DataView from 'primevue/dataview';
 import 'primeflex/primeflex.css';
 
 import {computed, onBeforeMount, ref} from "vue";
-import {exposeGame, fetchDeveloperGames, hideGame} from "@/service/GamesService"
 import {useAuthStore} from "@/stores/authStore";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
+import Checkbox from 'primevue/checkbox';
 
 const router = useRouter()
 
 const authStore = useAuthStore();
 
-const games = ref([]);
+const banners = ref([]);
 
 const toast = useToast();
 
 const inputKey = ref('');
 
+const onlyActiveBanners = ref(false);
+
 onBeforeMount(async () => {
   try {
-    games.value = await fetchDeveloperGames(authStore.getUsername);
-    games.value = [{
+    //banners.value = await fetchDeveloperGames(authStore.getUsername);
+    banners.value = [{
       id: 1,
       name: "Estadisticas de los jugadores de overwatch a lo largo de latinoamerica",
-      image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg"}]
+      image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
+      is_active: true
+    },
+      {
+        id: 2,
+        name: "Aloha",
+        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
+        is_active: false
+      },
+      {
+        id: 3,
+        name: "Aloha",
+        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
+        is_active: true
+      },
+      {
+        id: 4,
+        name: "Aloha",
+        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
+        is_active: true
+      },
+      {
+        id: 5,
+        name: "Aloha",
+        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
+        is_active: true
+      },
+      {
+        id: 6,
+        name: "Aloha",
+        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
+        is_active: true
+      }
+    ];
   } catch (err) {
     //do nothing
   }
 });
 
 const showToggleHideStatusSuccess = () => {
-  toast.add({ severity: 'success', summary: 'Estado cambiado', detail: 'Se ha cambiado satisfactoriamente el estado del juego', life: 5000 });
+  toast.add({
+    severity: 'success',
+    summary: 'Estado cambiado',
+    detail: 'Se ha cambiado satisfactoriamente el estado del banner',
+    life: 5000
+  });
 }
 const showToggleHideStatusFailure = () => {
-  toast.add({ severity: 'error', summary: 'Estado no cambiado', detail: 'Algo ha ocurrido, intenta nuevamente mas tarde', life: 5000 });
+  toast.add({
+    severity: 'error',
+    summary: 'Estado no cambiado',
+    detail: 'Algo ha ocurrido, intenta nuevamente mas tarde',
+    life: 5000
+  });
 }
 
-const isHideSwitcherEnabled = ref(true);
+const isHideSwitcherEnabled = computed(() => {
+  return (is_active) => {
+    return (!isHideSwitcherLoading.value && activeBannersAreAmongTheLimit()) || is_active;
+  }
 
-const toggleSwitcher = async (gameId) => {
-  const game = games.value.filter(game => game.id === gameId)[0]
-  if (isHideSwitcherEnabled.value) {
-    isHideSwitcherEnabled.value = false;
+})
+
+const isHideSwitcherLoading = ref(false);
+
+const toggleSwitcher = async (bannerId) => {
+  if (! isHideSwitcherLoading.value) {
+    isHideSwitcherLoading.value = true;
     setTimeout(() => {
-      isHideSwitcherEnabled.value = true;
+      isHideSwitcherLoading.value = false;
     }, 2000);
   }
   try {
-    const isHidden = game.is_hidden;
-    if (isHidden) {
-      await exposeGame(gameId);
+    const banner = banners.value.filter(banner => banner.id === bannerId)[0]
+    const is_active = banner.is_active;
+    if (is_active) {
+      //await activateBanner(bannerId);
       showToggleHideStatusSuccess();
     } else {
-      await hideGame(gameId);
+      //await deactivateBanner(bannerId);
       showToggleHideStatusSuccess();
     }
-    games.value[games.value.indexOf(game)].is_hidden = !isHidden;
+    banners.value[banners.value.indexOf(banner)].is_active = !is_active;
   } catch (error) {
     showToggleHideStatusFailure();
   }
 };
 
-const goToGame = (gameId) => {
-  router.push("/games/" + gameId)
+const goToBanner = (bannerId) => {
+  router.push("/banners/" + bannerId)
 }
 
 const stopPropagation = (event) => {
@@ -71,28 +123,59 @@ const stopPropagation = (event) => {
 }
 
 const iconClass = computed(() => {
-  if (! isHideSwitcherEnabled.value) {
-    return 'pi pi-spinner pi-spin';
-  } else {
-    return 'pi pi-ban';
+  return (is_active) => {
+    if (isHideSwitcherLoading.value) {
+      return 'pi pi-spinner pi-spin';
+    } else {
+      if (is_active) {
+        return 'pi pi-check';
+      } else {
+        return 'pi pi-times';
+      }
+    }
   }
+
 });
 
-const goToNewGameForm = () => {
-  router.push("/dev/games/publish")
+const goToNewBannersForm = () => {
+  router.push("/admin/banners/publish")
 }
 
-const editGame = (gameAlias) => {
-  router.push("/dev/games/"+ gameAlias + "/edit")
+const editBanner = (bannerId) => {
+  router.push("/admin/banners/" + bannerId + "/edit")
 }
 
 const filteredData = computed(() => {
   const lowerCaseFilter = inputKey.value.toLowerCase()
-  return games.value.filter(
-      (item) =>
-          item.name.toLowerCase().includes(lowerCaseFilter)
+  return banners.value.filter(
+      (item) => {
+        if (onlyActiveBanners.value) {
+          return item.name.toLowerCase().includes(lowerCaseFilter) && item.is_active;
+        } else {
+          return item.name.toLowerCase().includes(lowerCaseFilter);
+        }
+      }
   )
 })
+
+function activeBannersAreAmongTheLimit() {
+  return banners.value.filter(banner => banner.is_active).length < 5;
+}
+
+const switcherTooltipText = computed(() => {
+  return (is_active) => {
+    if (!is_active && !activeBannersAreAmongTheLimit()) {
+      return "Solo puede haber hasta 5 banners activos";
+    } else {
+      if (is_active) {
+        return "Deseleccionar banner"
+      } else {
+        return "Seleccionar banner"
+      }
+    }
+  }
+
+});
 
 </script>
 
@@ -113,35 +196,44 @@ const filteredData = computed(() => {
     <div class="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
       <div class="font-medium text-3xl text-900">Banners</div>
       <div class="mt-3 lg:mt-0">
-        <Button class=" mr-2" icon="pi pi-plus" label="Publicar" @click="goToNewGameForm"></Button>
+        <Button class=" mr-2" icon="pi pi-plus" label="Publicar" @click="goToNewBannersForm"></Button>
       </div>
     </div>
   </div>
   <div class="card col-9 m-auto mt-5">
     <DataView :value="filteredData" paginator :rows="5">
       <template #header>
-        <div class="flex sm:flex-column md:flex-column lg:flex-row flex-wrap gap-4">
-          Poner filtro?
+        <div class="lg:col-3 lg:col-offset-1 md:col-3 sm:col-3 flex flex-column m-auto gap-2">
+          <InputText style="width: 250px;" v-model="inputKey" placeholder="Buscar"/>
+          <div class="ml-2">
+            <Checkbox v-model="onlyActiveBanners" :binary="true"/>
+            <label for="ingredient2" class="ml-2"> Activos </label>
+          </div>
         </div>
+
       </template>
-      <template #empty >
-        <div  class="no-games mb-5 mt-5"> No se encontraron juegos. </div>
+      <template #empty>
+        <div class="no-banners mb-5 mt-5"> No se encontraron banners.</div>
       </template>
       <template #list="slotProps">
-        <div class="col-12 clickeable-item" @click="goToGame(slotProps.data.id)">
+        <div class="col-12 clickeable-item" @click="goToBanner(slotProps.data.id)">
           <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4 h-full">
-            <img class=" " style="max-height: 160px; min-height: 160px; object-fit:cover;" :src="slotProps.data.image" :alt="slotProps.data.name" />
-            <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4 h-full">
+            <img class=" " style="max-height: 160px; min-height: 160px; object-fit:cover;" :src="slotProps.data.image"
+                 :alt="slotProps.data.name"/>
+            <div
+                class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4 h-full">
               <div class="font-bold text-5xl m-auto" style="font-size: 15px;">{{ slotProps.data.name }}</div>
-              <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2" @click="stopPropagation">
-                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'" @click="editGame(slotProps.data.alias)"></Button>
-                <label v-tooltip="slotProps.data.is_hidden ? 'Exponer juego' : 'Ocultar juego'" class="switcher" @click="stopPropagation">
-                  <input v-model="slotProps.data.is_hidden" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled" @click="toggleSwitcher(slotProps.data.id)">
+              <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
+                   @click="stopPropagation">
+                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'"
+                        @click="editBanner(slotProps.data.alias)"></Button>
+                <label v-tooltip="switcherTooltipText(slotProps.data.is_active)" class="switcher" @click="stopPropagation">
+                  <input v-model="slotProps.data.is_active" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled(slotProps.data.is_active)" @click="toggleSwitcher(slotProps.data.id)">
                   <span class="switcher-slider">
-                    <span class="slider-circle">
-                      <i :class="iconClass"></i>
-                    </span>
-                  </span>
+                <span class="slider-circle">
+                  <i :class="iconClass(slotProps.data.is_active)"></i>
+                </span>
+              </span>
                 </label>
               </div>
             </div>
@@ -193,17 +285,17 @@ const filteredData = computed(() => {
   transform: translateX(0);
 }
 
-.switcher-slider i.pi-ban {
-  color: white;
+.switcher-slider i.pi-check {
+  color: #00A65A;
+}
+
+.switcher-slider i.pi-times {
+  color: red;
 }
 
 .switcher-input:checked + .switcher-slider .slider-circle {
   background-color: #9b2a3a;
   transform: translateX(30px);
-}
-
-.red {
-  color: #9b2a3a;
 }
 
 .clickeable-item {
@@ -212,20 +304,10 @@ const filteredData = computed(() => {
 }
 
 
-
 .clickeable-item:hover {
   animation: bounce 0.8s;
   background-color: #414141;
 }
-
-.image-container {
-  width: 200px;
-  height: 160px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 
 
 @keyframes bounce {
@@ -240,10 +322,11 @@ const filteredData = computed(() => {
   }
 }
 
-.no-games {
+.no-banners {
   text-align: center;
   color: rgba(255, 255, 255, 0.4);
   font-size: 18px;
   transition: color 0.3s;
 }
+
 </style>
