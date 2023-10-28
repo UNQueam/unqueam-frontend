@@ -11,6 +11,7 @@ import AccessDenied from "@/views/AccessDenied.vue";
 import PetitionsView from "@/views/DeveloperRequestsView.vue";
 import DeveloperGames from "@/views/DeveloperGames.vue";
 import NewGameFormView from "@/views/NewGameFormView.vue";
+import BannersList from "@/views/BannersList.vue";
 import BannerFormView from "@/views/BannerFormView.vue";
 import SingleBannerView from "@/views/SingleBannerView.vue";
 
@@ -35,6 +36,7 @@ const router = createRouter({
       props: true,
       meta: { requiresAuth: true, requiredRole: 'developer' }
     },
+
     {
       path: '/dev/games/publish',
       name: 'NewGameFormView',
@@ -63,6 +65,12 @@ const router = createRouter({
       path: '/admin/users',
       name: 'Users',
       component: UsersView,
+      meta: { requiresAuth: true, requiredRole: 'admin' }
+    },
+    {
+      path: '/admin/banners',
+      name: 'BannersList',
+      component: BannersList,
       meta: { requiresAuth: true, requiredRole: 'admin' }
     },
     {
