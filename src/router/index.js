@@ -137,6 +137,8 @@ router.beforeEach((to, from, next) => {
     next('/login');
   } else if (requiresAuth && !isAuthenticated && to.path !== '/login') {
     next('/login');
+  } else if (requiresAuth && isAuthenticated && requiredRole == null) {
+    next();
   } else if (requiresAuth && !authStore.hasRole(requiredRole)) {
     next('/access-denied');
   } else {

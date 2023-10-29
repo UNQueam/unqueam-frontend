@@ -24,52 +24,69 @@
     </div>
   </div>
 
-  <div class="card col-9 m-auto my-5 p-6 ">
+  <div class="card sm:col-12 md:col-9 lg:col-9 m-auto my-5 sm:p-4 md:p-6 lg:p-6">
     <form @submit.prevent="handlePublish">
-      <div class="flex flex-row gap-3">
-      <div class="mb-5">
-      <label class="block text-600 font-medium mb-2" for="name">Título del banner</label>
-      <InputText v-model="banner.title" autofocus class="md:w-25rem w-full" type="text"/>
+      <div class="flex flex-row flex-wrap lg:flex-nowrap gap-3 ">
+        <div class="mb-5 w-full lg:25-rem">
+          <label class="block text-600 font-medium mb-2" for="name">Título del banner</label>
+          <InputText v-model="banner.title" autofocus class="md:w-25rem w-full" type="text"/>
 
-      <div class="error-container">
-        <small v-for="error of v$.title.$errors" :key="error.$uid" class="p-error ml-2">{{ getCustomError("title", error.$validator, error) + ". " }}</small>
-      </div>
-      </div>
-
-      <div class="mb-5">
-        <label class="block text-600 font-medium mb-2" for="name">Enlace al banner</label>
-        <div class="flex flex-column">
-          <InputText v-model="banner.alias" class="md:w-25rem w-full" type="text"/>
-          <small v-if="banner.alias" id="alias-help" class="mt-1 ml-2">Se verá asi en la url: <span class="font-medium" style="color:#9b2a3a"> /{{toKebabCase(banner.alias)}} </span> </small>
+          <div class="error-container">
+            <small v-for="error of v$.title.$errors" :key="error.$uid"
+                   class="p-error ml-2">{{ getCustomError("title", error.$validator, error) + ". " }}</small>
+          </div>
         </div>
+
+        <div class="mb-5 w-full lg:25-rem">
+          <label class="block text-600 font-medium mb-2" for="name">Enlace al banner</label>
+          <div class="flex flex-column">
+            <InputText v-model="banner.alias" class="md:w-25rem w-full" type="text"/>
+            <small v-if="banner.alias" id="alias-help" class="mt-1 ml-2">Se verá asi en la url: <span
+                class="font-medium" style="color:#9b2a3a"> /{{ toKebabCase(banner.alias) }} </span> </small>
+          </div>
+          <div class="error-container">
+            <small v-for="error of v$.alias.$errors" :key="error.$uid"
+                   class="p-error ml-2">{{ getCustomError("alias", error.$validator, error) + ". " }}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <Editor v-model="banner.rich_text" editorStyle="height: 320px"/>
         <div class="error-container">
-          <small v-for="error of v$.alias.$errors" :key="error.$uid" class="p-error ml-2">{{ getCustomError("alias", error.$validator, error) + ". " }}</small>
+          <small v-for="error of v$.rich_text.$errors" :key="error.$uid"
+                 class="p-error ml-2">{{ getCustomError("rich_text", error.$validator, error) + ". " }}</small>
         </div>
       </div>
+
+      <div class="flex flex-row gap-1 mb-3">
+      <label class="text-600 font-medium" for="name">Imágen para el banner</label>
+        <label class="text-400 font-medium font-italic" for="name">(tamaño requerido: 800x200 píxeles)</label>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <div class="w-25rem lg:w-15rem ">
+          <FileUpload :chooseLabel="pictureUploadLabel" accept="image/*" auto class="w-full" customUpload mode="basic" @uploader="uploadImage"/>
+        </div>
+        <div class="w-25rem lg:w-15rem ">
+          <Button :disabled="!banner.picture.byte_array_as_string" class="w-full" icon="pi pi-eye" label="Ver imagen" @click="showPicture"/>
+        </div>
       </div>
 
-      <div class="mb-5">
-      <Editor v-model="banner.rich_text" editorStyle="height: 320px"/>
+      <Dialog v-model:visible="pictureModalIsVisible" header="Imágen de banner" modal style="max-width: 100%; height: auto;">
+        <Image :src="banner.picture.byte_array_as_string" alt="Image" class="w-full" style="max-width: 100%; height: auto;"></Image>
+      </Dialog>
       <div class="error-container">
-        <small v-for="error of v$.rich_text.$errors" :key="error.$uid" class="p-error ml-2">{{ getCustomError("rich_text", error.$validator, error) + ". " }}</small>
-      </div>
-      </div>
+        <small v-for="error of v$.picture.$errors" :key="error.$uid"
+               class="p-error ml-2">{{ getCustomError("picture", error.$validator, error) + ". " }}</small>
+        <small v-if="!imageSatisfiesDimensions"
+               class="p-error ml-2">La imágen debe tener una dimensión específica de 800x200 píxeles.</small>
 
-      <label class="block text-600 font-medium mb-2" for="name">Imágen para el banner</label>
-      <div class="flex flex-row gap-2">
-        <FileUpload :chooseLabel="pictureUploadLabel" accept="image/*" auto customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadImage" />
-        <Button :disabled="!banner.picture.byte_array_as_string" icon="pi pi-eye" label="Ver imágen" @click="showPicture"/>
-        <Dialog v-model:visible="pictureModalIsVisible" header="Imágen de banner" modal>
-           <Image :src="banner.picture.byte_array_as_string" alt="Image" class="w-full"></Image>
-        </Dialog>
-      </div>
-      <div class="error-container">
-        <small v-for="error of v$.picture.$errors" :key="error.$uid" class="p-error ml-2">{{ getCustomError("picture", error.$validator, error) + ". " }}</small>
       </div>
 
       <div class="flex flex-row justify-content-end mt-5 gap-3">
         <Button class="w-6rem cancel-button" label="Cancelar" type="button" @click="router.back()"></Button>
-        <Button :label="isEditMode ? 'Editar' : 'Publicar'" :loading="isProcessingRequest" class="w-6rem" type="submit"></Button>
+        <Button :label="isEditMode ? 'Editar' : 'Publicar'" :loading="isProcessingRequest" class="w-6rem"
+                type="submit"></Button>
       </div>
     </form>
   </div>
@@ -113,6 +130,8 @@ const banner = ref({
   }
 })
 
+const imageSatisfiesDimensions = ref(true)
+
 //Vuelidate:
 const rules = {
   title: {required},
@@ -136,6 +155,7 @@ onBeforeMount(async () => {
     //do nothing
   }
 });
+
 ///// ------
 
 async function handleEdition() {
@@ -153,7 +173,12 @@ async function handleCreation() {
   console.log(banner.value)
   await publishBanner(banner.value)
 
-  toast.add({ severity: 'success', summary: 'Operación exitosa', detail: 'Tu banner se ha publicado correctamente', life: 3500 });
+  toast.add({
+    severity: 'success',
+    summary: 'Operación exitosa',
+    detail: 'Tu banner se ha publicado correctamente',
+    life: 3500
+  });
   router.push('/admin/banners');
 }
 
@@ -179,12 +204,22 @@ const handlePublish = async () => {
       }
     } catch (error) {
       $externalResults.value = error.response.data.errors;
-      toast.add({ severity: 'error', summary: 'Operación fallida', detail: 'Ocurrió un error durante la publicación de tu banner', life: 3500 });
+      toast.add({
+        severity: 'error',
+        summary: 'Operación fallida',
+        detail: 'Ocurrió un error durante la publicación de tu banner',
+        life: 3500
+      });
     } finally {
       isProcessingRequest.value = false
     }
   } else {
-    toast.add({ severity: 'error', summary: 'Operación fallida', detail: 'Algunos de los campos del formulario es inválido', life: 3500 });
+    toast.add({
+      severity: 'error',
+      summary: 'Operación fallida',
+      detail: 'Algunos de los campos del formulario es inválido',
+      life: 3500
+    });
   }
   isProcessingRequest.value = false
 }
@@ -194,6 +229,7 @@ const pictureUploadLabel = computed(() => {
 });
 
 const uploadImage = async (event) => {
+  imageSatisfiesDimensions.value = true
   const file = event.files[0];
   const reader = new FileReader();
   let blob = await fetch(file.objectURL).then((r) => r.blob());
@@ -201,18 +237,41 @@ const uploadImage = async (event) => {
 
   reader.onloadend = function () {
     const base64data = reader.result;
-    banner.value.picture = {
-      file_name: file.name,
-      type: blob.type,
-      byte_array_as_string: base64data,
-      size: blob.size
-    }
+
+    const img = new Image();
+
+    img.onload = function () {
+      const requiredWidth = 800;
+      const requiredHeight = 200;
+
+      const meetsCriteria = this.height === requiredHeight && this.width === requiredWidth;
+
+      if (!meetsCriteria) {
+        imageSatisfiesDimensions.value = false
+
+        banner.value.picture = {
+          file_name: "",
+              type: "",
+              byte_array_as_string: "",
+              size: null
+        }
+      } else {
+        banner.value.picture = {
+          file_name: file.name,
+          type: blob.type,
+          byte_array_as_string: base64data,
+          size: blob.size
+        }
+      }
+    };
+    img.src = base64data;
   };
 };
 
 </script>
 
-<style>
+<style scoped>
+
 .cancel-button {
   width: 100px;
   background-color: rgba(255, 255, 255, 0.87);

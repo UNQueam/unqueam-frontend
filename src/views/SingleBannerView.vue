@@ -22,6 +22,25 @@ onMounted(async () => {
 </script>
 
 <template>
+  <div class="col-7 m-auto surface-section px-4 py-5 md:px-6 lg:px-8">
+    <ul class="list-none p-0 m-0 flex align-items-center font-medium mb-3">
+      <li>
+        <router-link class="text-500 no-underline line-height-3 cursor-pointer" to="/">Home</router-link>
+      </li>
+      <li class="px-2">
+        <i class="pi pi-angle-right text-500 line-height-3"></i>
+      </li>
+      <li>
+        <span class="text-900 line-height-3">Banner</span>
+      </li>
+    </ul>
+    <div class="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
+      <div>
+        <div class="font-medium text-3xl text-900">Banner</div>
+      </div>
+    </div>
+  </div>
+
   <div v-if="!bannerData" class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
       <Skeleton class="mb-5" height="3rem" width="10rem"></Skeleton>

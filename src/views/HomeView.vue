@@ -4,6 +4,7 @@ import {computed, onMounted, ref} from 'vue'
 import {fetchData} from "@/service/GamesService"
 import {useRouter} from 'vue-router';
 import RankIconsFactory from '@/services/RankIconsFactory'
+import {fetchActiveBanners} from "@/service/BannersService";
 
 const filterKey = ref('');
 const isLoadingData = ref(true);
@@ -11,7 +12,11 @@ const games = ref([]);
 const error = ref([]);
 const router = useRouter();
 
+const images = ref();
+
 onMounted(async () => {
+  await fetchActiveBanners().then((data) => (images.value = data));
+  console.log(images.value)
       try {
         const result = await fetchData();
         result.forEach(game => game.rankBadgeSrc = RankIconsFactory.getRankIcon(game.rank_badge))
@@ -35,11 +40,36 @@ const goToGame = (gameAlias) => {
   router.push({ name: 'GameDetails', params: { alias: gameAlias } });
 };
 
+const goToBanner = (banner) => {
+  router.push({ name: 'SingleBanner', params: {alias: banner.alias}})
+}
+
 const layout = ref('grid')
 
 </script>
 
 <template>
+
+    <div class="flex">
+      <div class="mb-5 m-auto mt-5 w-100 col-12 md:col-10 lg:col-9 p-4  justify-content-center text-center align-items-center align-content-center">
+        <Galleria
+            :autoPlay="true"
+            :autoPlayInterval="10000"
+            :effect="'fade'"
+            :numScroll="1"
+            :showThumbnails="false"
+            :value="images"
+            circular
+        class="m-auto"
+        num-visible="1"
+        >
+        <template #item="slotProps">
+          <Image :alt="slotProps.item.alias" :src="slotProps.item.picture.byte_array_as_string" style="width: 100%; display: block; cursor: pointer;" @click="goToBanner(slotProps.item)" />
+        </template>
+      </Galleria>
+      </div>
+    </div>
+
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-10 lg:col-9 p-4">
         <div class="title">

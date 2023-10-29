@@ -60,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
             return this.authenticationInfo?.role.toLowerCase() === 'user';
         },
         hasRole(aRole: string): boolean {
-            return this.authenticationInfo?.role.toLowerCase() === aRole.toLowerCase();
+            return aRole != null && this.authenticationInfo?.role.toLowerCase() === aRole.toLowerCase();
         }
     },
 });

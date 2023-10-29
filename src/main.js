@@ -10,8 +10,6 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 import Vuelidate from 'vuelidate';
 import Tooltip from 'primevue/tooltip';
-import Galleria from 'primevue/galleria';
-
 import PrimeVue from 'primevue/config';
 import '@/assets/styles.scss';
 import piniaPluginPersistedState from "pinia-plugin-persistedstate"
@@ -33,6 +31,7 @@ import Avatar from "primevue/avatar";
 import ProgressBar from "primevue/progressbar";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import Galleria from 'primevue/galleria';
 import Card from "primevue/card";
 import MultiSelect from "primevue/multiselect";
 import Calendar from "primevue/calendar";
@@ -96,11 +95,11 @@ app.component('Column', Column)
 app.component('MultiSelect', MultiSelect)
 app.component('Calendar', Calendar)
 app.component('InputNumber', InputNumber)
+app.component('Galleria', Galleria)
 app.component('Slider', Slider)
 app.component('TriStateCheckbox', TriStateCheckbox)
 app.component('Tag', Tag)
 app.directive('tooltip', Tooltip);
-app.directive('Galleria', Galleria);
 
 app.component('Password', Password)
 
