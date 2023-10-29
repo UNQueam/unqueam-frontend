@@ -55,6 +55,54 @@ export const editBanner = async (bannerId, updatedBanner) => {
     }
 };
 
+export const activateBanner = async (bannerId) => {
+    try {
+        const response = await apiService.put(`/${bannerId}/activate`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+            router.push('/404');
+        }
+        if(error.response && error.response.status === 400){
+            throw error;
+        } else {
+            return Promise.reject(error.response.data);
+            router.push('/500');
+        }
+    }
+};
+
+export const deactivateBanner = async (bannerId) => {
+    try {
+        const response = await apiService.put(`/${bannerId}/deactivate`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.log(error.response.data)
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+            router.push('/404');
+        }
+        if(error.response && error.response.status === 400){
+            throw error;
+        } else {
+            return Promise.reject(error.response.data);
+            router.push('/500');
+        }
+    }
+};
+
+
 export const fetchActiveBanners = async () => {
     try {
         const response = await apiService.get(``);
@@ -64,6 +112,20 @@ export const fetchActiveBanners = async () => {
         return handleRequestError(error);
     }
 };
+
+export const fetchAllBanners = async () => {
+    try {
+        const response = await apiService.get(``, {
+            params: {
+                deactivated: true
+            }
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        return handleRequestError(error);
+    }
+}
 
 export const fetchBannerById = async (bannerId) => {
     try {

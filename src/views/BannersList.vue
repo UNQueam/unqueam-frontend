@@ -7,6 +7,7 @@ import {useAuthStore} from "@/stores/authStore";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import Checkbox from 'primevue/checkbox';
+import {activateBanner, deactivateBanner, fetchAllBanners} from "@/service/BannersService";
 
 const router = useRouter()
 
@@ -22,44 +23,7 @@ const onlyActiveBanners = ref(false);
 
 onBeforeMount(async () => {
   try {
-    //banners.value = await fetchDeveloperGames(authStore.getUsername);
-    banners.value = [{
-      id: 1,
-      name: "Estadisticas de los jugadores de overwatch a lo largo de latinoamerica",
-      image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
-      is_active: true
-    },
-      {
-        id: 2,
-        name: "Aloha",
-        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
-        is_active: false
-      },
-      {
-        id: 3,
-        name: "Aloha",
-        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
-        is_active: true
-      },
-      {
-        id: 4,
-        name: "Aloha",
-        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
-        is_active: true
-      },
-      {
-        id: 5,
-        name: "Aloha",
-        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
-        is_active: true
-      },
-      {
-        id: 6,
-        name: "Aloha",
-        image: "https://elcomercio.pe/resizer/oAQExsuvFUNs3Dzt7i6lmi4fXVA=/1200x900/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/PAVQWATNQ5D5FNEBHIMXZZX554.jpg",
-        is_active: true
-      }
-    ];
+    banners.value = await fetchAllBanners();
   } catch (err) {
     //do nothing
   }
@@ -99,13 +63,13 @@ const toggleSwitcher = async (bannerId) => {
     }, 2000);
   }
   try {
-    const banner = banners.value.filter(banner => banner.id === bannerId)[0]
+    const banner = banners.value.filter(banner => banner.banner_id === bannerId)[0]
     const is_active = banner.is_active;
     if (is_active) {
-      //await activateBanner(bannerId);
+      await activateBanner(bannerId);
       showToggleHideStatusSuccess();
     } else {
-      //await deactivateBanner(bannerId);
+      await deactivateBanner(bannerId);
       showToggleHideStatusSuccess();
     }
     banners.value[banners.value.indexOf(banner)].is_active = !is_active;
@@ -114,8 +78,8 @@ const toggleSwitcher = async (bannerId) => {
   }
 };
 
-const goToBanner = (bannerId) => {
-  router.push("/banners/" + bannerId)
+const goToBanner = (alias) => {
+  router.push("/banners/" + alias)
 }
 
 const stopPropagation = (event) => {
@@ -150,9 +114,9 @@ const filteredData = computed(() => {
   return banners.value.filter(
       (item) => {
         if (onlyActiveBanners.value) {
-          return item.name.toLowerCase().includes(lowerCaseFilter) && item.is_active;
+          return item.title.toLowerCase().includes(lowerCaseFilter) && item.is_active;
         } else {
-          return item.name.toLowerCase().includes(lowerCaseFilter);
+          return item.title.toLowerCase().includes(lowerCaseFilter);
         }
       }
   )
@@ -212,23 +176,24 @@ const switcherTooltipText = computed(() => {
         </div>
 
       </template>
+
       <template #empty>
         <div class="no-banners mb-5 mt-5"> No se encontraron banners.</div>
       </template>
       <template #list="slotProps">
-        <div class="col-12 clickeable-item" @click="goToBanner(slotProps.data.id)">
+        <div class="col-12 clickeable-item" @click="goToBanner(slotProps.data.alias)">
           <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4 h-full">
-            <img class=" " style="max-height: 160px; min-height: 160px; object-fit:cover;" :src="slotProps.data.image"
-                 :alt="slotProps.data.name"/>
+            <img :alt="slotProps.data.alias" :src="slotProps.data.picture.byte_array_as_string" class=" "
+                 style="max-height: 160px; min-height: 160px; object-fit:cover;"/>
             <div
                 class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4 h-full">
-              <div class="font-bold text-5xl m-auto" style="font-size: 15px;">{{ slotProps.data.name }}</div>
+              <div class="font-bold text-5xl m-auto" style="font-size: 15px;">{{ slotProps.data.title }}</div>
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
                    @click="stopPropagation">
                 <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'"
-                        @click="editBanner(slotProps.data.alias)"></Button>
+                        @click="editBanner(slotProps.data.banner_id)"></Button>
                 <label v-tooltip="switcherTooltipText(slotProps.data.is_active)" class="switcher" @click="stopPropagation">
-                  <input v-model="slotProps.data.is_active" type="checkbox" class="switcher-input" :disabled="!isHideSwitcherEnabled(slotProps.data.is_active)" @click="toggleSwitcher(slotProps.data.id)">
+                  <input v-model="slotProps.data.is_active" :disabled="!isHideSwitcherEnabled(slotProps.data.is_active)" class="switcher-input" type="checkbox" @click="toggleSwitcher(slotProps.data.banner_id)">
                   <span class="switcher-slider">
                 <span class="slider-circle">
                   <i :class="iconClass(slotProps.data.is_active)"></i>
