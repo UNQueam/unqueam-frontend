@@ -65,7 +65,7 @@ const toggleSwitcher = async (bannerId) => {
   try {
     const banner = banners.value.filter(banner => banner.banner_id === bannerId)[0]
     const is_active = banner.is_active;
-    if (is_active) {
+    if (!is_active) {
       await activateBanner(bannerId);
       showToggleHideStatusSuccess();
     } else {

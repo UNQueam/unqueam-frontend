@@ -51,7 +51,10 @@ onMounted(async () => {
   </div>
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
-      <Image :src="bannerData?.picture.byte_array_as_string" alt="Image" ></Image>
+      <div class="flex justify-content-center align-items-center banner-container">
+        <Image :src="bannerData?.picture.byte_array_as_string" class="banner-image" alt="Image" ></Image>
+      </div>
+
       <h3>{{ bannerData?.title }}</h3>
       <div class="w-full" v-html="bannerData?.rich_text"></div>
     </div>
@@ -144,4 +147,13 @@ onMounted(async () => {
   gap: 1rem;
   margin-bottom: 2rem;
 }
+
+.banner-image {
+  height: auto;
+}
+
+.banner-container {
+  overflow: hidden;
+}
+
 </style>

@@ -57,7 +57,7 @@ export const editBanner = async (bannerId, updatedBanner) => {
 
 export const activateBanner = async (bannerId) => {
     try {
-        const response = await apiService.put(`/${bannerId}/activate`,
+        const response = await apiService.put(`/${bannerId}/activate`,{},
             {
                 headers: {
                     'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
@@ -80,7 +80,7 @@ export const activateBanner = async (bannerId) => {
 
 export const deactivateBanner = async (bannerId) => {
     try {
-        const response = await apiService.put(`/${bannerId}/deactivate`,
+        const response = await apiService.put(`/${bannerId}/deactivate`,{},
             {
                 headers: {
                     'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
@@ -141,6 +141,7 @@ export const fetchBannerByAlias = async (alias) => {
         const response = await apiService.get(``, {
             params: { alias: alias }
         });
+        console.log(response.data)
         return response.data[0];
     } catch (error) {
         return handleRequestError(error);

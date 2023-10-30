@@ -46,6 +46,7 @@ const goToBanner = (banner) => {
 
 const layout = ref('grid')
 
+
 </script>
 
 <template>
@@ -60,11 +61,17 @@ const layout = ref('grid')
             :showThumbnails="false"
             :value="images"
             circular
-        class="m-auto"
-        num-visible="1"
+            class="m-auto"
+            :numVisible="5"
         >
         <template #item="slotProps">
-          <Image :alt="slotProps.item.alias" :src="slotProps.item.picture.byte_array_as_string" style="width: 100%; display: block; cursor: pointer;" @click="goToBanner(slotProps.item)" />
+          <div class="overflow-auto">
+            <Image :alt="slotProps.item.alias" :src="slotProps.item.picture.byte_array_as_string" class="m-auto" style="width: 100%; display: block; cursor: pointer;" @click="goToBanner(slotProps.item)" />
+          </div>
+
+        </template>
+        <template #caption="slotProps">
+          <div class="text-xl mb-2 font-bold">{{ slotProps.item.title }}</div>
         </template>
       </Galleria>
       </div>
