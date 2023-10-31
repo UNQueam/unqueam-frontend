@@ -58,6 +58,13 @@
         <small v-for="error of v$.link_to_game.$errors" :key="error.$uid" class="p-error">{{ getCustomError("link_to_game", error.$validator, error) + ". " }}</small>
       </div>
 
+      <label class="block text-600 font-medium mb-2 mt-5" for="game">Link de descarga</label>
+      <InputText id="game" v-model="game.link_to_download" class="w-full" placeholder="El enlace de descarga del videojuego" style="padding: 1rem" type="text" />
+
+      <div class="error-container">
+        <small v-for="error of v$.link_to_download.$errors" :key="error.$uid" class="p-error">{{ getCustomError("link_to_download", error.$validator, error) + ". " }}</small>
+      </div>
+
       <label class="block text-600 font-medium mb-2 mt-5" for="devTeam">Equipo desarrollador</label>
       <InputText id="devTeam" v-model="game.development_team" class="w-full " placeholder="El nombre del equipo desarrollador" style="padding: 1rem" type="text" />
 
@@ -141,7 +148,7 @@
   import {useVuelidate} from "@vuelidate/core";
   import AuthenticationService from "@/service/AuthenticationService";
   import {useAuthStore} from "@/stores/authStore";
-  import {helpers, required} from "@vuelidate/validators";
+  import {helpers, required, requiredUnless, url} from "@vuelidate/validators";
   import {formatGameDate} from "@/utils/DateFormatter";
   import {getCustomError} from "@/utils/FormErrorMessageHandler";
   import {useToast} from "primevue/usetoast";
@@ -163,6 +170,7 @@
     name: "",
     alias: "",
     link_to_game: "",
+    link_to_download: "",
     description: "",
     development_team: "",
     release_date: null,
@@ -217,12 +225,17 @@
     return /^https:\/\/(.*?)\.github\.io\/(.*?)$/.test(value);
   }
 
+  const isDownloadLinkProvided = () => {
+    return game.value.link_to_download;
+  }
+
   const rules = {
     name: {required},
     alias: {required},
     link_to_game: {
-      required,
+      requiredUnlessDownloadProvided: requiredUnless(isDownloadLinkProvided),
       linkToGameRegex: helpers.withMessage("El link debe ser un enlace válido de GitHub Pages", linkToGameRegex)},
+    link_to_download: {url},
     description: {required},
     development_team: {required},
     release_date: {required},
