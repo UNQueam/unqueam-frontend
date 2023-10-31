@@ -22,7 +22,10 @@ const customErrors = {
     required: 'El nombre es requerido',
   },
   link_to_game: {
-    required: 'El enlace al videojuego es requerido',
+    requiredUnlessDownloadProvided: 'Es requerido si no se provee un enlace de descarga'
+  },
+  link_to_download: {
+    url: 'El enlace de descarga debe ser una url'
   },
   description: {
     required: 'La descripción es requerida',
@@ -56,7 +59,7 @@ const customErrors = {
   },
   picture: {
     required: 'Debes ingresar una imágen'
-  }
+  },
 };
 
 const customValidators = [
