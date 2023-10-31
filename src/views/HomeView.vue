@@ -52,26 +52,24 @@ const layout = ref('grid')
 <template>
 
     <div class="flex">
-      <div class="mb-5 m-auto mt-5 w-100 col-12 md:col-10 lg:col-9 p-4  justify-content-center text-center align-items-center align-content-center">
+      <div class="m-auto mt-5 w-100 col-12 md:col-10 lg:col-9 p-4  justify-content-center text-center align-items-center align-content-center">
         <Galleria
             :autoPlay="true"
             :autoPlayInterval="10000"
             :effect="'fade'"
             :numScroll="1"
             :showThumbnails="false"
+            :show-indicators="true"
             :value="images"
             circular
             class="m-auto"
             :numVisible="5"
         >
         <template #item="slotProps">
-          <div class="overflow-auto">
-            <Image :alt="slotProps.item.alias" :src="slotProps.item.picture.byte_array_as_string" class="m-auto" style="width: 100%; display: block; cursor: pointer;" @click="goToBanner(slotProps.item)" />
+          <div class="card p-0 m-0 overflow-auto">
+            <Image :alt="slotProps.item.alias" :src="slotProps.item.picture.byte_array_as_string" class="m-auto" style="border-radius: 20px; width: 100%; display: block; cursor: pointer;" @click="goToBanner(slotProps.item)" />
           </div>
 
-        </template>
-        <template #caption="slotProps">
-          <div class="text-xl mb-2 font-bold">{{ slotProps.item.title }}</div>
         </template>
       </Galleria>
       </div>

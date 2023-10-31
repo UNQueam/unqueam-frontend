@@ -7,16 +7,20 @@ import {useRoute} from 'vue-router';
 const route = useRoute();
 const bannerAlias = ref('');
 const bannerData = ref(null);
+const bannerIsDeactivated = ref(false);
+const isLoading = ref(false)
 
 onMounted(async () => {
+  isLoading.value = true
   bannerAlias.value = route.params.alias;
 
   try {
     bannerData.value = await fetchBannerByAlias(bannerAlias.value);
-    console.log(bannerData.value)
+    bannerIsDeactivated.value = bannerData.value == null
   } catch (error) {
     console.error('Error al cargar el banner:', error);
   }
+  isLoading.value = false
 })
 
 </script>
@@ -41,15 +45,36 @@ onMounted(async () => {
     </div>
   </div>
 
-  <div v-if="!bannerData" class="flex">
+  <div v-if="isLoading" class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
+      <Skeleton class="mt-5 mb-5" height="13rem" width="100%"></Skeleton>
       <Skeleton class="mb-5" height="3rem" width="10rem"></Skeleton>
-      <Skeleton height="500px" width="100%"></Skeleton>
-      <Skeleton class="mb-5 mt-5" height="3rem" width="10rem"></Skeleton>
-      <Skeleton class="mt-5" height="10rem" width="100%"></Skeleton>
+      <Skeleton height="400px" width="100%"></Skeleton>
     </div>
   </div>
-  <div class="flex">
+
+  <div v-if="bannerIsDeactivated" class="flex flex-column align-items-center justify-content-center m-auto">
+    <div class="flex flex-column align-items-center justify-content-center mt-8">
+      <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
+        <div class="w-full surface-card py-8 px-5 sm:px-8 flex flex-column align-items-center" style="border-radius: 53px">
+          <div class="grid flex flex-column align-items-center">
+            <div class="flex justify-content-center align-items-center border-circle" style="width: 3.2rem; height: 3.2rem; background-color: #964849;">
+              <i class="text-50 pi pi-fw pi-ban text-2xl text-white"></i>
+            </div>
+            <h1 class="text-900 font-bold text-4xl lg:text-5xl mb-2">Banner desactivado</h1>
+            <span class="text-600 ">El banner se encuentra desactivado por un administrador.</span>
+            <span class="text-600 mb-5">No es público en este momento.</span>
+            <div class="col-12 mt-5 text-center">
+              <i class="pi pi-fw pi-arrow-left text-blue-500 mr-2" style="vertical-align: center"></i>
+              <router-link class="text-blue-500" to="/">Ir al Inicio</router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="bannerData && !bannerIsDeactivated" class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
       <div class="flex justify-content-center align-items-center banner-container">
         <Image :src="bannerData?.picture.byte_array_as_string" class="banner-image" alt="Image" ></Image>
@@ -74,78 +99,6 @@ onMounted(async () => {
 
 .ql-align-left {
   text-align: start;
-}
-
-.carousel {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-}
-
-.carousel-item {
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-.carousel-item img {
-  max-width: 150px;
-}
-.game {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.play-icon {
-  font-size: 14pt;
-  background-color: #666666;
-  border: 1px solid #858585;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px
-}
-
-.play-button {
-  border: 0;
-  background: none;
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.play-button:hover {
-  cursor: pointer;
-}
-
-#play-button-text {
-  font-size: 48px;
-  color: #c1272d
-}
-
-.game-preview {
-  background-color: black;
-  width: 100%;
-  height: 500px;
-  margin: 2rem 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.gameplay {
-  width: 100%;
-  height: 600px;
-  margin: 2rem 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.game-images-container {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  margin-bottom: 2rem;
 }
 
 .banner-image {
