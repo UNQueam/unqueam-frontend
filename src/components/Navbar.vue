@@ -33,6 +33,10 @@
                 <i class="pi pi-box" />
                 <span class="ml-2">Ser desarrollador</span>
               </button>
+              <button  class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="goToFavourites">
+                <i class="pi pi-folder" />
+                <span class="ml-2">Mis Favoritos</span>
+              </button>
               <button v-if="authStore.isDeveloper()" class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="handleGoToDeveloperGames">
                 <i class="pi pi-box" />
                 <span class="ml-2">Mis Juegos</span>
@@ -185,6 +189,10 @@ const handleLogout = () => {
 const handleGoToDeveloperGames = () => {
   router.push({path: '/dev/games'});
 };
+
+const goToFavourites = () => {
+  router.push({path: '/my-favourites'});
+}
 
 </script>
 
