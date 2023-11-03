@@ -9,6 +9,7 @@ import {onMounted, ref} from 'vue';
 import {useRoute} from 'vue-router';
 import {fetchGame} from "@/service/GamesService"
 import GameCommentsCard from "@/components/GameCommentsCard.vue";
+import {useAuthStore} from "@/stores/authStore";
 
 const isUserPlaying = ref(false);
 
@@ -41,13 +42,18 @@ const getDeveloperNames = (developers) => {
 }
 
 onMounted(async () => {
+  const isLoggedInUser = useAuthStore().isAuthenticated()
   gameAlias.value = route.params.alias;
 
   try {
     const response = await fetchGame(gameAlias.value);
-    const favoriteGames = await fetchFavoriteGamesOfAuthUser()
     gameData.value = response;
-    isMarkedAsFavorite.value = favoriteGames.some(favoriteGame => favoriteGame.game.id === gameData.value.id)
+    if (isLoggedInUser) {
+      const favoriteGames = await fetchFavoriteGamesOfAuthUser()
+      isMarkedAsFavorite.value = favoriteGames.some(favoriteGame => favoriteGame.game.id === gameData.value.id)
+    } else {
+      isMarkedAsFavorite.value = null
+    }
   } catch (error) {
     console.error('Error al cargar el juego:', error);
   }
@@ -71,6 +77,10 @@ const handleFavorite = () => {
   isMarkedAsFavorite.value ? handleRemoveGameFromFavorites() : handleAddGameToFavorites()
 }
 
+const scrollToDownloadLinks = () => {
+  document.getElementById('downloadLink').scrollIntoView({ behavior: 'smooth' });
+}
+
 </script>
 
 <template>
@@ -87,6 +97,7 @@ const handleFavorite = () => {
       <div class="flex align-items-center justify-content-between">
         <h3 class="">{{ gameData?.name }}</h3>
         <Button
+            v-if="isMarkedAsFavorite != null"
             v-tooltip="!isMarkedAsFavorite ? 'Agregar a Favoritos' : 'Quitar de Favoritos'"
             :class="!isMarkedAsFavorite ? 'dislike-button' : ''"
             :icon="!isMarkedAsFavorite ? 'pi pi-heart' : 'pi pi-heart-fill'"
@@ -105,10 +116,9 @@ const handleFavorite = () => {
       </div>
       <div v-else>
         <div class='game-preview '>
-          <div class="download-message">
+          <div class="download-message" @click="scrollToDownloadLinks">
             ¡Link de descarga debajo!
           </div>
-
         </div>
       </div>
 
@@ -126,7 +136,7 @@ const handleFavorite = () => {
       <div>
         <div v-if="gameData?.link_to_download" class="mb-5">
           <div class="font-medium text-2xl text-900 mb-3 mt-3">Link de descarga</div>
-          <a :href="gameData?.link_to_download" target="_blank">
+          <a :href="gameData?.link_to_download" target="_blank" id="downloadLink">
             {{ gameData?.link_to_download }}
           </a>
         </div>
@@ -259,19 +269,23 @@ const handleFavorite = () => {
 
 .download-message {
   text-align: center;
-  padding: 20px; /* Ajusta el espaciado interior según tus necesidades */
+  padding: 20px;
   position: relative;
   font-size: 24px;
   color: #9b2a3a;
 }
 
+.download-message:hover {
+  cursor:pointer;
+}
+
 .download-message::after {
-  content: "▼"; /* Agrega una flecha hacia abajo usando el carácter Unicode */
+  content: "▼";
   position: absolute;
-  bottom: -20px; /* Ajusta la posición vertical de la flecha según tus necesidades */
-  left: 50%; /* Coloca la flecha en el centro horizontal */
-  transform: translateX(-50%); /* Centra horizontalmente la flecha */
-  font-size: 24px; /* Ajusta el tamaño de la flecha según tus necesidades */
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
   display: block;
 }
 </style>
