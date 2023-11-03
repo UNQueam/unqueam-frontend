@@ -1,14 +1,14 @@
 <template>
   <nav class="navbar">
-    <div class="navbar-logo">
-      <router-link to="/">
-        <img src="/public/Unqueam_logo_image.png" alt="Logo" />
+      <div class="navbar-logo">
+      <router-link to="/" >
+        <img src="/public/Unqueam_logo_image.png" alt="Logo" class="m-0 p-0" />
       </router-link>
       <span class="hidden md:visible md:inline logo-name">
-        <router-link to="/"> &lt;<span class="red-text">UN</span>Queam/&gt; </router-link>
+        <router-link to="/"><span class="red-text">UN</span>Queam</router-link>
       </span>
     </div>
-    <div class="navbar-links">
+      <div class="navbar-links">
       <ul>
         <li v-if="authStore.isAdmin()">
           <span aria-controls="overlay_menu" aria-haspopup="true" class="cursor-pointer" @click="toggle_admin">Admin</span>
@@ -220,7 +220,7 @@ a {
 }
 
 .logo-name {
-  font-family: 'Orbitron', sans-serif;
+  font-family: sans-serif;
   font-size: 20px;
   display: flex;
   align-items: center;
@@ -228,7 +228,7 @@ a {
 }
 
 .red-text {
-  color: red;
+  color: #b22429;
   margin: 0;
 }
 
