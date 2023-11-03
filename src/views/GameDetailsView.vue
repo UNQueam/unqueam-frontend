@@ -59,12 +59,23 @@ onMounted(async () => {
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
         <h3>{{gameData?.name}}</h3>
-        <div v-if="!isUserPlaying" class='game-preview'>
-          <button class='play-button' @click="executePlay">
-            <span id='play-button-text'>Play</span>
-            <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
-          </button>
+        <div v-if="!gameData?.link_to_game">
+          <div v-if="!isUserPlaying" class='game-preview'>
+            <button class='play-button' @click="executePlay">
+              <span id='play-button-text'>Play</span>
+              <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
+            </button>
+          </div>
         </div>
+        <div v-else>
+          <div class='game-preview '>
+            <div class="download-message">
+              ¡Link de descarga debajo!
+            </div>
+
+          </div>
+        </div>
+
         <div v-if="isUserPlaying" class="gameplay flex flex-column">
           <iframe ref="gameIframe" :src="gameData?.link_to_game" allowfullscreen="true" class="game"></iframe>
         </div>
@@ -77,8 +88,16 @@ onMounted(async () => {
           </div>
         </div>
         <div>
+          <div v-if="gameData?.link_to_download" class="mb-5">
+            <div class="font-medium text-2xl text-900 mb-3 mt-3">Link de descarga</div>
+            <a :href="gameData?.link_to_download" target="_blank" >
+              {{gameData?.link_to_download}}
+            </a>
+          </div>
           <div class="font-medium text-2xl text-900 mb-3 mt-3">Información</div>
           <div class="text-500 mb-5">{{gameData?.description}}</div>
+
+
           <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
               <div class="text-500 w-6 md:w-2 font-medium mr-3">Título</div>
@@ -182,5 +201,23 @@ onMounted(async () => {
   flex-direction: row;
   gap: 1rem;
   margin-bottom: 2rem;
+}
+
+.download-message {
+  text-align: center;
+  padding: 20px; /* Ajusta el espaciado interior según tus necesidades */
+  position: relative;
+  font-size: 24px;
+  color: #9b2a3a;
+}
+
+.download-message::after {
+  content: "▼"; /* Agrega una flecha hacia abajo usando el carácter Unicode */
+  position: absolute;
+  bottom: -20px; /* Ajusta la posición vertical de la flecha según tus necesidades */
+  left: 50%; /* Coloca la flecha en el centro horizontal */
+  transform: translateX(-50%); /* Centra horizontalmente la flecha */
+  font-size: 24px; /* Ajusta el tamaño de la flecha según tus necesidades */
+  display: block;
 }
 </style>
