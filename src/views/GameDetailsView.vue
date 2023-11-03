@@ -1,5 +1,15 @@
 <script setup>
 
+import {
+  doRemoveGameFromFavorites,
+  fetchFavoriteGamesOfAuthUser,
+  postAddGameToFavorite
+} from "@/service/FavoriteGamesService";
+import {onMounted, ref} from 'vue';
+import {useRoute} from 'vue-router';
+import {fetchGame} from "@/service/GamesService"
+import GameCommentsCard from "@/components/GameCommentsCard.vue";
+
 const isUserPlaying = ref(false);
 
 const gameIframe = ref(null);
@@ -18,17 +28,13 @@ function executePlay() {
   setTimeout(toggleFullscreen, 400)
 }
 
-import {onMounted, ref} from 'vue';
-import {useRoute} from 'vue-router';
-import {fetchGame} from "@/service/GamesService"
-import GameCommentsCard from "@/components/GameCommentsCard.vue";
-
 const route = useRoute();
 const gameAlias = ref('');
 const gameData = ref(null);
+const isMarkedAsFavorite = ref(false);
 
 const getDeveloperNames = (developers) => {
-  if(developers) {
+  if (developers) {
     const nameStrings = developers.map(item => `${item.name}`);
     return nameStrings.join(', ');
   }
@@ -39,11 +45,31 @@ onMounted(async () => {
 
   try {
     const response = await fetchGame(gameAlias.value);
+    const favoriteGames = await fetchFavoriteGamesOfAuthUser()
     gameData.value = response;
+    isMarkedAsFavorite.value = favoriteGames.some(favoriteGame => favoriteGame.game.id === gameData.value.id)
   } catch (error) {
     console.error('Error al cargar el juego:', error);
   }
 })
+
+const handleRemoveGameFromFavorites = () => {
+  if (isMarkedAsFavorite.value) {
+    doRemoveGameFromFavorites(gameData.value.id)
+    isMarkedAsFavorite.value = false
+  }
+}
+
+const handleAddGameToFavorites = () => {
+  if (!isMarkedAsFavorite.value) {
+    postAddGameToFavorite(gameData.value.id)
+    isMarkedAsFavorite.value = true
+  }
+}
+
+const handleFavorite = () => {
+  isMarkedAsFavorite.value ? handleRemoveGameFromFavorites() : handleAddGameToFavorites()
+}
 
 </script>
 
@@ -58,78 +84,105 @@ onMounted(async () => {
   </div>
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
-        <h3>{{gameData?.name}}</h3>
-        <div v-if="!gameData?.link_to_game">
-          <div v-if="!isUserPlaying" class='game-preview'>
-            <button class='play-button' @click="executePlay">
-              <span id='play-button-text'>Play</span>
-              <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
-            </button>
-          </div>
-        </div>
-        <div v-else>
-          <div class='game-preview '>
-            <div class="download-message">
-              ¡Link de descarga debajo!
-            </div>
-
-          </div>
-        </div>
-
-        <div v-if="isUserPlaying" class="gameplay flex flex-column">
-          <iframe ref="gameIframe" :src="gameData?.link_to_game" allowfullscreen="true" class="game"></iframe>
-        </div>
-        <div>
-          <div class="font-medium text-2xl text-900 mb-3 mt-3">Galeria</div>
-          <div class="carousel">
-            <div v-for="(image, index) in gameData?.images" :key="index" class="carousel-item" >
-              <Image :key="index" :src="image.url" alt="Image" preview />
-            </div>
-          </div>
-        </div>
-        <div>
-          <div v-if="gameData?.link_to_download" class="mb-5">
-            <div class="font-medium text-2xl text-900 mb-3 mt-3">Link de descarga</div>
-            <a :href="gameData?.link_to_download" target="_blank" >
-              {{gameData?.link_to_download}}
-            </a>
-          </div>
-          <div class="font-medium text-2xl text-900 mb-3 mt-3">Información</div>
-          <div class="text-500 mb-5">{{gameData?.description}}</div>
-
-
-          <ul class="list-none p-0 m-0">
-            <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium mr-3">Título</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.name}}</div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium mr-3">Géneros</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
-                <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.spanish_name" class="mr-2"></Chip>
-              </div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium mr-3">Equipo desarrollador</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{gameData?.development_team}}</div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium mr-3">Desarrolladores</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ getDeveloperNames(gameData?.developers) }}</div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
-              <div class="text-500 w-6 md:w-2 font-medium mr-3">Lanzamiento</div>
-              <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.release_date }}</div>
-            </li>
-          </ul>
+      <div class="flex align-items-center justify-content-between">
+        <h3 class="">{{ gameData?.name }}</h3>
+        <Button
+            v-tooltip="!isMarkedAsFavorite ? 'Agregar a Favoritos' : 'Quitar de Favoritos'"
+            :class="!isMarkedAsFavorite ? 'dislike-button' : ''"
+            :icon="!isMarkedAsFavorite ? 'pi pi-heart' : 'pi pi-heart-fill'"
+            class="mb-2 favorite-button"
+            rounded
+            @click="handleFavorite"
+        />
+      </div>
+      <div v-if="gameData?.link_to_game">
+        <div v-if="!isUserPlaying" class='game-preview'>
+          <button class='play-button' @click="executePlay">
+            <span id='play-button-text'>Play</span>
+            <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
+          </button>
         </div>
       </div>
+      <div v-else>
+        <div class='game-preview '>
+          <div class="download-message">
+            ¡Link de descarga debajo!
+          </div>
+
+        </div>
+      </div>
+
+      <div v-if="isUserPlaying" class="gameplay flex flex-column">
+        <iframe ref="gameIframe" :src="gameData?.link_to_game" allowfullscreen="true" class="game"></iframe>
+      </div>
+      <div>
+        <div class="font-medium text-2xl text-900 mb-3 mt-3">Galeria</div>
+        <div class="carousel">
+          <div v-for="(image, index) in gameData?.images" :key="index" class="carousel-item">
+            <Image :key="index" :src="image.url" alt="Image" preview/>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div v-if="gameData?.link_to_download" class="mb-5">
+          <div class="font-medium text-2xl text-900 mb-3 mt-3">Link de descarga</div>
+          <a :href="gameData?.link_to_download" target="_blank">
+            {{ gameData?.link_to_download }}
+          </a>
+        </div>
+        <div class="font-medium text-2xl text-900 mb-3 mt-3">Información</div>
+        <div class="text-500 mb-5">{{ gameData?.description }}</div>
+
+
+        <ul class="list-none p-0 m-0">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium mr-3">Título</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.name }}</div>
+          </li>
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium mr-3">Géneros</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+              <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.spanish_name"
+                    class="mr-2"></Chip>
+            </div>
+          </li>
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium mr-3">Equipo desarrollador</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.development_team }}</div>
+          </li>
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium mr-3">Desarrolladores</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{
+                getDeveloperNames(gameData?.developers)
+              }}
+            </div>
+          </li>
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium mr-3">Lanzamiento</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.release_date }}</div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
-  <GameCommentsCard v-if="gameData && gameData.id" :comments="gameData.comments ? gameData.comments : []" :game-id="gameData.id" :game-publisher="gameData?.publisher.username"/>
+  <GameCommentsCard v-if="gameData && gameData.id" :comments="gameData.comments ? gameData.comments : []"
+                    :game-id="gameData.id" :game-publisher="gameData?.publisher.username"/>
   <p class="m-5 opacity-0">.</p>
 </template>
 
 <style>
+
+.dislike-button {
+  background-color: #717171;
+  color: #2a2a2a;
+  border: 0;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.dislike-button:hover {
+  background-color: #2a2a2a;
+  color: #9b2a3a;
+}
 
 .carousel {
   display: flex;
@@ -145,6 +198,7 @@ onMounted(async () => {
 .carousel-item img {
   max-width: 150px;
 }
+
 .game {
   width: 100%;
   height: 100%;

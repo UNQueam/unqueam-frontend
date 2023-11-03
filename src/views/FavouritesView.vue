@@ -3,11 +3,11 @@ import DataView from 'primevue/dataview';
 import 'primeflex/primeflex.css';
 
 import {computed, onBeforeMount, ref} from "vue";
-import {fetchDeveloperGames} from "@/service/GamesService"
 import {useAuthStore} from "@/stores/authStore";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import {useConfirm} from "primevue/useconfirm";
+import {doRemoveGameFromFavorites, fetchFavoriteGamesOfAuthUser} from "@/service/FavoriteGamesService";
 
 const router = useRouter()
 
@@ -31,7 +31,8 @@ const confirm = useConfirm();
 
 onBeforeMount(async () => {
   try {
-    games.value = await fetchDeveloperGames(authStore.getUsername);
+    games.value = await fetchFavoriteGamesOfAuthUser()
+    games.value = games.value.map(favGame => favGame.game)
     getGeneralMetrics();
   } catch (err) {
     //do nothing
@@ -124,8 +125,9 @@ const confirmDialog = (gameId, event) => {
     rejectLabel: 'No',
     accept: async () => {
       try {
-        //Pegarle al back y filtrar la lista despues del await.
+        await doRemoveGameFromFavorites(gameId)
         showRemovalStatusSuccess();
+        games.value = games.value.filter(game => game.id !== gameId)
       } catch (error) {
         showRemovalStatusFailure();
       }
