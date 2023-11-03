@@ -1,14 +1,14 @@
 <template>
   <nav class="navbar">
-    <div class="navbar-logo">
-      <router-link to="/">
-        <img src="/public/Unqueam_logo_image.png" alt="Logo" />
+      <div class="navbar-logo">
+      <router-link to="/" >
+        <img src="/public/Unqueam_logo_image.png" alt="Logo" class="m-0 p-0" />
       </router-link>
       <span class="hidden md:visible md:inline logo-name">
-        <router-link to="/"> &lt;<span class="red-text">UN</span>Queam/&gt; </router-link>
+        <router-link to="/"><span class="red-text">UN</span>Queam</router-link>
       </span>
     </div>
-    <div class="navbar-links">
+      <div class="navbar-links">
       <ul>
         <li v-if="authStore.isAdmin()">
           <span aria-controls="overlay_menu" aria-haspopup="true" class="cursor-pointer" @click="toggle_admin">Admin</span>
@@ -32,6 +32,10 @@
               <button v-if="authStore.isUser()" class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="showBeDeveloperModal = true">
                 <i class="pi pi-box" />
                 <span class="ml-2">Ser desarrollador</span>
+              </button>
+              <button  class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="goToFavourites">
+                <i class="pi pi-folder" />
+                <span class="ml-2">Mis Favoritos</span>
               </button>
               <button v-if="authStore.isDeveloper()" class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround" @click="handleGoToDeveloperGames">
                 <i class="pi pi-box" />
@@ -186,6 +190,10 @@ const handleGoToDeveloperGames = () => {
   router.push({path: '/dev/games'});
 };
 
+const goToFavourites = () => {
+  router.push({path: '/my-favourites'});
+}
+
 </script>
 
 <style scoped>
@@ -212,7 +220,7 @@ a {
 }
 
 .logo-name {
-  font-family: 'Orbitron', sans-serif;
+  font-family: sans-serif;
   font-size: 20px;
   display: flex;
   align-items: center;
@@ -220,7 +228,7 @@ a {
 }
 
 .red-text {
-  color: red;
+  color: #b22429;
   margin: 0;
 }
 

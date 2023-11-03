@@ -222,7 +222,7 @@
 
   //Vuelidate:
   const linkToGameRegex = (value) => {
-    return /^https:\/\/(.*?)\.github\.io\/(.*?)$/.test(value);
+    return "" === value || /^https:\/\/(.*?)\.github\.io\/(.*?)$/.test(value);
   }
 
   const isDownloadLinkProvided = () => {

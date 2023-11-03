@@ -14,6 +14,7 @@ import NewGameFormView from "@/views/NewGameFormView.vue";
 import BannersList from "@/views/BannersList.vue";
 import BannerFormView from "@/views/BannerFormView.vue";
 import SingleBannerView from "@/views/SingleBannerView.vue";
+import FavouritesView from "@/views/FavouritesView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,6 +36,13 @@ const router = createRouter({
       component: DeveloperGames,
       props: true,
       meta: { requiresAuth: true, requiredRole: 'developer' }
+    },
+
+    {
+      path: '/my-favourites',
+      name: 'FavouritesView',
+      component: FavouritesView,
+      meta: { requiresAuth: true}
     },
 
     {
