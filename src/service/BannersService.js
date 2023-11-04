@@ -127,6 +127,20 @@ export const fetchAllBanners = async () => {
     }
 }
 
+export const deleteBannerById = async (bannerId) => {
+    try {
+        const response = await apiService.delete(`/${bannerId}`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        return handleRequestError(error);
+    }
+};
+
 export const fetchBannerById = async (bannerId) => {
     try {
         const response = await apiService.get(`/${bannerId}`);

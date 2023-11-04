@@ -7,7 +7,8 @@ import {useAuthStore} from "@/stores/authStore";
 import {useToast} from "primevue/usetoast";
 import {useRouter} from "vue-router";
 import Checkbox from 'primevue/checkbox';
-import {activateBanner, deactivateBanner, fetchAllBanners} from "@/service/BannersService";
+import {activateBanner, deactivateBanner, deleteBannerById, fetchAllBanners} from "@/service/BannersService";
+import {useConfirm} from "primevue/useconfirm";
 
 const router = useRouter()
 
@@ -20,6 +21,8 @@ const toast = useToast();
 const inputKey = ref('');
 
 const onlyActiveBanners = ref(false);
+
+const confirm = useConfirm();
 
 onBeforeMount(async () => {
   try {
@@ -109,6 +112,24 @@ const editBanner = (bannerId) => {
   router.push("/admin/banners/" + bannerId + "/edit")
 }
 
+const confirmDelete = (bannerId, event) => {
+  confirm.require({
+    target: event.currentTarget,
+    message: '¿Estas seguro que deseas eliminar el banner?',
+    icon: 'pi pi-info-circle',
+    acceptLabel: 'Sí. eliminar',
+    rejectLabel: 'No',
+    accept: async () => {
+      try {
+        await deleteBannerById(bannerId)
+        banners.value = banners.value.filter(banner => banner.banner_id !== bannerId)
+      } catch(e) {
+        console.log(e)
+      }
+    }
+  });
+};
+
 const filteredData = computed(() => {
   const lowerCaseFilter = inputKey.value.toLowerCase()
   return banners.value.filter(
@@ -190,7 +211,7 @@ const switcherTooltipText = computed(() => {
               <div class="font-bold text-5xl m-auto" style="font-size: 15px;">{{ slotProps.data.title }}</div>
               <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
                    @click="stopPropagation">
-                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar juego'"
+                <Button icon="pi pi-pencil" rounded v-tooltip="'Editar banner'"
                         @click="editBanner(slotProps.data.banner_id)"></Button>
                 <label v-tooltip="switcherTooltipText(slotProps.data.is_active)" class="switcher" @click="stopPropagation">
                   <input v-model="slotProps.data.is_active" :disabled="!isHideSwitcherEnabled(slotProps.data.is_active)" class="switcher-input" type="checkbox" @click="toggleSwitcher(slotProps.data.banner_id)">
@@ -200,6 +221,8 @@ const switcherTooltipText = computed(() => {
                 </span>
               </span>
                 </label>
+                <Button icon="pi pi-times" rounded v-tooltip="'Eliminar banner'"
+                        @click="confirmDelete(slotProps.data.banner_id, $event)"></Button>
               </div>
             </div>
           </div>
