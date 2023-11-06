@@ -10,7 +10,7 @@
     </div>
       <div class="navbar-links">
       <ul>
-        <li v-if="authStore.isAdmin()">
+        <li v-if="authStore.isAdmin()" data-testid="admin_menu">
           <span aria-controls="overlay_menu" aria-haspopup="true" class="cursor-pointer" @click="toggle_admin">Admin</span>
           <Menu id="overlay_menu" ref="menu_admin" :model="admin_items" :popup="true" />
         </li>
@@ -75,16 +75,18 @@
 <script setup>
 
 import {useAuthStore} from "@/stores/authStore";
+
 import {computed, ref} from "vue";
 import {useConfirm} from "primevue/useconfirm";
 import {useRouter} from "vue-router";
 import AuthenticationService from "@/service/AuthenticationService";
 import {useToast} from "primevue/usetoast";
+import Toast from "primevue/toast";
 import {processRequestToBeDeveloper} from "@/service/DeveloperRequestsService";
 
-const toast = useToast();
+let toast = useToast();
+let authStore = useAuthStore()
 
-const authStore = useAuthStore()
 const router = useRouter()
 const authService = new AuthenticationService()
 
