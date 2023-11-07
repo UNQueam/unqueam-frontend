@@ -19,3 +19,9 @@ export const formatGameDate = (value) => {
         return `${year}-${month}-${day}`;
     }
 };
+
+export const formatYear = (aDate) => {
+    if (aDate === undefined || aDate.size === 0) return null
+    const date = new Date(aDate);
+    return date.getFullYear();
+}

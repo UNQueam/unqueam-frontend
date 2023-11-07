@@ -10,6 +10,7 @@ import {useRoute} from 'vue-router';
 import {fetchGame} from "@/service/GamesService"
 import GameCommentsCard from "@/components/GameCommentsCard.vue";
 import {useAuthStore} from "@/stores/authStore";
+import {formatToLabel} from "../utils/PeriodFormatter";
 
 const isUserPlaying = ref(false);
 
@@ -170,6 +171,10 @@ const scrollToDownloadLinks = () => {
           <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Lanzamiento</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.release_date }}</div>
+          </li>
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap" v-if="gameData?.period">
+            <div class="text-500 w-6 md:w-2 font-medium mr-3">Cursada</div>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1"> {{ formatToLabel(gameData?.period) }}</div>
           </li>
         </ul>
       </div>

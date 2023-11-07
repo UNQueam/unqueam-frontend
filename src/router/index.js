@@ -10,7 +10,7 @@ import {useAuthStore} from "@/stores/authStore";
 import AccessDenied from "@/views/AccessDenied.vue";
 import PetitionsView from "@/views/DeveloperRequestsView.vue";
 import DeveloperGames from "@/views/DeveloperGames.vue";
-import NewGameFormView from "@/views/NewGameFormView.vue";
+import NewGameFormView from "@/views/GameFormView.vue";
 import BannersList from "@/views/BannersList.vue";
 import BannerFormView from "@/views/BannerFormView.vue";
 import SingleBannerView from "@/views/SingleBannerView.vue";
