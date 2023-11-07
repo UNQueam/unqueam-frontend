@@ -16,7 +16,7 @@
         </li>
         <li><router-link to="/">Juegos</router-link></li>
         <li v-if="!isUserAuthenticated"><router-link to="/login">Iniciar sesión</router-link></li>
-        <li><button aria-controls="overlay_menu" aria-haspopup="true" class="p-link" @click="toggle">{{authStore.getUsername}}</button>
+        <li><button aria-controls="overlay_menu" aria-haspopup="true" class="p-link" @click="toggle" data-cy="nav-username">{{authStore.getUsername}}</button>
           <Menu id="overlay_menu" ref="menu" :model="items"  :popup="true">
             <template #start>
               <div class="w-full flex align-items-center p-2 pl-3 text-color border-noround">
