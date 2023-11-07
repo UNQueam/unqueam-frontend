@@ -55,15 +55,15 @@ const isButtonDisabled = computed(() => {
             <div class="md:w-30rem"/>
             <form @submit.prevent="handleLogin">
             <label class="block text-900 font-medium mb-2" for="email1">Nombre de usuario</label>
-            <InputText id="email1" v-model="username" class="w-full mb-5" placeholder="Tú nombre de usuario" style="padding: 1rem" type="text" />
+            <InputText id="email1" v-model="username" class="w-full mb-5" placeholder="Tú nombre de usuario" style="padding: 1rem" type="text" data-cy="username"/>
             <label class="block text-900 font-medium mb-2" for="password1">Contraseña</label>
-            <Password id="password1" v-model="password" :feedback="false" :inputStyle="{ padding: '1rem' }" :toggleMask="true" class="w-full mb-3" inputClass="w-full" placeholder="Contraseña"></Password>
+            <Password id="password1" v-model="password" :feedback="false" :inputStyle="{ padding: '1rem' }" :toggleMask="true" class="w-full mb-3" inputClass="w-full" placeholder="Contraseña" data-cy="password"></Password>
 
               <div v-if="errorMessage" class="error-message">
                 {{errorMessage}}
               </div>
 
-            <Button :disabled="isButtonDisabled" class="w-full p-3 mt-5" label="Ingresar" type="submit"></Button>
+            <Button :disabled="isButtonDisabled" class="w-full p-3 mt-5" label="Ingresar" type="submit" data-cy="submit-login"></Button>
             <ProgressBar v-if="isProcessingRequest" mode="indeterminate" style="height: 3px" />
             <div class="text-center w-100 mt-2">
               <router-link class="font-medium no-underline m-auto cursor-pointer" style="color: var(--primary-color)" to="/register">¿No tienes cuenta? Registrarse</router-link>

@@ -14,13 +14,13 @@
           <Rating v-model="comment.rating" :cancel="false" class="mt-2" readonly />
         </div>
         <div class="flex flex-column justify-content-center align-items-center m-0 p-0">
-          <Button v-if="canEditAComment()" v-tooltip="'Editar comentario'" icon="pi pi-pencil" rounded severity="danger" text @click="editCommentForm" />
-          <Button v-if="canDeleteAComment()" v-tooltip="'Eliminar comentario'" icon="pi pi-times" rounded severity="danger" text @click="confirmDialog($event)" />
+          <Button v-if="canEditAComment()" v-tooltip="'Editar comentario'" icon="pi pi-pencil" rounded severity="danger" text @click="editCommentForm" data-cy="edit-comment"/>
+          <Button v-if="canDeleteAComment()" v-tooltip="'Eliminar comentario'" icon="pi pi-times" rounded severity="danger" text @click="confirmDialog($event)" data-cy="delete-comment" />
         </div>
       </div>
       <h5 class="font-medium mt-2"><Avatar class="p-overlay-badge mr-2 pi pi-user" size="small" />{{ comment.publisher.username }}</h5>
     </div>
-    <p class="comment-content text-700">
+    <p class="comment-content text-700" data-cy="comment-content">
       {{ comment.content }}
     </p>
   </div>
@@ -31,7 +31,7 @@
         <Rating v-model="commentStructure.rating" :cancel="false" :class="{ 'p-invalid': submitted && v$.rating.$error }" class="m-0 p-0"/>
       </div>
 
-      <Textarea v-model="commentStructure.comment"  class="w-full mt-3 p-2" rows="4" />
+      <Textarea v-model="commentStructure.comment"  class="w-full mt-3 p-2" rows="4" data-cy="edit-comment-field"/>
       <div class="error-container">
         <small v-for="error of v$.comment.$errors" :key="error.$uid" class="p-error">{{ getCustomError("comment", error.$validator, error) + ". " }}</small>
         <small v-for="error of v$.rating.$errors" :key="error.$uid" class="p-error">{{ getCustomError("rating", error.$validator, error) + ". " }}</small>
@@ -39,7 +39,7 @@
 
       <div class="flex justify-content-end gap-2 mt-3">
         <Button class="cancel-button p-2" label="Cancelar" @click="cancelComment"></Button>
-        <Button :loading="false" class="p-2" label="Enviar reseña" type="button" @click="handleEdit"></Button>
+        <Button :loading="false" class="p-2" label="Enviar reseña" type="button" @click="handleEdit" data-cy="edit-comment-button"></Button>
       </div>
     </form>
   </div>

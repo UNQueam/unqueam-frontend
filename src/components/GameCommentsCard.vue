@@ -2,23 +2,23 @@
   <div class="card m-auto md:col-7 p-4">
     <div class="flex justify-content-between align-items-center">
       <h3 class="m-0 p-0">Comentarios</h3>
-        <Button v-tooltip="tooltipButtonMessage" :disabled="isButtonBlockedToComment" icon="pi pi-comment" label="Comentar" @click="openCommentBox"/>
+        <Button v-tooltip="tooltipButtonMessage" :disabled="isButtonBlockedToComment" icon="pi pi-comment" label="Comentar" @click="openCommentBox" data-cy="comment"/>
     </div>
     <form v-if="showCommentForm" class="my-4 card p-4" @submit.prevent="sendComment">
       <div class=" shaking-input flex align-items-center gap-2 ml-3">
         <p class="m-0 p-0 text-500">Valoración</p>
-          <Rating v-model="commentStructure.rating" :cancel="false" class="m-0 p-0"/>
+          <Rating v-model="commentStructure.rating" :cancel="false" class="m-0 p-0" data-cy="comment-rating"/>
       </div>
 
-      <Textarea v-model="commentStructure.comment"  class="w-full mt-3 p-2" rows="4" />
+      <Textarea v-model="commentStructure.comment"  class="w-full mt-3 p-2" rows="4" data-cy="comment-input"/>
       <div class="error-container">
-        <small v-if="formErrors.comment != null" class="p-error">{{ formErrors.comment }}</small>
-        <small v-if="formErrors.rating != null" class="p-error">{{ formErrors.rating }}</small>
+        <small v-if="formErrors.comment != null" class="p-error" data-cy="comment-error">{{ formErrors.comment }}</small>
+        <small v-if="formErrors.rating != null" class="p-error" data-cy="rating-error">{{ formErrors.rating }}</small>
       </div>
 
       <div class="flex justify-content-end gap-2 mt-3">
         <Button class="cancel-button p-2" label="Cancelar" @click="cancelComment"></Button>
-        <Button :loading="false" class="p-2" label="Enviar reseña" type="submit"></Button>
+        <Button :loading="false" class="p-2" label="Enviar reseña" type="submit" data-cy=send-comment></Button>
       </div>
     </form>
 
