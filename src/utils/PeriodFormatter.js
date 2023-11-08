@@ -2,7 +2,7 @@ import Semester from "@/utils/Semester";
 import {formatYear} from "@/utils/DateFormatter";
 
 export const formatPeriod = (period) => {
-    if (period === undefined || period.year === undefined || period.semester === undefined) return null
+    if (period === undefined || period.year === undefined || period.semester === undefined || period.year === null || period.semester === null) return null
     const semester = Semester.getSemester(period.semester)
     const year = formatYear(period.year)
     return {

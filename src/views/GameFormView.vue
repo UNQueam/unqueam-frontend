@@ -137,6 +137,14 @@
           <SelectButton v-model="game.period.semester" :options="availableSemesters" aria-labelledby="basic"/>
         </div>
       </div>
+      <div class="error-container">
+        <small v-for="error of v$.semester.$errors" :key="error.$uid"
+               class="p-error">{{ getCustomError("semester", error.$validator, error) + ". " }}</small>
+      </div>
+      <div class="error-container">
+        <small v-for="error of v$.year.$errors" :key="error.$uid"
+               class="p-error">{{ getCustomError("year", error.$validator, error) + ". " }}</small>
+      </div>
 
       <label class="block text-600 font-medium mb-2 mt-5" for="logo">Logo de videojuego</label>
       <!-- <FileUpload :auto="true" :chooseLabel="'Seleccionar logo'" accept="image/*" class="mb-5" customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadGameLogo" /> -->
@@ -188,7 +196,7 @@ import {useRoute, useRouter} from "vue-router";
 import {createGame, editGame, fetchGame} from "@/service/GamesService";
 import {useVuelidate} from "@vuelidate/core";
 import {useAuthStore} from "@/stores/authStore";
-import {helpers, required, requiredUnless, url} from "@vuelidate/validators";
+import {helpers, required, requiredIf, requiredUnless, url} from "@vuelidate/validators";
 import {formatGameDate} from "@/utils/DateFormatter";
 import {getCustomError} from "@/utils/FormErrorMessageHandler";
 import {useToast} from "primevue/usetoast";
@@ -288,6 +296,14 @@ const isDownloadLinkProvided = () => {
   return game.value.link_to_download;
 }
 
+const isSemesterSet = () => {
+  return ! game.value.period.semester && game.value.period.year;
+}
+
+const isYearSet = () => {
+  return ! game.value.period.year && game.value.period.semester;
+}
+
 const rules = {
   name: {required},
   alias: {required},
@@ -302,7 +318,13 @@ const rules = {
   genres: {required},
   developers: {required},
   images: {required},
-  logo_url: {required}
+  logo_url: {required},
+  year: {
+    requiredIfSemesterIsSet: requiredIf(isSemesterSet)
+  },
+  semester: {
+    requiredIfYearIsSet: requiredIf(isYearSet)
+  }
 };
 
 const $externalResults = ref({})
@@ -364,6 +386,7 @@ const publishGame = async () => {
         await handleCreation();
       }
     } catch (error) {
+      console.log(error)
       $externalResults.value = error.response.data.errors;
       toast.add({
         severity: 'error',

@@ -60,6 +60,12 @@ const customErrors = {
   picture: {
     required: 'Debes ingresar una imágen'
   },
+  year: {
+    requiredIfSemesterIsSet: 'Debes seleccionar un semestre '
+  },
+  semester: {
+    requiredIfYearIsSet: 'Debes seleccionar un año'
+  }
 };
 
 const customValidators = [
