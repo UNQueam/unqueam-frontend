@@ -16,3 +16,8 @@ export const formatToLabel = (period) => {
 
     return semester + ' cuatrimestre del año ' + period.year
 }
+
+export const formatToFilterLabel = (period) => {
+    const semester = period.semester === 'FIRST' ? 'Primer' : 'Segundo'
+    return semester + " cuatrimestre";
+}

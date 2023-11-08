@@ -5,21 +5,33 @@ import {fetchData} from "@/service/GamesService"
 import {useRouter} from 'vue-router';
 import RankIconsFactory from '@/services/RankIconsFactory'
 import {fetchActiveBanners} from "@/service/BannersService";
+import OverlayPanel from "primevue/overlaypanel";
+import {formatToFilterLabel} from "@/utils/PeriodFormatter";
 
 const filterKey = ref('');
 const isLoadingData = ref(true);
 const games = ref([]);
 const error = ref([]);
 const router = useRouter();
+const gameYears = ref(["No especificado"]);
+const selectedYears = ref([]);
+const semesters = ref(["Primer cuatrimestre", "Segundo cuatrimestre", "No especificado"]);
+const selectedSemesters = ref([]);
+const filterPanel = ref();
 
 const images = ref();
 
 onMounted(async () => {
   await fetchActiveBanners().then((data) => (images.value = data));
-  console.log(images.value)
       try {
         const result = await fetchData();
-        result.forEach(game => game.rankBadgeSrc = RankIconsFactory.getRankIcon(game.rank_badge))
+        result.forEach(game => {
+              game.rankBadgeSrc = RankIconsFactory.getRankIcon(game.rank_badge);
+              if (game.period) {
+                gameYears.value.push(game.period.year);
+              }
+        })
+        gameYears.value = Array.from(new Set(gameYears.value)).sort();
         games.value = result;
         isLoadingData.value = false
       } catch (err) {
@@ -31,10 +43,31 @@ const filteredData = computed(() => {
   const lowerCaseFilter = filterKey.value.toLowerCase()
   return games.value.filter(
     (item) =>
-      item.name.toLowerCase().includes(lowerCaseFilter) ||
-      item.description.toLowerCase().includes(lowerCaseFilter)
+        (item.name.toLowerCase().includes(lowerCaseFilter) ||
+        item.description.toLowerCase().includes(lowerCaseFilter)) &&
+        correspondsToSelectedYears(item) &&
+        correspondsToSelectedSemester(item)
+
   )
 })
+
+const correspondsToSelectedYears = (game) => {
+  if (game.period && selectedYears.value.length !== 0) {
+    return selectedYears.value.includes(game.period.year);
+  }
+  return selectedYears.value.length === 0 || (!game.period && selectedYears.value.includes("No especificado"));
+}
+
+const correspondsToSelectedSemester = (game) => {
+  if (game.period && selectedSemesters.value.length !== 0) {
+    return selectedSemesters.value.includes(formatToFilterLabel(game.period));
+  }
+  return selectedSemesters.value.length === 0 || (!game.period && selectedSemesters.value.includes("No especificado"));
+}
+
+const toggleFilters = (event) => {
+  filterPanel.value.toggle(event);
+}
 
 const goToGame = (gameAlias) => {
   router.push({ name: 'GameDetails', params: { alias: gameAlias } });
@@ -84,8 +117,22 @@ const layout = ref('grid')
           <template #header>
             <div class="grid grid-nogutter">
               <div class="col-6 mt-3 col-offset-3">
-                <InputText v-model="filterKey" placeholder="Search" />
+                <InputText v-model="filterKey" placeholder="Buscar..." />
+                <Button class="ml-2" icon="pi pi-filter-fill" @click="toggleFilters"></Button>
+                <OverlayPanel ref="filterPanel">
+                  <div>
+                    <div class="mb-1">Año de cursada</div>
+                    <MultiSelect v-model="selectedYears" :options="gameYears"  placeholder="Años"
+                                 class="w-full md:w-20rem" />
+
+                    <div class="mb-1 mt-3">Cuatrimestre de la cursada</div>
+                    <MultiSelect v-model="selectedSemesters" :options="semesters"  placeholder="Cuatrimestre"
+                                 class="w-full md:w-20rem" />
+                  </div>
+                </OverlayPanel>
+
               </div>
+
               <div v-if="!layout === 'grid'" class="col-offset-2 col-1">
                 <DataViewLayoutOptions v-model="layout" />
               </div>

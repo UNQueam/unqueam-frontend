@@ -106,7 +106,6 @@ export const deactivateBanner = async (bannerId) => {
 export const fetchActiveBanners = async () => {
     try {
         const response = await apiService.get(``);
-        console.log(response.data)
         return response.data;
     } catch (error) {
         return handleRequestError(error);
