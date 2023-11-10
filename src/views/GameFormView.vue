@@ -147,7 +147,6 @@
       </div>
 
       <label class="block text-600 font-medium mb-2 mt-5" for="logo">Logo de videojuego</label>
-      <!-- <FileUpload :auto="true" :chooseLabel="'Seleccionar logo'" accept="image/*" class="mb-5" customUpload mode="basic" name="demo[]" url="/api/upload" @uploader="uploadGameLogo" /> -->
       <div class="flex gap-5">
         <InputText id="logo" v-model="logoField" class="w-full input-height" placeholder="URL de la imagen"
                    style="padding: 0.7rem" type="text"/>
@@ -256,28 +255,48 @@ onBeforeMount(async () => {
       name: item.spanish_name
     }));
     if (isEditMode.value) {
-      const existingGame = await fetchGame(gameAlias.value);
-      if (existingGame.publisher.username !== authStore.getUsername) {
-        await router.push("/access-denied")
-      }
-      game.value = {...game.value, ...existingGame};
-      game.value.genres = game.value.genres.map(item => ({
-        ...item,
-        name: item.spanish_name
-      }));
-      game.value.developers = game.value.developers.map(developer => developer.name);
-      if (game.value.period.id !== null) {
-        game.value.period = {
-          id: game.value.period.id,
-          year: new Date(game.value.period.year, 0, 1),
-          semester: (game.value.period.semester != null && game.value.period.semester === 'FIRST') ? 'Primero' : 'Segundo'
-        }
-      }
+      await retrieveGameData();
     }
   } catch (err) {
     //do nothing
   }
 });
+
+const retrieveGameData = async () => {
+  const existingGame = await fetchGame(gameAlias.value);
+  if (existingGame.publisher.username !== authStore.getUsername) {
+    await router.push("/access-denied");
+  }
+  game.value = {...game.value, ...existingGame};
+  formatIncomingGameData();
+}
+
+const formatIncomingGameData = () => {
+  formatGameGenres();
+  formatGameDevelopers();
+  formatGamePeriodIfNeeded();
+}
+
+const formatGameGenres = () => {
+  game.value.genres = game.value.genres.map(item => ({
+    ...item,
+    name: item.spanish_name
+  }));
+}
+
+const formatGameDevelopers = () => {
+  game.value.developers = game.value.developers.map(developer => developer.name);
+}
+
+const formatGamePeriodIfNeeded = () => {
+  if (game.value.period.id !== null) {
+    game.value.period = {
+      id: game.value.period.id,
+      year: new Date(game.value.period.year, 0, 1),
+      semester: (game.value.period.semester != null && game.value.period.semester === 'FIRST') ? 'Primero' : 'Segundo'
+    }
+  }
+}
 
 const handleRemoveImage = (imageToBeRemoved) => {
   game.value.images = game.value.images.filter(savedImage => savedImage.id !== imageToBeRemoved.id);
@@ -287,7 +306,7 @@ const handleAddImage = async (newImage) => {
   game.value.images.push(newImage);
 };
 
-//Vuelidate:
+//************* Vuelidate:
 const linkToGameRegex = (value) => {
   return "" === value || /^https:\/\/(.*?)\.github\.io\/(.*?)$/.test(value);
 }
@@ -388,24 +407,32 @@ const publishGame = async () => {
     } catch (error) {
       console.log(error)
       $externalResults.value = error.response.data.errors;
-      toast.add({
-        severity: 'error',
-        summary: 'Operación fallida',
-        detail: 'Ocurrió un error durante la publicación de tu juego',
-        life: 3500
-      });
+      showSubmissionErrorToast();
     } finally {
       isProcessingRequest.value = false
     }
   } else {
-    toast.add({
-      severity: 'error',
-      summary: 'Operación fallida',
-      detail: 'Algunos de los campos del formulario es inválido',
-      life: 3500
-    });
+    showInvalidFormToast();
   }
   isProcessingRequest.value = false
+}
+
+const showSubmissionErrorToast = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Operación fallida',
+    detail: 'Ocurrió un error durante la publicación de tu juego',
+    life: 3500
+  });
+}
+
+const showInvalidFormToast = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Operación fallida',
+    detail: 'Algunos de los campos del formulario es inválido',
+    life: 3500
+  });
 }
 
 </script>
