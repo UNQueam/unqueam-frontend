@@ -79,7 +79,6 @@ const goToBanner = (banner) => {
 
 const layout = ref('grid')
 
-
 </script>
 
 <template>
