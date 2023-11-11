@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {useAuthStore} from "../stores/authStore";
 import {formatDate} from "../utils/DateFormatter";
-
+// @ts-ignore
+import {requestAuthConfig} from "@/utils/HttpHelper";
 const apiService = axios.create({
     baseURL: 'http://localhost:8080/api/users',
 });
@@ -17,12 +18,7 @@ interface PlatformUser {
 
 export const fetchUsers = async () => {
     try {
-        let authStore = useAuthStore();
-        const response = await apiService.get('', {
-            headers: {
-                'Authorization': `Bearer ${authStore.getAuthToken()}`
-            }
-        });
+        const response = await apiService.get('', requestAuthConfig());
         let users = response.data;
         users.forEach(user => user.created_at = formatDate(user.created_at))
         return users
