@@ -9,8 +9,9 @@ class Semester {
     }
 
     static getSemester(spanishPeriod) {
-        if (spanishPeriod === undefined || spanishPeriod.size === 0) return null;
-
+        if (spanishPeriod === undefined || spanishPeriod === null || spanishPeriod.size === 0) {
+            return null;
+        }
         return (spanishPeriod.toLowerCase() === 'primero')
             ? Semester.first()
             : Semester.second();

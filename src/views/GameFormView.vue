@@ -123,7 +123,7 @@
 
       <div class="flex flex-row gap-2 mt-5 mb-3 align-items-center">
         <span class="text-600 font-medium">Cursada <span class="font-italic">(opcional)</span></span>
-        <i id="reset-enrollment-data" class="pi pi-trash small text-600" v-tooltip="Limpiar"
+        <i id="reset-enrollment-data" class="pi pi-trash small text-600" v-tooltip="'Limpiar'"
            @click="handleResetEnrollmentData"></i>
       </div>
       <div class="flex mb-2 gap-3 card p-3 w-fit">
@@ -234,8 +234,8 @@ const game = ref({
   logo_url: "",
   period: {
     id: null,
-    year: "",
-    semester: ""
+    year: null,
+    semester: null
   }
 })
 
@@ -289,7 +289,7 @@ const formatGameDevelopers = () => {
 }
 
 const formatGamePeriodIfNeeded = () => {
-  if (game.value.period.id !== null) {
+  if (game.value.period.id !== null && game.value.period.year !== null && game.value.period.semester !== null) {
     game.value.period = {
       id: game.value.period.id,
       year: new Date(game.value.period.year, 0, 1),
@@ -362,7 +362,6 @@ const getFormattedGameToSend = () => {
   gameToSend.release_date = formatGameDate(gameToSend.release_date);
 
   gameToSend.period = formatPeriod(gameToSend.period)
-
   return gameToSend;
 };
 
