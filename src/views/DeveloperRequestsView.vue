@@ -182,7 +182,7 @@ const isButtonDisabled = computed(() => {
                   <OverlayPanel ref="rejectedPanel">
                     <div>
                       <h5>Ingrese la razón por la cuál se está rechazando la solicitud.</h5>
-                      <InputText v-model="rejectionText" placeholder="Ingrese la razon del rechazo" type="text" class="w-full" />
+                      <InputText @keydown.stop v-model="rejectionText" placeholder="Ingrese la razon del rechazo" type="text" class="w-full" />
                       <div class="flex justify-content-end mt-2">
                         <Button class="p-2 cancel-button" label="Cancelar" type="button" @click="cancelRejectModal"></Button>
                         <Button class="p-2 ml-2" label="Enviar" type="button" style="width: 100px;" :disabled="isButtonDisabled" @click="sendRejectMessage(data)"></Button>
