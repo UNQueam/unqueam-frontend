@@ -18,7 +18,7 @@
           <Button v-if="canDeleteAComment()" v-tooltip="'Eliminar comentario'" icon="pi pi-times" rounded severity="danger" text @click="confirmDialog($event)" data-cy="delete-comment" />
         </div>
       </div>
-      <h5 class="font-medium mt-2"><Avatar class="p-overlay-badge mr-2 pi pi-user" size="small" />{{ comment.publisher.username }}</h5>
+      <h5 class="font-medium mt-2"><Avatar class="p-overlay-badge mr-2 " size="small" icon="pi pi-user"/>{{ comment.publisher.username }}</h5>
     </div>
     <p class="comment-content text-700" data-cy="comment-content">
       {{ comment.content }}
