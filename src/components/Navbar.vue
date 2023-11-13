@@ -120,15 +120,6 @@
     </div>
     <div class="navbar-links">
       <ul>
-        <li v-if="authStore.isAdmin()" @click="toggle_admin" data-testid="admin_menu" class="navbar-item flex flex-row gap-2 align-items-center font-bold" aria-controls="overlay_menu" aria-haspopup="true">
-          <i
-              class="pi pi-cog p-1"
-              style="border-radius: 50%; border: 2px solid #747475; color: #848588;"
-          />
-          <span>Admin</span>
-          <Menu id="overlay_menu" ref="menu_admin" :model="admin_items" :popup="true"/>
-        </li>
-
         <router-link to="/" class="navbar-item flex flex-row gap-2 align-items-center">
           <i
               class="pi pi-th-large p-1"
@@ -136,6 +127,16 @@
           />
           <span>Juegos</span>
         </router-link>
+        <li v-if="authStore.isAdmin()" @click="toggle_admin" data-testid="admin_menu" class="navbar-item flex flex-row gap-2 align-items-center font-bold" aria-controls="overlay_menu" aria-haspopup="true">
+          <i
+              class="pi pi-cog p-1"
+              style="border-radius: 50%; border: 2px solid #747475; color: #848588;"
+          />
+          <span>Admin</span>
+          <i class="pi pi-chevron-down text-sm opacity-70 mt-1"/>
+          <Menu id="overlay_menu" ref="menu_admin" :model="admin_items" :popup="true"/>
+        </li>
+
         <router-link to="/login" v-if="!isUserAuthenticated" class="navbar-item flex flex-row gap-2 align-items-center">
           <i class="pi pi-user p-1" style="border-radius: 50%; border: 2px solid #747475; color: #848588"/>
           <span>Iniciar sesión</span>
@@ -148,14 +149,16 @@
               @click="toggle"
               data-cy="nav-username"
           >
+            <Avatar :label="authStore.getUsername[0]" class="" shape="circle"
+                    style="background-color:#9c27b0; color: #ffffff" />
             {{ authStore.getUsername }}
-            <i class="pi pi-chevron-down text-sm opacity-70"/>
+            <i class="pi pi-chevron-down text-sm opacity-70 mt-1"/>
           </li>
           <Menu id="overlay_menu" ref="menu" :model="items" :popup="true">
             <template #start>
               <div class="w-full flex align-items-center p-2 pl-3 text-color border-noround">
                 <Avatar :label="authStore.getUsername[0]" class="mr-2" shape="circle"
-                        style="background-color:#9c27b0; color: #ffffff"/>
+                        style="background-color:#9c27b0; color: #ffffff" />
                 <div class="flex flex-column align">
                   <span class="font-bold">{{ authStore.getUsername }}</span>
                   <span class="text-sm">Rol: {{ authStore.getUserRole }}</span>
