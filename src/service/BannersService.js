@@ -2,6 +2,7 @@ import axios from 'axios';
 import router from '@/router/index.js';
 
 import {useAuthStore} from "@/stores/authStore";
+import {handleRequestError, requestAuthConfig} from "@/utils/HttpHelper";
 
 const apiService = axios.create({
     baseURL: 'http://localhost:8080/api/banners',
@@ -11,23 +12,13 @@ export const publishBanner = async (banner) => {
     try {
         const response = await apiService.post("",
             banner,
-            {
-                headers: {
-                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
-                },
-            });
+            requestAuthConfig());
         return response.data;
     } catch (error) {
-        if(error.response && error.response.status === 404){
-            await router.push('/404');
-            return Promise.reject(error.response.data);
-        }
         if(error.response && error.response.status === 400){
             throw error;
-        } else {
-            await router.push('/500');
-            return Promise.reject(error.response.data);
         }
+        return handleRequestError(error);
     }
 };
 
@@ -35,70 +26,39 @@ export const editBanner = async (bannerId, updatedBanner) => {
     try {
         const response = await apiService.put(`/${bannerId}`,
             updatedBanner,
-            {
-                headers: {
-                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
-                },
-            });
+            requestAuthConfig());
         return response.data;
     } catch (error) {
-        if(error.response && error.response.status === 404){
-            console.log(error.response.data);
-            router.push('/404');
-        }
         if(error.response && error.response.status === 400){
             throw error;
-        } else {
-            return Promise.reject(error.response.data);
-            router.push('/500');
         }
+        return handleRequestError(error);
     }
 };
 
 export const activateBanner = async (bannerId) => {
     try {
         const response = await apiService.put(`/${bannerId}/activate`,{},
-            {
-                headers: {
-                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
-                },
-            });
+            requestAuthConfig());
         return response.data;
     } catch (error) {
-        if(error.response && error.response.status === 404){
-            console.log(error.response.data);
-            router.push('/404');
-        }
         if(error.response && error.response.status === 400){
             throw error;
-        } else {
-            return Promise.reject(error.response.data);
-            router.push('/500');
         }
+        return handleRequestError(error);
     }
 };
 
 export const deactivateBanner = async (bannerId) => {
     try {
         const response = await apiService.put(`/${bannerId}/deactivate`,{},
-            {
-                headers: {
-                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
-                },
-            });
+            requestAuthConfig());
         return response.data;
     } catch (error) {
-        console.log(error.response.data)
-        if(error.response && error.response.status === 404){
-            console.log(error.response.data);
-            router.push('/404');
-        }
         if(error.response && error.response.status === 400){
             throw error;
-        } else {
-            return Promise.reject(error.response.data);
-            router.push('/500');
         }
+        return handleRequestError(error);
     }
 };
 
@@ -129,11 +89,7 @@ export const fetchAllBanners = async () => {
 export const deleteBannerById = async (bannerId) => {
     try {
         const response = await apiService.delete(`/${bannerId}`,
-            {
-                headers: {
-                    'Authorization': `Bearer ${useAuthStore().getAuthToken()}`,
-                },
-            });
+            requestAuthConfig());
         return response.data;
     } catch (error) {
         return handleRequestError(error);
@@ -162,13 +118,4 @@ export const fetchBannerByAlias = async (alias) => {
 };
 
 
-function handleRequestError(error) {
-    if (error.response && error.response.status === 404) {
-        console.log(error.response.data);
-        router.push('/404');
-    } else if (error.response && error.response.status === 400) {
-        return Promise.reject(error.response.data);
-    } else {
-        router.push('/500');
-    }
-}
+

@@ -1,7 +1,8 @@
 import axios from 'axios';
 import {useAuthStore} from "../stores/authStore";
 import {formatDate} from "../utils/DateFormatter";
-
+// @ts-ignore
+import {handleRequestError, requestAuthConfig} from "@/utils/HttpHelper";
 const apiService = axios.create({
     baseURL: 'http://localhost:8080/api/requests',
 });
@@ -17,12 +18,7 @@ interface Request {
 
 export const fetchRequests = async () => {
     try {
-        let authStore = useAuthStore();
-        const response = await apiService.get('', {
-            headers: {
-                'Authorization': `Bearer ${authStore.getAuthToken()}`
-            }
-        });
+        const response = await apiService.get('', requestAuthConfig());
         let requests = response.data;
         requests.forEach(user => user.timestamp = formatDate(user.timestamp))
         return requests
@@ -40,13 +36,7 @@ export const fetchRequests = async () => {
 
 export const approveRequest = async (requestId: bigint) => {
     try {
-        let authStore = useAuthStore();
-
-        const response = await apiService.put('/' + requestId + "/approve", {},{
-            headers: {
-                'Authorization': `Bearer ${authStore.getAuthToken()}`
-            }
-        });
+        const response = await apiService.put('/' + requestId + "/approve", {},requestAuthConfig());
     } catch (error) {
         if(error.response && error.response.status === 404){
             console.log(error.response.data);
@@ -61,15 +51,9 @@ export const approveRequest = async (requestId: bigint) => {
 
 export const rejectRequest = async (requestId: bigint , reason: string) => {
     try {
-        let authStore = useAuthStore();
-
         const response = await apiService.put('/' + requestId + "/reject", {
             reason
-            },{
-                headers: {
-                    'Authorization': `Bearer ${authStore.getAuthToken()}`
-                }
-        });
+            },requestAuthConfig());
     } catch (error) {
         if(error.response && error.response.status === 404){
             console.log(error.response.data);
@@ -87,11 +71,7 @@ export const processRequestToBeDeveloper = async (reason) => {
         let authStore = useAuthStore();
         await apiService.post('', {
             "reason_to_be_developer": reason
-        }, {
-            headers: {
-                'Authorization': `Bearer ${authStore.getAuthToken()}`,
-            },
-        });
+        }, requestAuthConfig());
     } catch (error) {
         return Promise.reject(error.response.data);
     }
