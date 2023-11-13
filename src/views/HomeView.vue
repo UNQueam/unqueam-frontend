@@ -79,7 +79,6 @@ const goToBanner = (banner) => {
 
 const layout = ref('grid')
 
-
 </script>
 
 <template>
@@ -130,15 +129,32 @@ const layout = ref('grid')
                                  class="w-full md:w-20rem" />
                   </div>
                 </OverlayPanel>
-
               </div>
-
               <div v-if="!layout === 'grid'" class="col-offset-2 col-1">
                 <DataViewLayoutOptions v-model="layout" />
               </div>
             </div>
             <div v-if="isLoadingData" class="h-5rem mt-8">
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
+            </div>
+            <div v-if="selectedYears.length > 0 || selectedSemesters.length > 0" class="font-normal" style="font-size: 12px">
+              <p class="m-0 p-0 font-bold">
+                Filtros aplicados
+              </p>
+              <div v-if="selectedYears.length > 0" class="flex flex-row gap-1 mt-2 align-items-center">
+                <p class="m-0">
+                  <i class="pi pi-angle-right"/>
+                  Años:
+                </p>
+                  <Chip v-for="year of selectedYears" v-bind:key="year" style="font-size: 12px; padding: 2px 5px">{{ year }}</Chip>
+              </div>
+              <div v-if="selectedSemesters.length > 0" class="flex flex-row gap-1 mt-2 align-items-center">
+                <p class="m-0">
+                  <i class="pi pi-angle-right"/>
+                  Cuatrimestre:
+                </p>
+                <Chip v-for="semester of selectedSemesters" v-bind:key="semester" style="font-size: 12px; padding: 2px 5px">{{ semester }}</Chip>
+              </div>
             </div>
           </template>
 
@@ -164,6 +180,9 @@ const layout = ref('grid')
               </div>
             </div>
           </template>
+          <template #empty >
+            <div  class="no-games mb-5 mt-5"> No se encontraron juegos. </div>
+          </template>
         </DataView>
     </div>
   </div>
@@ -182,6 +201,13 @@ const layout = ref('grid')
   margin-top: 0px !important;
   align-content: center;
   align-items: center;
+}
+
+.no-games {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  transition: color 0.3s;
 }
 
 .flip-card {
