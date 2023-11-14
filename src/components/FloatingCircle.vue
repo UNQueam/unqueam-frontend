@@ -1,6 +1,6 @@
 <template>
   <div class="floating-circle" @click="handleClick">
-    <img src="@/assets/icons/coffee%20cup.svg" alt="Cafecito" />
+    <img src="../assets/icons/coffee-cup.svg" alt="Cafecito" />
   </div>
 </template>
 
