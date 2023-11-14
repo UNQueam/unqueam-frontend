@@ -11,6 +11,7 @@ import {fetchGame} from "@/service/GamesService"
 import GameCommentsCard from "@/components/GameCommentsCard.vue";
 import {useAuthStore} from "@/stores/authStore";
 import {formatToLabel} from "../utils/PeriodFormatter";
+import FloatingCircle from "@/components/FloatingCircle.vue";
 
 const isUserPlaying = ref(false);
 
@@ -97,6 +98,11 @@ const scrollToDownloadLinks = () => {
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
       <div class="flex align-items-center justify-content-between">
         <h3 class="">{{ gameData?.name }}</h3>
+        <div class="pb-5">
+          <FloatingCircle/>
+        </div>
+
+
         <Button
             v-if="isMarkedAsFavorite != null"
             v-tooltip="!isMarkedAsFavorite ? 'Agregar a Favoritos' : 'Quitar de Favoritos'"
@@ -180,6 +186,7 @@ const scrollToDownloadLinks = () => {
       </div>
     </div>
   </div>
+
   <GameCommentsCard v-if="gameData && gameData.id" :comments="gameData.comments ? gameData.comments : []"
                     :game-id="gameData.id" :game-publisher="gameData?.publisher.username"/>
   <p class="m-5 opacity-0">.</p>
