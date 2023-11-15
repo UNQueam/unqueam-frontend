@@ -88,8 +88,8 @@
               <div class="mt-auto" v-if="authStore.isAuthenticated()">
                 <hr class="mb-3 mx-3 border-top-1 border-none surface-border" />
                 <a v-ripple class="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple">
-                  <Avatar :label="authStore.getUsername[0]" class="mr-2" shape="circle"
-                          style="background-color:#9c27b0; color: #ffffff"/>
+                  <Avatar :image="getAvatarImage('zeus')" shape="circle" class="mr-2"
+                          style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%" />
                   <span class="font-bold">{{ authStore.getUsername }}</span>
                 </a>
               </div>
@@ -149,16 +149,16 @@
               @click="toggle"
               data-cy="nav-username"
           >
-            <Avatar :label="authStore.getUsername[0]" class="" shape="circle"
-                    style="background-color:#9c27b0; color: #ffffff" />
+            <Avatar :image="getAvatarImage('zeus')" shape="circle"
+                    style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%" />
             {{ authStore.getUsername }}
             <i class="pi pi-chevron-down text-sm opacity-70 mt-1"/>
           </li>
           <Menu id="overlay_menu" ref="menu" :model="items" :popup="true">
             <template #start>
               <div class="w-full flex align-items-center p-2 pl-3 text-color border-noround">
-                <Avatar :label="authStore.getUsername[0]" class="mr-2" shape="circle"
-                        style="background-color:#9c27b0; color: #ffffff" />
+                <Avatar :image="getAvatarImage('zeus')" shape="circle" class="mr-2"
+                        style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%" />
                 <div class="flex flex-column align">
                   <span class="font-bold">{{ authStore.getUsername }}</span>
                   <span class="text-sm">Rol: {{ authStore.getUserRole }}</span>
@@ -230,6 +230,7 @@ import AuthenticationService from "@/service/AuthenticationService";
 import {useToast} from "primevue/usetoast";
 import Toast from "primevue/toast";
 import {processRequestToBeDeveloper} from "@/service/DeveloperRequestsService";
+import {getAvatarImage} from "@/service/AvatarKeysResolver";
 
 const handleCloseSidebar = (functionToExecute) => {
   functionToExecute()

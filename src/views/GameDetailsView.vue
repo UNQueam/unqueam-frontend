@@ -116,7 +116,7 @@ const scrollToDownloadLinks = () => {
       <div v-if="gameData?.link_to_game">
         <div v-if="!isUserPlaying" class='game-preview'>
           <button class='play-button' @click="executePlay">
-            <span id='play-button-text'>Play</span>
+            <span id='play-button-text'>Jugar</span>
             <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
           </button>
         </div>
