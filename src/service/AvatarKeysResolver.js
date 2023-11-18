@@ -50,5 +50,5 @@ export const avatarsObjects = [
 ];
 
 export const getAvatarImage = (avatarId) => {
-    return avatarsObjects.filter(avatar => avatar.key = avatarId)[0]
+    return avatarsObjects.filter(avatar => avatar.key === avatarId)[0].src
 }

@@ -486,10 +486,12 @@ a {
   margin: 0.5rem;
   border-radius: 50%;
   padding: 0.5rem;
+  transition-duration: 0.5s;
 }
 
 .available-avatar:hover {
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition-duration: 0.1s;
+  border: 3px solid #bf272d;
   cursor: pointer;
 }
 
