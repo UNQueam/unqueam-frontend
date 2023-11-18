@@ -1,39 +1,54 @@
-import animalAvatar from '../assets/avatars/animal-avatar.png'
-import astronautSkullAvatar from '../assets/avatars/astronaut-skull.png'
-import boldLionAvatar from '../assets/avatars/bold-lion.png'
-import cartoonKoalaAvatar from '../assets/avatars/cartoon-koala.png'
-import chickAvatar from '../assets/avatars/chick.png'
-import cuteCatAvatar from '../assets/avatars/cute-cat.png'
-import cuteDevilMonsterAvatar from '../assets/avatars/cute-devil-monster.png'
-import dragonHeadAvatar from '../assets/avatars/dragon-head.png'
-import monkeyGlassesAvatar from '../assets/avatars/monkey-glasses.png'
-import monsterWarriorAvatar from '../assets/avatars/monster-warrior.png'
-import owlReadingAvatar from '../assets/avatars/owl-reading.png'
-import skullWarriorAvatar from '../assets/avatars/skull-warrior.png'
-import tribalWarriorAvatar from '../assets/avatars/tribal-warrior.png'
-import wolfHeadAvatar from '../assets/avatars/wolf-head.png'
-import womenAvatarGame from '../assets/avatars/women-avatar-game.png'
-import zeusAvatar from '../assets/avatars/zeus.png'
-
-const avatars = {
-    'womenGamer': womenAvatarGame,
-    'wolfHead': wolfHeadAvatar,
-    'tribalWarrior': tribalWarriorAvatar,
-    'skullWarrior': skullWarriorAvatar,
-    'owlReading': owlReadingAvatar,
-    'monsterWarrior': monsterWarriorAvatar,
-    'monkeyGlasses': monkeyGlassesAvatar,
-    'dragonHead': dragonHeadAvatar,
-    'cuteDevilMonster': cuteDevilMonsterAvatar,
-    'cuteCat': cuteCatAvatar,
-    'chick': chickAvatar,
-    'cartoonKoala': cartoonKoalaAvatar,
-    'boldLion': boldLionAvatar,
-    'astronautSkull': astronautSkullAvatar,
-    'animal': animalAvatar,
-    'zeus': zeusAvatar
-}
+export const avatarsObjects = [
+    {
+        "key": "womenGamer",
+        "src": "src/assets/avatars/women-avatar-game.png"
+    },
+    {
+        "key": "wolfHead",
+        "src": "src/assets/avatars/wolf-head.png"
+    },
+    {
+        "key": "tribalWarrior",
+        "src": "src/assets/avatars/tribal-warrior.png"
+    },
+    {
+        "key": "skullWarrior",
+        "src": "src/assets/avatars/skull-warrior.png"
+    },
+    {
+        "key": "owlReading",
+        "src": "src/assets/avatars/owl-reading.png"
+    },
+    {
+        "key": "monsterWarrior",
+        "src": "src/assets/avatars/monster-warrior.png"
+    },
+    {
+        "key": "cuteDevilMonster",
+        "src": "src/assets/avatars/cute-devil-monster.png"
+    },
+    {
+        "key": "cuteCat",
+        "src": "src/assets/avatars/cute-cat.png"
+    },
+    {
+        "key": "chick",
+        "src": "src/assets/avatars/chick.png"
+    },
+    {
+        "key": "cartoonKoala",
+        "src": "src/assets/avatars/cartoon-koala.png"
+    },
+    {
+        "key": "astronautSkull",
+        "src": "src/assets/avatars/astronaut-skull.png"
+    },
+    {
+        "key": "zeus",
+        "src": "src/assets/avatars/zeus.png"
+    }
+];
 
 export const getAvatarImage = (avatarId) => {
-    return avatars[avatarId]
+    return avatarsObjects.filter(avatar => avatar.key = avatarId)[0]
 }

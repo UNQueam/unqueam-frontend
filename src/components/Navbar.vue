@@ -154,14 +154,30 @@
             {{ authStore.getUsername }}
             <i class="pi pi-chevron-down text-sm opacity-70 mt-1"/>
           </li>
-          <Menu id="overlay_menu" ref="menu" :model="items" :popup="true">
+          <Menu id="overlay_menu" ref="menu" class="w-fit pr-2" :model="items" :popup="true">
             <template #start>
-              <div class="w-full flex align-items-center p-2 pl-3 text-color border-noround">
-                <Avatar :image="getAvatarImage('zeus')" shape="circle" class="mr-2"
-                        style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%" />
-                <div class="flex flex-column align">
-                  <span class="font-bold">{{ authStore.getUsername }}</span>
-                  <span class="text-sm">Rol: {{ authStore.getUserRole }}</span>
+              <div class="w-full flex align-items-center p-2 pl-3 text-color">
+                <Avatar
+                    :image="getAvatarImage('zeus')"
+                    shape="circle"
+                    class="mr-2"
+                    size="xlarge"
+                    style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%"
+                    v-on:mouseover="showEditIcon = true"
+                    v-on:mouseout="showEditIcon = false"
+                    >
+                  <i
+                      v-if="showEditIcon"
+                      v-tooltip.left="'Cambiar avatar'"
+                      class="pi pi-pencil edit-icon"
+                      @click="handleOpenAvatarsMenu"
+                  />
+
+                </Avatar>
+
+                <div class="flex flex-column align gap-1">
+                  <span class="font-bold text-2xl">{{ authStore.getUsername }}</span>
+                  <span class="text-sm">{{ authStore.getUserRole }}</span>
                 </div>
               </div>
             </template>
@@ -193,6 +209,23 @@
             </template>
           </Menu>
           <Toast/>
+        <Dialog
+            v-model:visible="shouldShowAvatarChangeMenu"
+            modal
+            :style="{ width: avatarDialogWidth() }"
+            header="Seleccioná un avatar"
+        >
+          <hr class="mb-4 mt-0">
+          <div class="avatar-container">
+            <Avatar
+                    v-for="avatar in avatarsObjects"
+                :image="avatar.src"
+                class="mr-2 available-avatar"
+                size="xlarge"
+                    v-bind:key="avatar.key"
+                shape="circle"/>
+            </div>
+        </Dialog>
       </ul>
     </div>
   </nav>
@@ -230,11 +263,21 @@ import AuthenticationService from "@/service/AuthenticationService";
 import {useToast} from "primevue/usetoast";
 import Toast from "primevue/toast";
 import {processRequestToBeDeveloper} from "@/service/DeveloperRequestsService";
-import {getAvatarImage} from "@/service/AvatarKeysResolver";
+import {avatarsObjects, getAvatarImage} from "@/service/AvatarKeysResolver";
 
 const handleCloseSidebar = (functionToExecute) => {
   functionToExecute()
   showSideBar.value = false
+}
+
+const avatarDialogWidth = () => {
+  if (window?.innerWidth <= 767) {
+    return '90%'
+  }
+  if (window?.innerWidth <= 1300) {
+    return '60%'
+  }
+  return '30%'
 }
 
 const isMobile = ref(false);
@@ -242,6 +285,17 @@ const showSideBar = ref(false)
 
 let toast = useToast();
 let authStore = useAuthStore()
+
+const showAvatarImages = ref(false)
+
+const shouldShowAvatarChangeMenu = ref(false)
+
+const handleOpenAvatarsMenu = () => {
+  shouldShowAvatarChangeMenu.value = true
+  setTimeout(() => showAvatarImages.value = true, 0)
+}
+
+const showEditIcon = ref(false);
 
 const router = useRouter()
 const authService = new AuthenticationService()
@@ -393,6 +447,22 @@ onBeforeUnmount(() => {
   margin-right: 10px; /* Add margin between image and text */
 }
 
+.avatar-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.avatar-window {
+  width: 30%;
+}
+
+@media (max-width: 767px) {
+  .avatar-window {
+    width: 30%;
+  }
+}
+
 a {
   color: white;
 }
@@ -410,9 +480,31 @@ a {
   margin: 0;
 }
 
+.available-avatar {
+  width: 9rem;
+  height: 9rem;
+  margin: 0.5rem;
+  border-radius: 50%;
+  padding: 0.5rem;
+}
+
+.available-avatar:hover {
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
 .navbar-links ul {
   display: flex;
   gap: 5px;
+}
+
+.edit-icon {
+  font-size: 1.1rem;
+  position: absolute;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 2rem;
+  border-radius: 50%;
 }
 
 .navbar-links a {
