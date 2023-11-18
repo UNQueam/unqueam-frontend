@@ -170,7 +170,7 @@
                       v-if="showEditIcon"
                       v-tooltip.left="'Cambiar avatar'"
                       class="pi pi-pencil edit-icon"
-                      @click="handleOpenAvatarsMenu"
+                      @click="shouldShowChangeAvatarDialog = true"
                   />
 
                 </Avatar>
@@ -188,6 +188,11 @@
                       @click="showBeDeveloperModal = true">
                 <i class="pi pi-box"/>
                 <span class="ml-2">Ser desarrollador</span>
+              </button>
+              <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround"
+                      @click="shouldShowProfileDialog = true">
+                <i class="pi pi-user"/>
+                <span class="ml-2">Mí Perfil</span>
               </button>
               <button class="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround"
                       @click="goToFavourites">
@@ -209,23 +214,8 @@
             </template>
           </Menu>
           <Toast/>
-        <Dialog
-            v-model:visible="shouldShowAvatarChangeMenu"
-            modal
-            :style="{ width: avatarDialogWidth() }"
-            header="Seleccioná un avatar"
-        >
-          <hr class="mb-4 mt-0">
-          <div class="avatar-container">
-            <Avatar
-                    v-for="avatar in avatarsObjects"
-                :image="avatar.src"
-                class="mr-2 available-avatar"
-                size="xlarge"
-                    v-bind:key="avatar.key"
-                shape="circle"/>
-            </div>
-        </Dialog>
+        <UserProfileDialog :visible="shouldShowProfileDialog" :close="() => {shouldShowProfileDialog = false}"/>
+        <ChangeAvatarDialog :visible="shouldShowChangeAvatarDialog" :close="() => {shouldShowChangeAvatarDialog = false}"/>
       </ul>
     </div>
   </nav>
@@ -263,37 +253,27 @@ import AuthenticationService from "@/service/AuthenticationService";
 import {useToast} from "primevue/usetoast";
 import Toast from "primevue/toast";
 import {processRequestToBeDeveloper} from "@/service/DeveloperRequestsService";
-import {avatarsObjects, getAvatarImage} from "@/service/AvatarKeysResolver";
+import {getAvatarImage} from "@/service/AvatarKeysResolver";
+import UserProfileDialog from "@/components/UserProfileDialog.vue";
+import ChangeAvatarDialog from "@/components/ChangeAvatarDialog.vue";
 
 const handleCloseSidebar = (functionToExecute) => {
   functionToExecute()
   showSideBar.value = false
 }
 
-const avatarDialogWidth = () => {
-  if (window?.innerWidth <= 767) {
-    return '90%'
-  }
-  if (window?.innerWidth <= 1300) {
-    return '60%'
-  }
-  return '30%'
-}
+/* Dialogs: ChangeAvatar and UserProfile */
+
+const shouldShowChangeAvatarDialog = ref(false)
+const shouldShowProfileDialog = ref(false)
+
+/* End dialogs */
 
 const isMobile = ref(false);
 const showSideBar = ref(false)
 
 let toast = useToast();
 let authStore = useAuthStore()
-
-const showAvatarImages = ref(false)
-
-const shouldShowAvatarChangeMenu = ref(false)
-
-const handleOpenAvatarsMenu = () => {
-  shouldShowAvatarChangeMenu.value = true
-  setTimeout(() => showAvatarImages.value = true, 0)
-}
 
 const showEditIcon = ref(false);
 
@@ -447,22 +427,6 @@ onBeforeUnmount(() => {
   margin-right: 10px; /* Add margin between image and text */
 }
 
-.avatar-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.avatar-window {
-  width: 30%;
-}
-
-@media (max-width: 767px) {
-  .avatar-window {
-    width: 30%;
-  }
-}
-
 a {
   color: white;
 }
@@ -478,21 +442,6 @@ a {
 .red-text {
   color: #b22429;
   margin: 0;
-}
-
-.available-avatar {
-  width: 9rem;
-  height: 9rem;
-  margin: 0.5rem;
-  border-radius: 50%;
-  padding: 0.5rem;
-  transition-duration: 0.5s;
-}
-
-.available-avatar:hover {
-  transition-duration: 0.1s;
-  border: 3px solid #bf272d;
-  cursor: pointer;
 }
 
 .navbar-links ul {
