@@ -32,3 +32,18 @@ export const fetchUsers = async () => {
         }
     }
 };
+
+export const fetchUserById = async (userId: number) => {
+    try {
+        const response = await apiService.get(`${userId}`);
+        return response.data
+    } catch (error) {
+        if(error.response && error.response.status === 404){
+            console.log(error.response.data);
+        }
+        if(error.response && error.response.status === 400){
+            return Promise.reject(error.response.data);
+        } else {
+        }
+    }
+};

@@ -49,6 +49,7 @@ import Textarea from "primevue/textarea";
 import FileUpload from "primevue/fileupload";
 import Chips from "primevue/chips";
 import Editor from 'primevue/editor';
+import OverlayPanel from "primevue/overlaypanel";
 
 const app = createApp(App)
 
@@ -71,6 +72,7 @@ app.component('Chips', Chips);
 app.component('Textarea', Textarea);
 app.component('FileUpload', FileUpload);
 app.component('InlineMessage', InlineMessage);
+app.component('OverlayPanel', OverlayPanel);
 app.component('Editor', Editor);
 app.component('DataViewLayoutOptions', DataViewLayoutOptions);
 app.component('Dropdown', Dropdown);

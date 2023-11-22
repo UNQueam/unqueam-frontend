@@ -214,8 +214,16 @@
             </template>
           </Menu>
           <Toast/>
-        <UserProfileDialog :visible="shouldShowProfileDialog" :close="() => {shouldShowProfileDialog = false}"/>
-        <ChangeAvatarDialog :visible="shouldShowChangeAvatarDialog" :close="() => {shouldShowChangeAvatarDialog = false}"/>
+        <UserProfileDialog
+            :visible="shouldShowProfileDialog"
+            :editable="true"
+            :userId="authStore.getUserId"
+            :close="() => {shouldShowProfileDialog = false}"
+        />
+        <ChangeAvatarDialog
+            :visible="shouldShowChangeAvatarDialog"
+            :close="() => {shouldShowChangeAvatarDialog = false}"
+        />
       </ul>
     </div>
   </nav>

@@ -12,6 +12,8 @@ import GameCommentsCard from "@/components/GameCommentsCard.vue";
 import {useAuthStore} from "@/stores/authStore";
 import {formatToLabel} from "../utils/PeriodFormatter";
 import FloatingCircle from "@/components/FloatingCircle.vue";
+import {getAvatarImage} from "@/service/AvatarKeysResolver";
+import UserProfileDialog from "@/components/UserProfileDialog.vue";
 
 const isUserPlaying = ref(false);
 
@@ -51,7 +53,7 @@ onMounted(async () => {
     const response = await fetchGame(gameAlias.value);
     gameData.value = response;
     if (isLoggedInUser) {
-      const favoriteGames = await fetchFavoriteGamesOfAuthUser()
+      const favoriteGames = await fetchFavoriteGamesOfAuthUser(useAuthStore().getUserId)
       isMarkedAsFavorite.value = favoriteGames.some(favoriteGame => favoriteGame.game.id === gameData.value.id)
     } else {
       isMarkedAsFavorite.value = null
@@ -67,6 +69,26 @@ const handleRemoveGameFromFavorites = () => {
     isMarkedAsFavorite.value = false
   }
 }
+
+/* Profile dialog */
+const shouldShowProfileDialog = ref(false);
+const selectedUserIdProfile = ref();
+const handleShowProfile = (userId) => {
+  selectedUserIdProfile.value = userId;
+  shouldShowProfileDialog.value = true
+}
+
+const handleCloseProfile = () => {
+  shouldShowProfileDialog.value = false
+  selectedUserIdProfile.value = undefined
+}
+
+const showProfileDialogOfGameEditor = () => {
+  selectedUserIdProfile.value = gameData.value.publisher.publisher_id;
+  shouldShowProfileDialog.value = true
+}
+/* End profile dialog */
+
 
 const handleAddGameToFavorites = () => {
   if (!isMarkedAsFavorite.value) {
@@ -164,6 +186,10 @@ const scrollToDownloadLinks = () => {
             </div>
           </li>
           <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+            <div class="text-500 w-6 md:w-2 font-medium mr-3">Editor</div>
+            <Chip :label="gameData?.publisher.username" class="mr-2 cursor-pointer" v-tooltip.rigth="'Ver perfil'" @click="showProfileDialogOfGameEditor"></Chip>
+          </li>
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Equipo desarrollador</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.development_team }}</div>
           </li>
@@ -188,8 +214,15 @@ const scrollToDownloadLinks = () => {
   </div>
 
   <GameCommentsCard v-if="gameData && gameData.id" :comments="gameData.comments ? gameData.comments : []"
-                    :game-id="gameData.id" :game-publisher="gameData?.publisher.username"/>
+                    :game-id="gameData.id" :game-publisher="gameData?.publisher.username" :handleShowProfileFn="(userId) => handleShowProfile(userId)"/>
   <p class="m-5 opacity-0">.</p>
+  <UserProfileDialog
+      v-if="selectedUserIdProfile"
+      :visible="shouldShowProfileDialog"
+      :editable="false"
+      :userId="selectedUserIdProfile"
+      :close="handleCloseProfile"
+  />
 </template>
 
 <style>

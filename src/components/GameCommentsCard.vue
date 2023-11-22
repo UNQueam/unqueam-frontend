@@ -23,7 +23,13 @@
     </form>
 
     <div v-if="!isSearchingComments">
-      <UserGameComment v-for="comment in comments" :key="comment.id" :comment="comment" :deleteCommentFn="(commentId) => deleteComment(commentId)"/>
+      <UserGameComment
+          v-for="comment in comments"
+          :key="comment.id"
+          :comment="comment"
+          :handleShowProfileFn="(userId) => handleShowProfileFn(userId)"
+          :deleteCommentFn="(commentId) => deleteComment(commentId)"
+      />
     </div>
   </div>
 </template>
@@ -33,6 +39,7 @@ import UserGameComment from "@/components/UserGameComment.vue";
 import {computed, ref} from "vue";
 import {publishComment} from "@/service/GamesService";
 import {useAuthStore} from "@/stores/authStore";
+import UserProfileDialog from "@/components/UserProfileDialog.vue";
 
 const authStore = useAuthStore()
 
@@ -48,8 +55,24 @@ const props = defineProps({
   gamePublisher: {
     type: String,
     required: true
+  },
+  handleShowProfileFn: {
+    type: Function,
+    required: true
   }
 });
+
+//const shouldShowProfileDialog = ref(false);
+//const selectedUserIdProfile = ref();
+//const handleShowProfile = (userId) => {
+  //selectedUserIdProfile.value = userId;
+ // shouldShowProfileDialog.value = true
+//}
+
+//const handleCloseProfile = () => {
+//  shouldShowProfileDialog.value = false
+ // selectedUserIdProfile.value = undefined
+//}
 
 const loggedUserUsername = authStore.getUsername
 

@@ -18,7 +18,10 @@
           <Button v-if="canDeleteAComment()" v-tooltip="'Eliminar comentario'" icon="pi pi-times" rounded severity="danger" text @click="confirmDialog($event)" data-cy="delete-comment" />
         </div>
       </div>
-      <h5 class="font-medium mt-2"><Avatar class="p-overlay-badge mr-2 " size="small" icon="pi pi-user"/>{{ comment.publisher.username }}</h5>
+      <div class="flex flex-row align-items-center" @click="handleOpenProfile">
+        <Avatar class="p-overlay-badge mr-2 cursor-pointer" size="small" icon="pi pi-user"/>
+        <h5 class="font-medium mt-2 cursor-pointer w-fit comment-username">{{ comment.publisher.username }}</h5>
+      </div>
     </div>
     <p class="comment-content text-700" data-cy="comment-content">
       {{ comment.content }}
@@ -45,9 +48,18 @@
   </div>
 </template>
 
-<style>
+<style scoped>
+.comment-username {
+  color: #d0d0d0;
+  transition: 0.2s;
+}
 
+.comment-username:hover {
+  color: #f3f3f3;
+  transition: 0.2s;
+}
 </style>
+
 <script setup>
 import {useAuthStore} from "@/stores/authStore";
 import {useConfirm} from "primevue/useconfirm";
@@ -66,8 +78,16 @@ const props = defineProps({
   deleteCommentFn: {
     type: Function,
     required: true
+  },
+  handleShowProfileFn: {
+    type: Function,
+    required: true
   }
 });
+
+const handleOpenProfile = () => {
+  props.handleShowProfileFn(comment.value.publisher.publisher_id)
+}
 
 const commentRating = (value) => {
   return value != null && value > 0 && value <=5

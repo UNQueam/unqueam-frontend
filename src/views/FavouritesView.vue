@@ -31,7 +31,7 @@ const confirm = useConfirm();
 
 onBeforeMount(async () => {
   try {
-    games.value = await fetchFavoriteGamesOfAuthUser()
+    games.value = await fetchFavoriteGamesOfAuthUser(authStore.getUserId)
     games.value = games.value.map(favGame => favGame.game)
     getGeneralMetrics();
   } catch (err) {

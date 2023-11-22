@@ -10,7 +10,7 @@
     <div class="avatar-container">
       <Avatar
           v-for="avatar in avatarsObjects"
-          :image="avatar.src"
+          :image="avatar.img"
           class="mr-2 available-avatar"
           size="xlarge"
           v-bind:key="avatar.key"
@@ -33,6 +33,8 @@ const props = defineProps({
     required: true
   }
 });
+
+const avatarsList = ref([])
 
 const showVisible = ref(props.visible);
 

@@ -7,10 +7,10 @@ const apiService = axios.create({
   baseURL: 'http://localhost:8080/api',
 });
 
-export const fetchFavoriteGamesOfAuthUser = async () => {
+export const fetchFavoriteGamesOfAuthUser = async (userId) => {
   let authStore = useAuthStore()
   try {
-    const response = await apiService.get(`/users/${authStore.getUserId}/games/favorites`,
+    const response = await apiService.get(`/users/${userId}/games/favorites`,
         {
           headers: {
             'Authorization': `Bearer ${authStore.getAuthToken()}`,
