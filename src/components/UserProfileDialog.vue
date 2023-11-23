@@ -13,16 +13,7 @@
             shape="circle"
             class="available-avatar"
             style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%; "
-            v-on:mouseover="showEditIcon = true"
-            v-on:mouseout="showEditIcon = false"
-        >
-          <i
-              v-if="showEditIcon && canUserEditProfile"
-              v-tooltip.left="'Cambiar avatar'"
-              class="pi pi-pencil edit-icon "
-              @click="handleOpenAvatarsMenu"
-          />
-        </Avatar>
+        />
         <div class="flex flex-column align-items-center gap-1">
           <span class="font-medium text-2xl">{{ profile.username }}</span>
           <span class="text-600 font-medium">{{ profile.email }}</span>
@@ -34,7 +25,7 @@
             <p class="font-bold my-auto">BIOGRAFIA</p>
             <i v-if="canUserEditProfile && !isEditingBiography" class="pi pi-pencil cursor-pointer" @click="showEditAboutInput" v-tooltip.left="'Editar información'"></i>
             <div v-if="canUserEditProfile && isEditingBiography" class="flex flex-row gap-3">
-              <Button class="p-button-link m-0 p-0">Guardar</Button>
+              <Button class="p-button-link m-0 p-0" @click="handleChangeBiography">Guardar</Button>
               <Button class="p-button-link m-0 p-0" @click="handleCancelEditAbout">Cancelar</Button>
             </div>
           </div>
@@ -49,23 +40,22 @@
             <div v-for="favoriteGame in favoriteGames" class="flex align-items-center justify-content-between" :key="favoriteGame.id">
               <div class="flex align-items-center">
                 <i class="pi pi-angle-right text-gray-200"></i>
-                <span class="favorite-game-title" @click="toggleGamePanel">{{ favoriteGame?.game?.name }}</span>
+                <span class="favorite-game-title">{{ favoriteGame?.game?.name }}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <ChangeAvatarDialog :visible="shouldShowAvatarChangeMenu" :close="() => {shouldShowAvatarChangeMenu = false}"/>
   </Dialog>
 </template>
 
 <script setup>
 import {getAvatarImage} from "@/service/AvatarKeysResolver";
 import {onBeforeMount, ref, watch} from "vue";
-import ChangeAvatarDialog from "@/components/ChangeAvatarDialog.vue";
 import {fetchFavoriteGamesOfAuthUser} from "@/service/FavoriteGamesService";
 import {fetchUserById} from "@/service/UsersService";
+import {updateBiography} from "@/service/UserProfileService";
 
 const props = defineProps({
   visible: {
@@ -86,16 +76,25 @@ const props = defineProps({
   }
 });
 
+const originalText = ref();
+
 const showEditAboutInput = () => {
   isEditingBiography.value = true
+  originalText.value = userBiography.value
 }
 
 const handleCancelEditAbout = () => {
   isEditingBiography.value = false
-  // todo: limpiar texto o dejar como esta
+  userBiography.value = originalText.value
 }
 
 const userBiography = ref()
+
+const handleChangeBiography = () => {
+  updateBiography(userBiography.value)
+  originalText.value = userBiography.value
+  isEditingBiography.value = false
+}
 
 const isEditingBiography = ref(false)
 
@@ -110,6 +109,7 @@ onBeforeMount(async () => {
   const response = await fetchUserById(props.userId)
   profile.value = response;
   userBiography.value = response.profile.description ? response.profile.description : "";
+  originalText.value = userBiography.value
   favoriteGames.value = await fetchFavoriteGamesOfAuthUser(props.userId)
 })
 
@@ -135,13 +135,6 @@ const profileDialogWidth = () => {
   return '20%'
 }
 
-const handleOpenAvatarsMenu = () => {
-  shouldShowAvatarChangeMenu.value = true
-}
-
-const shouldShowAvatarChangeMenu = ref(false)
-
-const showEditIcon = ref(false);
 </script>
 
 <style scoped>

@@ -60,10 +60,6 @@ export const avatarsObjects = [
     {
         "key": "zeus",
         "img": zeus
-    },
-    {
-        "key": "defaultAvatar",
-        "img": userProfileIcon
     }
 ];
 

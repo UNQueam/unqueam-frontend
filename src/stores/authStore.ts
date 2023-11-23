@@ -5,6 +5,7 @@ interface AuthenticationInfo {
     username: string | null;
     userId: bigint | null;
     role: string | null;
+    profileImageId: string | null;
 }
 
 const buildExpirationTokenDate = (millis: number) => {
@@ -24,7 +25,8 @@ export const useAuthStore = defineStore('auth', {
     getters: {
         getUsername: (state) => state.authenticationInfo?.username || '',
         getUserRole: (state) => state.authenticationInfo?.role || '',
-        getUserId: (state) => state.authenticationInfo?.userId || ''
+        getUserId: (state) => state.authenticationInfo?.userId || '',
+        getProfileImageId: (state) => state.authenticationInfo?.profileImageId || ''
     },
 
     actions: {
@@ -33,6 +35,7 @@ export const useAuthStore = defineStore('auth', {
                 authToken: data['auth_token'],
                 userId: data['user_id'],
                 username: data['username'],
+                profileImageId: data['profile_image_id'],
                 role: data['role'],
                 tokenExpirationTimestamp: buildExpirationTokenDate(data['token_ttl_ms'])
             };
@@ -61,6 +64,9 @@ export const useAuthStore = defineStore('auth', {
         },
         hasRole(aRole: string): boolean {
             return aRole != null && this.authenticationInfo?.role.toLowerCase() === aRole.toLowerCase();
+        },
+        updateProfileImageKey(key: string) {
+            this.authenticationInfo.profileImageId = key;
         }
     },
 });

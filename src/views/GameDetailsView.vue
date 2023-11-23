@@ -174,37 +174,39 @@ const scrollToDownloadLinks = () => {
 
 
         <ul class="list-none p-0 m-0">
-          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap gap-1">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Título</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.name }}</div>
           </li>
-          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap gap-1">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Géneros</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
               <Chip v-for="(genre, index) in gameData?.genres" :key="index" :label="genre.spanish_name"
                     class="mr-2"></Chip>
             </div>
           </li>
-          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap gap-1">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Editor</div>
-            <Chip :label="gameData?.publisher.username" class="mr-2 cursor-pointer" v-tooltip.rigth="'Ver perfil'" @click="showProfileDialogOfGameEditor"></Chip>
+            <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+              <Chip :label="gameData?.publisher.username" class="mr-2 cursor-pointer" v-tooltip.rigth="'Ver perfil'" @click="showProfileDialogOfGameEditor"></Chip>
+            </div>
           </li>
-          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap gap-1">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Equipo desarrollador</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.development_team }}</div>
           </li>
-          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap gap-1">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Desarrolladores</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{
                 getDeveloperNames(gameData?.developers)
               }}
             </div>
           </li>
-          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap gap-1">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Lanzamiento</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{{ gameData?.release_date }}</div>
           </li>
-          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap" v-if="gameData?.period">
+          <li class="flex align-items-center py-3 px-2 border-top-1 surface-border flex-wrap gap-1" v-if="gameData?.period">
             <div class="text-500 w-6 md:w-2 font-medium mr-3">Cursada</div>
             <div class="text-900 w-full md:w-8 md:flex-order-0 flex-order-1"> {{ formatToLabel(gameData?.period) }}</div>
           </li>

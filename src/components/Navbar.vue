@@ -88,7 +88,7 @@
               <div class="mt-auto" v-if="authStore.isAuthenticated()">
                 <hr class="mb-3 mx-3 border-top-1 border-none surface-border" />
                 <a v-ripple class="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple">
-                  <Avatar :image="getAvatarImage('zeus')" shape="circle" class="mr-2"
+                  <Avatar :image="getAvatarImage(authStore.getProfileImageId)" shape="circle" class="mr-2"
                           style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%" />
                   <span class="font-bold">{{ authStore.getUsername }}</span>
                 </a>
@@ -149,7 +149,7 @@
               @click="toggle"
               data-cy="nav-username"
           >
-            <Avatar :image="getAvatarImage('zeus')" shape="circle"
+            <Avatar :image="getAvatarImage(authStore.getProfileImageId)" shape="circle"
                     style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%" />
             {{ authStore.getUsername }}
             <i class="pi pi-chevron-down text-sm opacity-70 mt-1"/>
@@ -158,7 +158,7 @@
             <template #start>
               <div class="w-full flex align-items-center p-2 pl-3 text-color">
                 <Avatar
-                    :image="getAvatarImage('zeus')"
+                    :image="getAvatarImage(authStore.getProfileImageId)"
                     shape="circle"
                     class="mr-2"
                     size="xlarge"

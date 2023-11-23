@@ -14,7 +14,8 @@
           class="mr-2 available-avatar"
           size="xlarge"
           v-bind:key="avatar.key"
-          shape="circle"/>
+          shape="circle"
+          @click="handleChangeAvatar(avatar.key)"/>
     </div>
   </Dialog>
 </template>
@@ -22,6 +23,7 @@
 <script setup>
 import {avatarsObjects} from "@/service/AvatarKeysResolver";
 import {ref, watch} from "vue";
+import {updateAvatar} from "@/service/UserProfileService";
 
 const props = defineProps({
   visible: {
@@ -34,7 +36,11 @@ const props = defineProps({
   }
 });
 
-const avatarsList = ref([])
+const handleChangeAvatar = (avatarKey) => {
+  updateAvatar(avatarKey);
+  handleClose();
+  location.reload()
+}
 
 const showVisible = ref(props.visible);
 

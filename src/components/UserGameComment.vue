@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="flex flex-row align-items-center" @click="handleOpenProfile">
-        <Avatar class="p-overlay-badge mr-2 cursor-pointer" size="small" icon="pi pi-user"/>
+        <Avatar class="p-overlay-badge mr-2 cursor-pointer" size="small" :image="getAvatarImage(comment.publisher.profile_image_id)"/>
         <h5 class="font-medium mt-2 cursor-pointer w-fit comment-username">{{ comment.publisher.username }}</h5>
       </div>
     </div>
@@ -69,6 +69,7 @@ import {getCustomError} from "@/utils/FormErrorMessageHandler";
 import {ref} from "vue";
 import {helpers, minLength, required} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
+import {getAvatarImage} from "@/service/AvatarKeysResolver";
 
 const props = defineProps({
   comment: {
