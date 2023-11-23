@@ -108,7 +108,7 @@ onBeforeMount(async () => {
   canUserEditProfile.value = (props.editable) ? props.editable : false;
   const response = await fetchUserById(props.userId)
   profile.value = response;
-  userBiography.value = response.profile.description ? response.profile.description : "";
+  userBiography.value = response?.profile.description ? response.profile.description : "";
   originalText.value = userBiography.value
   favoriteGames.value = await fetchFavoriteGamesOfAuthUser(props.userId)
 })

@@ -128,7 +128,9 @@ const router = createRouter({
 })
 
 const scrollToTop = () => {
-  window.scrollTo(0, 0);
+  if (typeof window !== 'undefined' && typeof history !== 'undefined') {
+    window.scrollTo(0, 0);
+  }
 };
 
 router.beforeEach((to, from, next) => {
