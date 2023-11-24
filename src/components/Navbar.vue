@@ -88,7 +88,7 @@
               <div class="mt-auto" v-if="authStore.isAuthenticated()">
                 <hr class="mb-3 mx-3 border-top-1 border-none surface-border" />
                 <a v-ripple class="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple">
-                  <Avatar :image="getAvatarImage(authStore.getProfileImageId)" shape="circle" class="mr-2"
+                  <Avatar :image="getAvatarImage(avatarKey)" shape="circle" class="mr-2"
                           style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%" />
                   <span class="font-bold">{{ authStore.getUsername }}</span>
                 </a>
@@ -215,14 +215,17 @@
           </Menu>
           <Toast/>
         <UserProfileDialog
+            v-bind:avatarKey="avatarKey"
             :visible="shouldShowProfileDialog"
             :editable="true"
             :userId="authStore.getUserId"
             :close="() => {shouldShowProfileDialog = false}"
         />
         <ChangeAvatarDialog
+            v-if="shouldShowChangeAvatarDialog"
             :visible="shouldShowChangeAvatarDialog"
             :close="() => {shouldShowChangeAvatarDialog = false}"
+            :onUpdate="(key) => updateAvatarKey(key)"
         />
       </ul>
     </div>
@@ -274,6 +277,12 @@ const handleCloseSidebar = (functionToExecute) => {
 
 const shouldShowChangeAvatarDialog = ref(false)
 const shouldShowProfileDialog = ref(false)
+
+const avatarKey = ref()
+
+const updateAvatarKey = (key) => {
+  avatarKey.value = key
+}
 
 /* End dialogs */
 
@@ -407,6 +416,7 @@ const checkIfMobile = () => {
 onMounted(() => {
   checkIfMobile();
   window.addEventListener('resize', checkIfMobile);
+  avatarKey.value = authStore.getProfileImageId;
 });
 
 onBeforeUnmount(() => {

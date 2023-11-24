@@ -9,7 +9,7 @@
     <div>
       <div class="gap-1 mb-5 flex flex-column align-items-center">
         <Avatar
-            :image="getAvatarImage(profile?.profile?.image_id)"
+            :image="canUserEditProfile ? getAvatarImage(props.avatarKey) : getAvatarImage(profile?.profile?.image_id)"
             shape="circle"
             class="available-avatar"
             style="background-color: #0b0b0b; border: 1px solid #c1272d; border-radius: 50%; "
@@ -73,6 +73,10 @@ const props = defineProps({
   userId: {
     type: Number,
     required: true
+  },
+  avatarKey: {
+    type: String,
+    required: false
   }
 });
 

@@ -33,13 +33,17 @@ const props = defineProps({
   close: {
     type: Function,
     required: true
+  },
+  onUpdate: {
+    type: Function,
+    required: true
   }
 });
 
 const handleChangeAvatar = (avatarKey) => {
   updateAvatar(avatarKey);
+  props.onUpdate(avatarKey);
   handleClose();
-  location.reload()
 }
 
 const showVisible = ref(props.visible);
