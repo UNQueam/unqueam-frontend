@@ -215,8 +215,8 @@
           </Menu>
           <Toast/>
         <UserProfileDialog
-            v-bind:avatarKey="avatarKey"
             :visible="shouldShowProfileDialog"
+            v-if="shouldShowProfileDialog"
             :editable="true"
             :userId="authStore.getUserId"
             :close="() => {shouldShowProfileDialog = false}"
