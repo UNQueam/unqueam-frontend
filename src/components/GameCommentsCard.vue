@@ -22,7 +22,14 @@
       </div>
     </form>
 
-    <div v-if="!isSearchingComments">
+    <div v-if="comments.length === 0 && !showCommentForm">
+      <div class="card mt-5">
+        <p class="w-fit m-auto text-300  font-italic">Aún no hay comentarios. </p>
+        <p class="w-fit m-auto text-300  font-italic">Se el primero en comentar.</p>
+      </div>
+    </div>
+
+    <div v-if="!isSearchingComments && comments.length != 0">
       <UserGameComment
           v-for="comment in comments"
           :key="comment.id"
@@ -61,18 +68,6 @@ const props = defineProps({
     required: true
   }
 });
-
-//const shouldShowProfileDialog = ref(false);
-//const selectedUserIdProfile = ref();
-//const handleShowProfile = (userId) => {
-  //selectedUserIdProfile.value = userId;
- // shouldShowProfileDialog.value = true
-//}
-
-//const handleCloseProfile = () => {
-//  shouldShowProfileDialog.value = false
- // selectedUserIdProfile.value = undefined
-//}
 
 const loggedUserUsername = authStore.getUsername
 

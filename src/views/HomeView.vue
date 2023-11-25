@@ -172,7 +172,9 @@ const layout = ref('grid')
 
                 <div class="face back">
                   <h3>{{ slotProps.data.name }}</h3>
-                  <div class="mb-3">{{ slotProps.data.description }}</div>
+                  <div class="mb-3">
+                    <p class="text-sm">{{ slotProps.data.description }}</p>
+                  </div>
                   <div class="card-link">
                     <button class="button-50" type="button" @click="goToGame(slotProps.data.alias)">Go to game</button>
                   </div>
