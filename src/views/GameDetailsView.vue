@@ -11,9 +11,10 @@ import {fetchGame} from "@/service/GamesService"
 import GameCommentsCard from "@/components/GameCommentsCard.vue";
 import {useAuthStore} from "@/stores/authStore";
 import {formatToLabel} from "../utils/PeriodFormatter";
+import Chart from "primevue/chart";
 import FloatingCircle from "@/components/FloatingCircle.vue";
-import {getAvatarImage} from "@/service/AvatarKeysResolver";
 import UserProfileDialog from "@/components/UserProfileDialog.vue";
+import {getMetricTracks, track, TrackData, TrackingEntity, TrackingType} from "@/service/TrackingService";
 
 const isUserPlaying = ref(false);
 
@@ -31,6 +32,7 @@ const toggleFullscreen = () => {
 function executePlay() {
   isUserPlaying.value = true
   setTimeout(toggleFullscreen, 400)
+  track(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, gameId()))
 }
 
 const route = useRoute();
@@ -45,6 +47,76 @@ const getDeveloperNames = (developers) => {
   }
 }
 
+/* chart data */
+const chartData = ref();
+const chartOptions = ref();
+
+const setChartData = (metricsReport) => {
+  const documentStyle = getComputedStyle(document.documentElement);
+
+  const results = metricsReport.result
+
+  let metricsLabels = []
+  let metrisCount = []
+
+  if (results != null) {
+    metricsLabels = Array.from(results).map(result => result.date).sort();
+    metrisCount = Array.from(results).sort((a, b) => a.date.localeCompare(b.date)).map(item => item.count);
+  }
+
+  return {
+    labels: metricsLabels,
+    datasets: [
+      {
+        label: 'Veces jugado',
+        data: metrisCount,
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--blue-500'),
+        tension: 0
+      }
+    ]
+  };
+};
+const setChartOptions = () => {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+  const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+          stepSize: 1
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+          stepSize: 1
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      }
+    }
+  };
+}
+/* end chart data */
+
 onMounted(async () => {
   const isLoggedInUser = useAuthStore().isAuthenticated()
   gameAlias.value = route.params.alias;
@@ -54,18 +126,22 @@ onMounted(async () => {
     gameData.value = response;
     if (isLoggedInUser) {
       const favoriteGames = await fetchFavoriteGamesOfAuthUser(useAuthStore().getUserId)
-      isMarkedAsFavorite.value = favoriteGames.some(favoriteGame => favoriteGame.game.id === gameData.value.id)
+      isMarkedAsFavorite.value = favoriteGames.some(favoriteGame => favoriteGame.game.id === gameId())
     } else {
       isMarkedAsFavorite.value = null
     }
   } catch (error) {
     console.error('Error al cargar el juego:', error);
   }
+
+  const metricsReport = await getMetricTracks(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, gameId()))
+  chartData.value = setChartData(metricsReport);
+  chartOptions.value = setChartOptions();
 })
 
 const handleRemoveGameFromFavorites = () => {
   if (isMarkedAsFavorite.value) {
-    doRemoveGameFromFavorites(gameData.value.id)
+    doRemoveGameFromFavorites(gameId())
     isMarkedAsFavorite.value = false
   }
 }
@@ -83,6 +159,10 @@ const handleCloseProfile = () => {
   selectedUserIdProfile.value = undefined
 }
 
+function gameId() {
+  return gameData.value.id;
+}
+
 const showProfileDialogOfGameEditor = () => {
   selectedUserIdProfile.value = gameData.value.publisher.publisher_id;
   shouldShowProfileDialog.value = true
@@ -92,7 +172,7 @@ const showProfileDialogOfGameEditor = () => {
 
 const handleAddGameToFavorites = () => {
   if (!isMarkedAsFavorite.value) {
-    postAddGameToFavorite(gameData.value.id)
+    postAddGameToFavorite(gameId())
     isMarkedAsFavorite.value = true
   }
 }
@@ -105,6 +185,8 @@ const scrollToDownloadLinks = () => {
   document.getElementById('downloadLink').scrollIntoView({ behavior: 'smooth' });
 }
 
+const showMetricsDialog = ref(false)
+
 </script>
 
 <template>
@@ -116,24 +198,33 @@ const scrollToDownloadLinks = () => {
       <Skeleton class="mt-5" height="10rem" width="100%"></Skeleton>
     </div>
   </div>
+
   <div class="flex">
     <div class="card mb-5 m-auto mt-5 w-100 col-12 md:col-7 lg:col-7 p-4">
       <div class="flex align-items-center justify-content-between">
-        <h3 class="">{{ gameData?.name }}</h3>
+        <div class="flex flex-column mb-2">
+          <h3 class="m-0">{{ gameData?.name }}</h3>
+          <Button
+              icon="pi pi-chart-bar"
+              label="Métricas"
+              class="p-1 m-0 w-fit p-button-link font-medium"
+              @click="showMetricsDialog = true"
+          />
+        </div>
+
         <div class="pb-5">
           <FloatingCircle/>
         </div>
 
-
-        <Button
-            v-if="isMarkedAsFavorite != null"
-            v-tooltip="!isMarkedAsFavorite ? 'Agregar a Favoritos' : 'Quitar de Favoritos'"
-            :class="!isMarkedAsFavorite ? 'dislike-button' : ''"
-            :icon="!isMarkedAsFavorite ? 'pi pi-heart' : 'pi pi-heart-fill'"
-            class="mb-2 favorite-button"
-            rounded
-            @click="handleFavorite"
-        />
+          <Button
+              v-if="isMarkedAsFavorite != null"
+              v-tooltip="!isMarkedAsFavorite ? 'Agregar a Favoritos' : 'Quitar de Favoritos'"
+              :class="!isMarkedAsFavorite ? 'dislike-button' : ''"
+              :icon="!isMarkedAsFavorite ? 'pi pi-heart' : 'pi pi-heart-fill'"
+              rounded
+              class="mb-2"
+              @click="handleFavorite"
+          />
       </div>
       <div v-if="gameData?.link_to_game">
         <div v-if="!isUserPlaying" class='game-preview'>
@@ -214,6 +305,12 @@ const scrollToDownloadLinks = () => {
       </div>
     </div>
   </div>
+
+  <Dialog v-model:visible="showMetricsDialog" modal style="width: 80%" >
+    <div class="card align-items-center">
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem" />
+    </div>
+  </Dialog>
 
   <GameCommentsCard v-if="gameData && gameData.id" :comments="gameData.comments ? gameData.comments : []"
                     :game-id="gameData.id" :game-publisher="gameData?.publisher.username" :handleShowProfileFn="(userId) => handleShowProfile(userId)"/>

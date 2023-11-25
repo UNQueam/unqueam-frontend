@@ -1,7 +1,4 @@
 import axios from 'axios';
-import router from '@/router/index.js';
-
-import {useAuthStore} from "@/stores/authStore";
 import {handleRequestError, requestAuthConfig} from "@/utils/HttpHelper";
 
 const apiService = axios.create({

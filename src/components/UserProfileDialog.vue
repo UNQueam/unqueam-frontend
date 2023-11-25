@@ -110,11 +110,13 @@ const favoriteGames = ref([])
 
 onBeforeMount(async () => {
   canUserEditProfile.value = (props.editable) ? props.editable : false;
-  const response = await fetchUserById(props.userId)
-  profile.value = response;
-  userBiography.value = response?.profile.description ? response.profile.description : "";
-  originalText.value = userBiography.value
-  favoriteGames.value = await fetchFavoriteGamesOfAuthUser(props.userId)
+  if (props.userId != null && props.userId !== "") {
+    const response = await fetchUserById(props.userId)
+    profile.value = response;
+    userBiography.value = response?.profile.description ? response.profile.description : "";
+    originalText.value = userBiography.value
+    favoriteGames.value = await fetchFavoriteGamesOfAuthUser(props.userId)
+  }
 })
 
 const dialogVisible = ref(props.visible);
