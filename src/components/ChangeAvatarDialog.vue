@@ -16,6 +16,7 @@
           v-bind:key="avatar.key"
           shape="circle"
           @click="handleChangeAvatar(avatar.key)"/>
+      <a class="m-auto mt-3 text-sm" style="color:#9b2a3a" href="https://www.vecteezy.com/free-png/tshirt">Tshirt PNGs by Vecteezy</a>
     </div>
   </Dialog>
 </template>

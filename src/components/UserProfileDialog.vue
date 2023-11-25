@@ -25,8 +25,9 @@
             <p class="font-bold my-auto">BIOGRAFIA</p>
             <i v-if="canUserEditProfile && !isEditingBiography" class="pi pi-pencil cursor-pointer" @click="showEditAboutInput" v-tooltip.left="'Editar información'"></i>
             <div v-if="canUserEditProfile && isEditingBiography" class="flex flex-row gap-3">
-              <Button class="p-button-link m-0 p-0" @click="handleChangeBiography">Guardar</Button>
               <Button class="p-button-link m-0 p-0" @click="handleCancelEditAbout">Cancelar</Button>
+              <Button class="p-button-link m-0 p-0" @click="handleChangeBiography">Guardar</Button>
+
             </div>
           </div>
           <p v-if="!isEditingBiography && !userBiography" class="text-700 font-italic">No hay información para mostrar.</p>
