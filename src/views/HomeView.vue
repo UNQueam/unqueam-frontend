@@ -17,11 +17,16 @@ const gameYears = ref(["No especificado"]);
 const selectedYears = ref([]);
 const semesters = ref(["Primer cuatrimestre", "Segundo cuatrimestre", "No especificado"]);
 const selectedSemesters = ref([]);
+const selectedGenres = ref([]);
+const availableGenres = ref();
 const filterPanel = ref();
 
 const images = ref();
 
 onMounted(async () => {
+  const gamesGenres = [];
+  const genreSet = new Set();
+
   await fetchActiveBanners().then((data) => (images.value = data));
       try {
         const result = await fetchData();
@@ -30,6 +35,14 @@ onMounted(async () => {
               if (game.period) {
                 gameYears.value.push(game.period.year);
               }
+
+          game.genres.forEach(genre => {
+            const spanishName = genre.spanish_name;
+            if (!genreSet.has(spanishName)) {
+              gamesGenres.push(spanishName);
+              genreSet.add(spanishName);
+            }
+          })
         })
         gameYears.value = Array.from(new Set(gameYears.value)).sort();
         games.value = result;
@@ -37,7 +50,9 @@ onMounted(async () => {
       } catch (err) {
         error.value = err;
       }
-    });
+
+    availableGenres.value = gamesGenres;
+});
 
 const filteredData = computed(() => {
   const lowerCaseFilter = filterKey.value.toLowerCase()
@@ -46,10 +61,19 @@ const filteredData = computed(() => {
         (item.name.toLowerCase().includes(lowerCaseFilter) ||
         item.description.toLowerCase().includes(lowerCaseFilter)) &&
         correspondsToSelectedYears(item) &&
+        correspondsToSelectedGenres(item) &&
         correspondsToSelectedSemester(item)
-
   )
 })
+
+const correspondsToSelectedGenres = (game) => {
+  if (selectedGenres.value.length !== 0) {
+    return game.genres.some(genre => {
+      return selectedGenres.value.includes(genre.spanish_name);
+    })
+  }
+  return true;
+}
 
 const correspondsToSelectedYears = (game) => {
   if (game.period && selectedYears.value.length !== 0) {
@@ -127,6 +151,10 @@ const layout = ref('grid')
                     <div class="mb-1 mt-3">Cuatrimestre de la cursada</div>
                     <MultiSelect v-model="selectedSemesters" :options="semesters"  placeholder="Cuatrimestre"
                                  class="w-full md:w-20rem" />
+
+                    <div class="mb-1 mt-3">Géneros</div>
+                    <MultiSelect v-model="selectedGenres" :options="availableGenres"  placeholder="Géneros"
+                                 class="w-full md:w-20rem" />
                   </div>
                 </OverlayPanel>
               </div>
@@ -137,7 +165,7 @@ const layout = ref('grid')
             <div v-if="isLoadingData" class="h-5rem mt-8">
             <ProgressBar mode="indeterminate" style="height: 6px"></ProgressBar>
             </div>
-            <div v-if="selectedYears.length > 0 || selectedSemesters.length > 0" class="font-normal" style="font-size: 12px">
+            <div v-if="selectedYears.length > 0 || selectedSemesters.length > 0 || selectedGenres.length > 0" class="font-normal" style="font-size: 12px">
               <p class="m-0 p-0 font-bold">
                 Filtros aplicados
               </p>
@@ -151,9 +179,16 @@ const layout = ref('grid')
               <div v-if="selectedSemesters.length > 0" class="flex flex-row gap-1 mt-2 align-items-center">
                 <p class="m-0">
                   <i class="pi pi-angle-right"/>
-                  Cuatrimestre:
+                  Cuatrimestres:
                 </p>
                 <Chip v-for="semester of selectedSemesters" v-bind:key="semester" style="font-size: 12px; padding: 2px 5px">{{ semester }}</Chip>
+              </div>
+              <div v-if="selectedGenres.length > 0" class="flex flex-row gap-1 mt-2 align-items-center">
+                <p class="m-0">
+                  <i class="pi pi-angle-right"/>
+                  Géneros:
+                </p>
+                <Chip v-for="genre of selectedGenres" v-bind:key="genre" style="font-size: 12px; padding: 2px 5px">{{ genre }}</Chip>
               </div>
             </div>
           </template>
