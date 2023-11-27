@@ -13,6 +13,7 @@ import Tooltip from 'primevue/tooltip';
 import PrimeVue from 'primevue/config';
 import '@/assets/styles.scss';
 import piniaPluginPersistedState from "pinia-plugin-persistedstate"
+import TabMenu from 'primevue/tabmenu';
 
 //Primevue imports
 import DataView from 'primevue/dataview';
@@ -102,6 +103,7 @@ app.component('Slider', Slider)
 app.component('TriStateCheckbox', TriStateCheckbox)
 app.component('Tag', Tag)
 app.directive('tooltip', Tooltip);
+app.directive('TabMenu', TabMenu);
 
 app.component('Password', Password)
 

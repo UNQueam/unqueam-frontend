@@ -239,6 +239,7 @@ const handleCloseMetrics = () => {
       :visible="showMetricsDialog"
       :gameId="gameId()"
       :close="handleCloseMetrics"
+      :gameName="gameData?.name"
   />
 
   <GameCommentsCard v-if="gameData && gameData.id" :comments="gameData.comments ? gameData.comments : []"

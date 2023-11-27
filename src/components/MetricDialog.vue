@@ -1,5 +1,7 @@
 <template>
-  <Dialog v-model:visible="dialogVisible" modal style="width: 80%" @hide="handleClose">
+  <Dialog v-model:visible="dialogVisible" header="  " modal style="width: 80%" @hide="handleClose">
+    <h1>Métricas de {{props.gameName}}</h1>
+    <TabMenu :model="items" class="mb-5"/>
     <div class="card align-items-center">
       <Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem"/>
     </div>
@@ -11,6 +13,7 @@
 import {onMounted, ref} from 'vue';
 import {getMetricTracks, TrackData, TrackingEntity, TrackingType} from "@/service/TrackingService";
 import Chart from "primevue/chart";
+import TabMenu from "primevue/tabmenu"
 
 const props = defineProps({
   visible: {
@@ -24,6 +27,10 @@ const props = defineProps({
   close: {
     type: Function,
     required: true
+  },
+  gameName: {
+    type: String,
+    required: true
   }
 });
 
@@ -33,7 +40,10 @@ const dialogVisible = ref(props.visible);
 const chartData = ref();
 const chartOptions = ref();
 
-const setChartData = (metricsReport) => {
+const timesPlayedChartData = ref();
+const viewsChartData = ref();
+
+const setChartData = (metricsReport, legend, lineColor) => {
   const documentStyle = getComputedStyle(document.documentElement);
 
   const results = metricsReport.result
@@ -50,10 +60,10 @@ const setChartData = (metricsReport) => {
     labels: metricsLabels,
     datasets: [
       {
-        label: 'Veces jugado',
+        label: legend,
         data: metrisCount,
         fill: false,
-        borderColor: documentStyle.getPropertyValue('--blue-500'),
+        borderColor: documentStyle.getPropertyValue(lineColor),
         tension: 0
       }
     ]
@@ -100,19 +110,41 @@ const setChartOptions = () => {
 /* end chart data */
 
 onMounted(async () => {
-  const metricsReport = await getMetricTracks(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, props.gameId));
-  chartData.value = setChartData(metricsReport);
+  const timesPlayedMetrisReport = await getMetricTracks(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, props.gameId));
+  //ChartData starts as with timesPlayed information.
+  chartData.value = setChartData(timesPlayedMetrisReport, "Veces Jugado", '--blue-500');
   chartOptions.value = setChartOptions();
+  timesPlayedChartData.value = setChartData(timesPlayedMetrisReport, "Veces Jugado", '--blue-500');
+  const viewsMetricsReport = await getMetricTracks(new TrackData(TrackingEntity.Game, TrackingType.View, props.gameId));
+  viewsChartData.value = setChartData(viewsMetricsReport, "Veces Visitado", '--green-500');
 })
+
 
 function handleClose() {
   props.close();
   dialogVisible.value = false;
 }
 
+//Top Menu
+const items = ref([
+  {
+    label: 'Veces jugado',
+    icon: 'pi pi-chart-line',
+    command: () => {
+      chartData.value = timesPlayedChartData.value;
+    }
+  },
+  {
+    label: 'Visitas',
+    icon: 'pi pi-chart-line',
+    command: () => {
+      chartData.value = viewsChartData.value;
+    }
+  }
+]);
+
 
 </script>
 
 <style scoped>
-
 </style>
