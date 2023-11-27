@@ -89,6 +89,18 @@ const correspondsToSelectedSemester = (game) => {
   return selectedSemesters.value.length === 0 || (!game.period && selectedSemesters.value.includes("No especificado"));
 }
 
+const removeSelectedSemester = (semester) => {
+  selectedSemesters.value = selectedSemesters.value.filter(aSemester => aSemester !== semester)
+}
+
+const removeSelectedGenre = (genre) => {
+  selectedGenres.value = selectedGenres.value.filter(aGenre => aGenre !== genre)
+}
+
+const removeSelectedYear = (year) => {
+  selectedYears.value = selectedYears.value.filter(aYear => aYear !== year)
+}
+
 const toggleFilters = (event) => {
   filterPanel.value.toggle(event);
 }
@@ -139,7 +151,7 @@ const layout = ref('grid')
         <DataView :value="filteredData" :layout="layout" :paginator="true" :rows="9">
           <template #header>
             <div class="grid grid-nogutter">
-              <div class="col-6 mt-3 col-offset-3">
+              <div class="mt-3 col-offset-3 col-9 md:col-6 flex m-auto">
                 <InputText v-model="filterKey" placeholder="Buscar..." />
                 <Button class="ml-2" icon="pi pi-filter-fill" @click="toggleFilters"></Button>
                 <OverlayPanel ref="filterPanel">
@@ -174,21 +186,21 @@ const layout = ref('grid')
                   <i class="pi pi-angle-right"/>
                   Años:
                 </p>
-                  <Chip v-for="year of selectedYears" v-bind:key="year" style="font-size: 12px; padding: 2px 5px">{{ year }}</Chip>
+                  <Chip v-for="year of selectedYears" v-bind:key="year" style="font-size: 12px; padding: 2px 5px" removable @remove="removeSelectedYear(year)">{{ year }}</Chip>
               </div>
               <div v-if="selectedSemesters.length > 0" class="flex flex-row gap-1 mt-2 align-items-center">
                 <p class="m-0">
                   <i class="pi pi-angle-right"/>
                   Cuatrimestres:
                 </p>
-                <Chip v-for="semester of selectedSemesters" v-bind:key="semester" style="font-size: 12px; padding: 2px 5px">{{ semester }}</Chip>
+                <Chip v-for="semester of selectedSemesters" v-bind:key="semester" style="font-size: 12px; padding: 2px 5px" removable @remove="removeSelectedSemester(semester)">{{ semester }}</Chip>
               </div>
               <div v-if="selectedGenres.length > 0" class="flex flex-row gap-1 mt-2 align-items-center">
                 <p class="m-0">
                   <i class="pi pi-angle-right"/>
                   Géneros:
                 </p>
-                <Chip v-for="genre of selectedGenres" v-bind:key="genre" style="font-size: 12px; padding: 2px 5px">{{ genre }}</Chip>
+                <Chip v-for="genre of selectedGenres" v-bind:key="genre" style="font-size: 12px; padding: 2px 5px" removable @remove="removeSelectedGenre(genre)">{{ genre }}</Chip>
               </div>
             </div>
           </template>
