@@ -182,15 +182,15 @@ const layout = ref('grid')
                   <div>
                     <div class="mb-1">Año de cursada</div>
                     <MultiSelect v-model="selectedYears" :options="gameYears" placeholder="Años"
-                                 class="w-full md:w-20rem"/>
+                                 class="w-20rem"/>
 
                     <div class="mb-1 mt-3">Cuatrimestre de la cursada</div>
                     <MultiSelect v-model="selectedSemesters" :options="semesters" placeholder="Cuatrimestre"
-                                 class="w-full md:w-20rem"/>
+                                 class="w-20rem"/>
 
                     <div class="mb-1 mt-3">Géneros</div>
                     <MultiSelect v-model="selectedGenres" :options="availableGenres" placeholder="Géneros"
-                                 class="w-full md:w-20rem" />
+                                 class="w-20rem"/>
                   </div>
                   <Button @click='resetFilters' v-if="(selectedYears.length > 0 || selectedSemesters.length > 0 || selectedGenres.length > 0)" class="p-button-link">Eliminar filtros</Button>
                 </div>
