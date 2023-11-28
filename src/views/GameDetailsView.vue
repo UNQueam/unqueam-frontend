@@ -12,7 +12,6 @@ import GameCommentsCard from "@/components/GameCommentsCard.vue";
 import {useAuthStore} from "@/stores/authStore";
 import {TrackData,track, TrackingEntity, TrackingType} from "@/service/TrackingService";
 import {formatToLabel} from "../utils/PeriodFormatter";
-import FloatingCircle from "@/components/FloatingCircle.vue";
 import UserProfileDialog from "@/components/UserProfileDialog.vue";
 import MetricDialog from "@/components/MetricDialog.vue";
 
@@ -135,9 +134,6 @@ const handleCloseMetrics = () => {
           <h3 class="m-0">{{ gameData?.name }}</h3>
         </div>
 
-        <div class="pb-5">
-          <FloatingCircle/>
-        </div>
         <div class="flex flex-row gap-2 align-items-center mb-2">
           <Button
               v-tooltip.left="'Ver métricas'"
