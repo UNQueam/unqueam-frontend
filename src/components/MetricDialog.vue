@@ -44,9 +44,10 @@ const timesPlayedChartData = ref();
 const viewsChartData = ref();
 
 const setChartData = (metricsReport, legend, lineColor) => {
+  const metricsReportWithAllDates = fillMissingDates(metricsReport);
   const documentStyle = getComputedStyle(document.documentElement);
 
-  const results = metricsReport.result
+  const results = metricsReportWithAllDates
 
   let metricsLabels = []
   let metrisCount = []
@@ -110,14 +111,39 @@ const setChartOptions = () => {
 /* end chart data */
 
 onMounted(async () => {
-  const timesPlayedMetrisReport = await getMetricTracks(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, props.gameId));
+  let timesPlayedMetrisReport = await getMetricTracks(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, props.gameId));
   //ChartData starts as with timesPlayed information.
-  chartData.value = setChartData(timesPlayedMetrisReport, "Veces Jugado", '--blue-500');
+  chartData.value = setChartData(timesPlayedMetrisReport.result, "Veces Jugado", '--blue-500');
   chartOptions.value = setChartOptions();
-  timesPlayedChartData.value = setChartData(timesPlayedMetrisReport, "Veces Jugado", '--blue-500');
+  timesPlayedChartData.value = setChartData(timesPlayedMetrisReport.result, "Veces Jugado", '--blue-500');
   const viewsMetricsReport = await getMetricTracks(new TrackData(TrackingEntity.Game, TrackingType.View, props.gameId));
-  viewsChartData.value = setChartData(viewsMetricsReport, "Veces Visitado", '--green-500');
+  viewsChartData.value = setChartData(viewsMetricsReport.result, "Veces Visitado", '--green-500');
 })
+
+const fillMissingDates = (data) =>  {
+  if (data) {
+    const existingDates = data.map(item => new Date(item.date));
+    const minDate = new Date(Math.min(...existingDates));
+    const maxDate = new Date(Math.max(...existingDates));
+
+    const missingDates = [];
+    let currentDate = new Date(minDate);
+    while (currentDate <= maxDate) {
+      missingDates.push(currentDate.toISOString().split('T')[0]);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return missingDates.map(date => {
+      const existingItem = data.find(item => item.date === date);
+      return {
+        date: date,
+        count: existingItem ? existingItem.count : 0
+      };
+    });
+  }
+  return [];
+
+}
 
 
 function handleClose() {
