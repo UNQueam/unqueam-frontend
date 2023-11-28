@@ -50,7 +50,7 @@
       </div>
 
       <label class="block text-600 font-medium mb-2 mt-5" for="description">Descripción</label>
-      <Textarea id="description" v-model="game.description" class="w-full" placeholder="El título del juego"
+      <Textarea id="description" v-model="game.description" class="w-full" placeholder="La descripción del juego"
                 style="padding: 0.7rem" type="text"/>
 
       <div class="error-container">
