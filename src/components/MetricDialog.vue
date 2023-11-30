@@ -5,6 +5,9 @@
     <div class="card align-items-center">
       <Chart type="line" :data="chartData" :options="chartOptions" class="h-30rem"/>
     </div>
+    <div class="flex align-items-center justify-content-end mr-3" >
+      <h4>Total: {{totalToShow}}</h4>
+    </div>
   </Dialog>
 </template>
 
@@ -42,6 +45,9 @@ const chartOptions = ref();
 
 const timesPlayedChartData = ref();
 const viewsChartData = ref();
+
+const totals = ref({});
+const totalToShow = ref ({})
 
 const setChartData = (metricsReport, legend, lineColor) => {
   const metricsReportWithAllDates = fillMissingDates(metricsReport);
@@ -111,12 +117,15 @@ const setChartOptions = () => {
 /* end chart data */
 
 onMounted(async () => {
-  let timesPlayedMetrisReport = await getMetricTracks(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, props.gameId));
+  let timesPlayedMetricsReport = await getMetricTracks(new TrackData(TrackingEntity.PlayGame, TrackingType.Event, props.gameId));
+  totals.value.timesPlayed =  timesPlayedMetricsReport.total;
   //ChartData starts as with timesPlayed information.
-  chartData.value = setChartData(timesPlayedMetrisReport.result, "Veces Jugado", '--blue-500');
+  chartData.value = setChartData(timesPlayedMetricsReport.result, "Veces Jugado", '--blue-500');
   chartOptions.value = setChartOptions();
-  timesPlayedChartData.value = setChartData(timesPlayedMetrisReport.result, "Veces Jugado", '--blue-500');
+  totalToShow.value = timesPlayedMetricsReport.total;
+  timesPlayedChartData.value = setChartData(timesPlayedMetricsReport.result, "Veces Jugado", '--blue-500');
   const viewsMetricsReport = await getMetricTracks(new TrackData(TrackingEntity.Game, TrackingType.View, props.gameId));
+  totals.value.views =  viewsMetricsReport.total;
   viewsChartData.value = setChartData(viewsMetricsReport.result, "Veces Visitado", '--green-500');
 })
 
@@ -158,6 +167,7 @@ const items = ref([
     icon: 'pi pi-chart-line',
     command: () => {
       chartData.value = timesPlayedChartData.value;
+      totalToShow.value = totals.value.timesPlayed;
     }
   },
   {
@@ -165,6 +175,7 @@ const items = ref([
     icon: 'pi pi-chart-line',
     command: () => {
       chartData.value = viewsChartData.value;
+      totalToShow.value = totals.value.views;
     }
   }
 ]);
