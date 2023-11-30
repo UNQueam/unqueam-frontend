@@ -5,7 +5,7 @@ import {
   fetchFavoriteGamesOfAuthUser,
   postAddGameToFavorite
 } from "@/service/FavoriteGamesService";
-import {onMounted, ref} from 'vue';
+import {onBeforeUnmount, onMounted, ref} from 'vue';
 import {useRoute} from 'vue-router';
 import {fetchGame} from "@/service/GamesService"
 import GameCommentsCard from "@/components/GameCommentsCard.vue";
@@ -38,6 +38,7 @@ const route = useRoute();
 const gameAlias = ref('');
 const gameData = ref(null);
 const isMarkedAsFavorite = ref(false);
+const shouldShowPlayButton = ref();
 
 const getDeveloperNames = (developers) => {
   if (developers) {
@@ -47,6 +48,8 @@ const getDeveloperNames = (developers) => {
 }
 
 onMounted(async () => {
+  shouldShowPlayButton.value = window.innerWidth > 767;
+  window.addEventListener('resize', handleResize);
   const isLoggedInUser = useAuthStore().isAuthenticated()
   gameAlias.value = route.params.alias;
 
@@ -64,11 +67,19 @@ onMounted(async () => {
   }
 })
 
+onBeforeUnmount(async () => {
+  window.removeEventListener('resize', handleResize);
+})
+
 const handleRemoveGameFromFavorites = () => {
   if (isMarkedAsFavorite.value) {
     doRemoveGameFromFavorites(gameId())
     isMarkedAsFavorite.value = false
   }
+}
+
+function handleResize() {
+  shouldShowPlayButton.value = window.innerWidth > 767;
 }
 
 /* Profile dialog */
@@ -151,11 +162,18 @@ const handleCloseMetrics = () => {
         </div>
       </div>
       <div v-if="gameData?.link_to_game">
-        <div v-if="!isUserPlaying" class='game-preview'>
+        <div v-if="!isUserPlaying && shouldShowPlayButton" class='game-preview'>
           <button class='play-button' @click="executePlay">
             <span id='play-button-text'>Jugar</span>
             <i class="play-icon pi pi-play" style="color: #b3b3b3"></i>
           </button>
+        </div>
+        <div v-else-if="!isUserPlaying && !shouldShowPlayButton">
+          <div class='game-preview '>
+            <div class="no-available">
+              No disponible para celulares
+            </div>
+          </div>
         </div>
       </div>
       <div v-else>
@@ -338,6 +356,14 @@ const handleCloseMetrics = () => {
 }
 
 .download-message {
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  font-size: 24px;
+  color: #9b2a3a;
+}
+
+.no-available {
   text-align: center;
   padding: 20px;
   position: relative;

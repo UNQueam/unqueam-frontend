@@ -23,7 +23,7 @@ const filterPanel = ref();
 
 const images = ref();
 
-const shouldShowFilters = ref()
+const shouldShowFilters = ref();
 
 onBeforeUnmount(async () => {
   window.removeEventListener('resize', handleResize);
