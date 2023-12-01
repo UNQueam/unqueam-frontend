@@ -249,17 +249,17 @@ const layout = ref('grid')
                     class="shadow-2 my-1 mx-0"
                 />
                 <Avatar v-if="slotProps.data.rankBadgeSrc" :image="slotProps.data.rankBadgeSrc"
-                        class="p-overlay-badge absolute right-0 m-1" size="large"/>
+                        class="p-overlay-badge absolute right-0 m-1" style="background: none" size="large"/>
                 <h3 class="text-center">{{ slotProps.data.name }}</h3>
               </div>
 
               <div class="face back">
                 <h3>{{ slotProps.data.name }}</h3>
                 <div class="mb-3">
-                  <p class="text-sm">{{ slotProps.data.description }}</p>
+                  <p class="text-sm md:text-base">{{ slotProps.data.description }}</p>
                 </div>
                 <div class="card-link">
-                  <button class="button-50" type="button" @click="goToGame(slotProps.data.alias)">Go to game</button>
+                  <button class="button-50" type="button" @click="goToGame(slotProps.data.alias)">Ir al Juego</button>
                 </div>
               </div>
             </div>
@@ -379,7 +379,6 @@ const layout = ref('grid')
   background-color: #000;
   background-image: none;
   border: 1px solid #000;
-  border-radius: 4px;
   box-shadow: #fff 4px 4px 0 0,
   #000 4px 4px 0 1px;
   box-sizing: border-box;
@@ -387,7 +386,7 @@ const layout = ref('grid')
   cursor: pointer;
   display: inline-block;
   font-family: ITCAvantGardeStd-Bk, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 20px;
   margin: 0 5px 10px 0;
