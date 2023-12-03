@@ -8,7 +8,7 @@
         <i class="pi pi-angle-right text-500 line-height-3"></i>
       </li>
       <li>
-        <router-link class="text-500 no-underline line-height-3 cursor-pointer" to="/dev/games">Banners</router-link>
+        <router-link class="text-500 no-underline line-height-3 cursor-pointer" to="/admin/banners">Banners</router-link>
       </li>
       <li class="px-2">
         <i class="pi pi-angle-right text-500 line-height-3"></i>

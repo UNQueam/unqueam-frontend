@@ -5,8 +5,16 @@ import Footer from "@/components/Footer.vue";
 </script>
 
 <template>
-  <Navbar></Navbar>
-  <RouterView />
-  <Footer/>
+  <div class="flex flex-column h-full justify-content-between">
+    <div>
+      <Navbar></Navbar>
+      <RouterView />
+    </div>
+    <div>
+      <Footer/>
+    </div>
+  </div>
+
+
 </template>
 
